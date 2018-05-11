@@ -50,6 +50,8 @@ public class Board extends JPanel {
 	static int moveLimit = 75;
 	static int movedBy = moveLimit;
 	static int direction = 0; //-1 is left, 1 is right
+	static boolean shootProjectile = false;
+	static Projectile sProjectile = spaceship.getProjectile();
 
 	public static void main(String[] args) {
 
@@ -109,6 +111,11 @@ public class Board extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				// ADD implementation of space key here
 				System.out.println("Space Key Pressed");
+				int row = spaceship.getRow();
+				int col = spaceship.getCol() + spaceship.getWidth()/2;
+				sProjectile.setLocation(row, col);
+				sProjectile.setColor(Color.decode("#F7DC6F"));
+				shootProjectile =true;
 
 			}
 		});
@@ -146,11 +153,20 @@ public class Board extends JPanel {
 
 	protected static void tick() {
 		moveEnemies();
-		if(movedBy < moveLimit)
+//		if(movedBy < moveLimit)
 		moveSpaceship();
+		shootSpaceshipProjectile();
 		
 	}
 	
+	private static void shootSpaceshipProjectile() {
+		if(shootProjectile) {
+			sProjectile.move();
+			}
+		
+	}
+
+
 	private static void moveSpaceship() {
 		int change = 5;
 		if(movedBy < moveLimit) {
@@ -209,6 +225,12 @@ public class Board extends JPanel {
 			spaceship.setWidth(spaceship.getImage().getWidth()/9);
 			spaceship.setHeight(spaceship.getImage().getHeight()/9);
 			spaceship.paintComponent(g);
+			
+			//shoot projectile
+			if(shootProjectile) {
+				sProjectile.paintComponent(g);
+				
+			}
 			
 			
 		}
