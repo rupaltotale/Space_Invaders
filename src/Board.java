@@ -37,16 +37,16 @@ public class Board extends JPanel {
 
 	static boolean gameOver = true;
 
-	static int time = 30; // in milliseconds
+	static int time = 1; // in milliseconds
 	static Timer timer = new Timer(time, null);
 
-	static ArrayList<ArrayList<Enemy>> enemies = new ArrayList<ArrayList<Enemy>>();
+	static ArrayList<ArrayList<Enemy>> enemies = new ArrayList<ArrayList<Enemy>>();//for the enemy characteristics
 	static int enemyRow = 3;
 	static int enemyCol = 12;
 	static int shiftBy = 3;
 
-	static Spaceship spaceship = new Spaceship(height - 100, 100);
-	static int moveLimit = 75;
+	static Spaceship spaceship = new Spaceship(height - 100, 100);//for the spaceship characteristics
+	static int moveLimit = 30;
 	static int movedBy = moveLimit;
 	static int direction = 0; // -1 is left, 1 is right
 	static boolean shootProjectile = true;
@@ -179,7 +179,7 @@ public class Board extends JPanel {
 //									
 //									) {
 //								System.out.println("Touching!");
-//							}
+//							} 
 //						}
 //					}
 					
@@ -191,7 +191,7 @@ public class Board extends JPanel {
 	}
 
 	private static void moveSpaceship() {
-		int change = 5;
+		int change = 20;
 		if (movedBy < moveLimit) {
 			if (direction == 1 & spaceship.getCol() + change <= width) {
 				spaceship.setCol(spaceship.getCol() + change);
