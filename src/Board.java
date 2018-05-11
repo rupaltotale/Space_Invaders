@@ -36,8 +36,7 @@ public class Board extends JPanel {
 	static int margin = 100;
 
 	static boolean gameOver = true;
-	
-	
+
 	static int time = 30; // in milliseconds
 	static Timer timer = new Timer(time, null);
 
@@ -45,13 +44,14 @@ public class Board extends JPanel {
 	static int enemyRow = 3;
 	static int enemyCol = 12;
 	static int shiftBy = 3;
-	
-	static Spaceship spaceship = new Spaceship(height-100, 100);
+
+	static Spaceship spaceship = new Spaceship(height - 100, 100);
 	static int moveLimit = 75;
 	static int movedBy = moveLimit;
-	static int direction = 0; //-1 is left, 1 is right
-	static boolean shootProjectile = false;
-	static Projectile sProjectile = spaceship.getProjectile();
+	static int direction = 0; // -1 is left, 1 is right
+	static boolean shootProjectile = true;
+
+	static ArrayList<Projectile> sProjectiles = new ArrayList();
 
 	public static void main(String[] args) {
 
@@ -75,7 +75,6 @@ public class Board extends JPanel {
 
 	}
 
-
 	private void setUpKeyMappings() {
 
 		this.getInputMap().put(KeyStroke.getKeyStroke("LEFT"), "left");
@@ -87,7 +86,7 @@ public class Board extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// ADD implementation of right key here
-//				System.out.println("Right Key Pressed");
+				// System.out.println("Right Key Pressed");
 				direction = 1;
 				movedBy = 0;
 			}
@@ -98,9 +97,9 @@ public class Board extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// ADD implementation of left key here
-//				System.out.println("Left Key Pressed");
+				// System.out.println("Left Key Pressed");
 				direction = -1;
-				movedBy =0;
+				movedBy = 0;
 
 			}
 		});
@@ -111,11 +110,13 @@ public class Board extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				// ADD implementation of space key here
 				System.out.println("Space Key Pressed");
-				int row = spaceship.getRow();
-				int col = spaceship.getCol() + spaceship.getWidth()/2;
-				sProjectile.setLocation(row, col);
-				sProjectile.setColor(Color.decode("#F7DC6F"));
-				shootProjectile =true;
+				Projectile projectile = new Projectile("Rocket");
+				int row = spaceship.getRow() - projectile.getHeight();
+				int col = spaceship.getCol() + spaceship.getWidth() / 2 - projectile.getWidth() / 2;
+				projectile.setLocation(row, col);
+				// projectile.setColor(Color.decode("#F7DC6F"));
+				// Color.decode("#F7DC6F")
+				sProjectiles.add(projectile);
 
 			}
 		});
@@ -123,8 +124,9 @@ public class Board extends JPanel {
 		this.requestFocusInWindow();
 
 	}
-	public static void createEnemies() { 
-		int spacing = (width-margin*2)/enemyCol;
+
+	public static void createEnemies() {
+		int spacing = (width - margin * 2) / enemyCol;
 		for (int r = 0; r < enemyRow; r++) {
 			ArrayList<Enemy> enemyRow = new ArrayList<Enemy>();
 			for (int c = 0; c < enemyCol; c++) {
@@ -136,6 +138,7 @@ public class Board extends JPanel {
 		gameOver = false;
 
 	}
+
 	private static void setupTimer() {
 		timer.addActionListener(new ActionListener() {
 			@Override
@@ -146,57 +149,74 @@ public class Board extends JPanel {
 
 		});
 		timer.start();
-		
+
 	}
-
-
 
 	protected static void tick() {
 		moveEnemies();
-//		if(movedBy < moveLimit)
 		moveSpaceship();
 		shootSpaceshipProjectile();
-		
-	}
-	
-	private static void shootSpaceshipProjectile() {
-		if(shootProjectile) {
-			sProjectile.move();
-			}
-		
+
 	}
 
+	private static void shootSpaceshipProjectile() {
+		if (sProjectiles.size() > 0) {
+			for (int i = 0; i < sProjectiles.size(); i++) {
+				Projectile projectile = sProjectiles.get(i);
+				if (projectile.getRow() < 0) {
+					sProjectiles.remove(projectile);
+				} else {
+					projectile.move();
+					ArrayList<Integer> loc= new ArrayList();
+//					loc.add(projectile.getRow());
+//					loc.add(projectile.getCol());
+//					for (int r = 0; r < enemies.size(); r++) {
+//						Enemy enemy = enemies.get(r).get(enemies.get(r).size() - 1);
+//						enemy.updateListOfPixelsCovered();
+//						for(int j = 0; j< enemy.getPixelsCovered().size(); j++) {
+//							if(enemy.getPixelsCovered().get(j).get(0) == loc.get(0)
+//									&& enemy.getPixelsCovered().get(j).get(1) == loc.get(1)
+//									
+//									) {
+//								System.out.println("Touching!");
+//							}
+//						}
+//					}
+					
+				}
+			}
+
+		}
+
+	}
 
 	private static void moveSpaceship() {
 		int change = 5;
-		if(movedBy < moveLimit) {
-			if(direction == 1 & spaceship.getCol() + change <= width) {
+		if (movedBy < moveLimit) {
+			if (direction == 1 & spaceship.getCol() + change <= width) {
 				spaceship.setCol(spaceship.getCol() + change);
 				movedBy += change;
-			}
-			else if(direction == -1 && spaceship.getCol() - change >=0) {
+			} else if (direction == -1 && spaceship.getCol() - change >= 0) {
 				spaceship.setCol(spaceship.getCol() - change);
 				movedBy += change;
 			}
 		}
-		
+
 	}
 
-
 	public static void moveEnemies() {
-		int lastCol = enemies.get(0).get(enemyCol-1).getCol();
-		int w = enemies.get(0).get(enemyCol-1).getImage().getWidth()/9;
+		int lastCol = enemies.get(0).get(enemyCol - 1).getCol();
+		int w = enemies.get(0).get(enemyCol - 1).getImage().getWidth() / 9;
 		int firstCol = enemies.get(0).get(0).getCol();
-		int total = lastCol + shiftBy + w ;
-		if(Math.signum(shiftBy) > 0) { // moving right
-			if(total > width) {
+		int total = lastCol + shiftBy + w;
+		if (Math.signum(shiftBy) > 0) { // moving right
+			if (total > width) {
 				shiftBy = -1 * shiftBy;
 			}
-		}
-		else if(Math.signum(shiftBy) < 0) {
+		} else if (Math.signum(shiftBy) < 0) {
 			if (firstCol - shiftBy < 0) {
 				shiftBy = -1 * shiftBy;
-				
+
 			}
 		}
 		for (int r = 0; r < enemyRow; r++) {
@@ -204,7 +224,7 @@ public class Board extends JPanel {
 				Enemy enemy = enemies.get(r).get(c);
 				enemy.setCol(enemy.getCol() + shiftBy);
 			}
-			
+
 		}
 	}
 
@@ -212,7 +232,9 @@ public class Board extends JPanel {
 	public void paintComponent(Graphics g) {
 
 		if (!gameOver) {
-			//Paint Enemies
+			
+			setBackground(g);
+			// Paint Enemies
 			for (int r = 0; r < enemyRow; r++) {
 				for (int c = 0; c < enemyCol; c++) {
 					Enemy enemy = enemies.get(r).get(c);
@@ -221,19 +243,38 @@ public class Board extends JPanel {
 					enemy.paintComponent(g);
 				}
 			}
-			//Paint Spaceship
-			spaceship.setWidth(spaceship.getImage().getWidth()/9);
-			spaceship.setHeight(spaceship.getImage().getHeight()/9);
+			// Paint Spaceship
+			spaceship.setWidth(spaceship.getImage().getWidth() / 9);
+			spaceship.setHeight(spaceship.getImage().getHeight() / 9);
 			spaceship.paintComponent(g);
-			
-			//shoot projectile
-			if(shootProjectile) {
-				sProjectile.paintComponent(g);
-				
+
+			// shoot projectile
+			if (shootProjectile) {
+				if (sProjectiles.size() > 0) {
+					for (int i = 0; i < sProjectiles.size(); i++) {
+						Projectile projectile = sProjectiles.get(i);
+						projectile.paintComponent(g);
+
+					}
+				}
+
 			}
-			
-			
+
 		}
 
+	}
+
+	private void setBackground(Graphics g) {
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		InputStream input = classLoader.getResourceAsStream("SpaceBackground.png");
+		BufferedImage img = null;
+
+		try {
+			img = ImageIO.read(input);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		g.drawImage(img, 0, 0, width, height, null);
+		
 	}
 }

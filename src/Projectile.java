@@ -13,7 +13,6 @@ public class Projectile extends JPanel {
 	};
 
 	private int speed;
-
 	private int height;
 	private int width;
 	private ProjectileTypes projectile;
@@ -33,10 +32,10 @@ public class Projectile extends JPanel {
 			this.projectile = ProjectileTypes.Cannon;
 		if (projectile.equals("Rocket"))
 			this.projectile = ProjectileTypes.Rocket;
+		getImage();
 		setSpeed();
 		setSize();
 		setDamage();
-		getImage();
 
 	}
 
@@ -58,16 +57,16 @@ public class Projectile extends JPanel {
 	// should we make them all the same size?
 	public void setSize() {
 		if (projectile == ProjectileTypes.Boomerang) {
-			height = 50;
-			width = 75;
+			height = image.getHeight()/10;
+			width = image.getWidth()/10;
 		}
 		if (projectile == ProjectileTypes.Cannon) {
 			height = 25;
 			width = 8;
 		}
 		if (projectile == ProjectileTypes.Rocket) {
-			height = 100;
-			width = 50;
+			height = image.getHeight()/10;
+			width = image.getWidth()/10;
 		}
 		if (projectile == ProjectileTypes.LaserGun) {
 			height = 10;
@@ -105,7 +104,7 @@ public class Projectile extends JPanel {
 		} else if (projectile == ProjectileTypes.Rocket) {
 			try {
 				ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-				image = ImageIO.read(classLoader.getResourceAsStream("Rocket.png"));
+				image = ImageIO.read(classLoader.getResourceAsStream("YellowRocket.png"));
 //				image = ImageIO.read(new File("src/rocket.png"));
 
 			} catch (IOException e) {
