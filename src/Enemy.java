@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-public class SmallEnemy extends JPanel{
+public class Enemy extends JPanel{
 	
 	private int row;
 	private int col;
@@ -22,7 +22,7 @@ public class SmallEnemy extends JPanel{
 	private String imageName;
 
 	
-	public SmallEnemy(int row, int col,String imageName) {
+	public Enemy(int row, int col,String imageName) {
 		this.row = row;
 		this.col = col;
 		this.imageName = imageName;
@@ -60,24 +60,35 @@ public class SmallEnemy extends JPanel{
 	@Override
 	public void paintComponent(Graphics g) {
 		// TODO Auto-generated method stub
-		System.out.println("In the enemy class");
 		g.drawImage(image, col, row, width, height, this);
 		
 	}
 	
 	
 	//getters and setters
+	private void updateListOfPixelsCovered() {
+		for (int i = 0; i < pixelsCovered.size(); i++) {
+			int row = pixelsCovered.get(i).get(0) + this.row;
+			int col = pixelsCovered.get(i).get(1) + this.col;
+			ArrayList<Integer> loc = new ArrayList();
+			loc.add(row);
+			loc.add(col);
+			pixelsCovered.set(i, loc);
+		}
+	}
 	public int getRow() {
 		return row;
 	}
 	public void setRow(int row) {
 		this.row = row;
+		updateListOfPixelsCovered();
 	}
 	public int getCol() {
 		return col;
 	}
 	public void setCol(int col) {
 		this.col = col;
+		updateListOfPixelsCovered();
 	}
 	public int getWidth() {
 		return width;
