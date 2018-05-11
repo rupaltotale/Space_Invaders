@@ -17,9 +17,10 @@ public class Enemy extends JPanel{
 	private BufferedImage image;
 	private int width = 100;
 	private int height = 100;
-//	Projectile projectile;
 	private ArrayList<ArrayList<Integer>> pixelsCovered = new ArrayList<ArrayList<Integer>>();
 	private String imageName;
+	
+	private Projectile projectile;
 
 	
 	public Enemy(int row, int col,String imageName) {
@@ -81,14 +82,14 @@ public class Enemy extends JPanel{
 	}
 	public void setRow(int row) {
 		this.row = row;
-		updateListOfPixelsCovered();
+//		updateListOfPixelsCovered();
 	}
 	public int getCol() {
 		return col;
 	}
 	public void setCol(int col) {
 		this.col = col;
-		updateListOfPixelsCovered();
+//		updateListOfPixelsCovered();
 	}
 	public int getWidth() {
 		return width;

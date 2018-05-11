@@ -31,20 +31,25 @@ import javax.swing.UIManager;
 public class Board extends JPanel {
 
 	static Board board = new Board(); // JPanel
-	static int width = 800; // panel width
-	static int height = 600; // panel height
+	static int width = 1200; // panel width
+	static int height = 800; // panel height
 	static int margin = 100;
 
 	static boolean gameOver = true;
 	
 	
-	static int time = 1; // in milliseconds
+	static int time = 30; // in milliseconds
 	static Timer timer = new Timer(time, null);
 
 	static ArrayList<ArrayList<Enemy>> enemies = new ArrayList<ArrayList<Enemy>>();
 	static int enemyRow = 3;
-	static int enemyCol = 10;
-	static int shiftBy = 5;
+	static int enemyCol = 12;
+	static int shiftBy = 3;
+	
+	static Spaceship spaceship = new Spaceship(height-100, 100);
+	static int moveLimit = 75;
+	static int movedBy = moveLimit;
+	static int direction = 0; //-1 is left, 1 is right
 
 	public static void main(String[] args) {
 
@@ -68,11 +73,6 @@ public class Board extends JPanel {
 
 	}
 
-	
-
-	
-
-
 
 	private void setUpKeyMappings() {
 
@@ -80,15 +80,14 @@ public class Board extends JPanel {
 		this.getInputMap().put(KeyStroke.getKeyStroke("RIGHT"), "right");
 		this.getInputMap().put(KeyStroke.getKeyStroke("SPACE"), "space");
 
-		/*
-		 * THIS IS WHERE YOU WRITE THE METHOD WHEN ARROW KEYS ARE PRESSED
-		 */
 		this.getActionMap().put("right", new AbstractAction() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// ADD implementation of right key here
-				System.out.println("Right Key Pressed");
+//				System.out.println("Right Key Pressed");
+				direction = 1;
+				movedBy = 0;
 			}
 		});
 
@@ -97,7 +96,9 @@ public class Board extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// ADD implementation of left key here
-				System.out.println("Left Key Pressed");
+//				System.out.println("Left Key Pressed");
+				direction = -1;
+				movedBy =0;
 
 			}
 		});
@@ -144,20 +145,41 @@ public class Board extends JPanel {
 
 
 	protected static void tick() {
+		moveEnemies();
+		if(movedBy < moveLimit)
+		moveSpaceship();
+		
+	}
+	
+	private static void moveSpaceship() {
+		int change = 5;
+		if(movedBy < moveLimit) {
+			if(direction == 1 & spaceship.getCol() + change <= width) {
+				spaceship.setCol(spaceship.getCol() + change);
+				movedBy += change;
+			}
+			else if(direction == -1 && spaceship.getCol() - change >=0) {
+				spaceship.setCol(spaceship.getCol() - change);
+				movedBy += change;
+			}
+		}
+		
+	}
+
+
+	public static void moveEnemies() {
 		int lastCol = enemies.get(0).get(enemyCol-1).getCol();
 		int w = enemies.get(0).get(enemyCol-1).getImage().getWidth()/9;
 		int firstCol = enemies.get(0).get(0).getCol();
 		int total = lastCol + shiftBy + w ;
-		if(shiftBy == 5) { // moving right
+		if(Math.signum(shiftBy) > 0) { // moving right
 			if(total > width) {
-				shiftBy = -5;
-				System.out.println("Less than width");
+				shiftBy = -1 * shiftBy;
 			}
 		}
-		else if(shiftBy == -5) {
+		else if(Math.signum(shiftBy) < 0) {
 			if (firstCol - shiftBy < 0) {
-				shiftBy = 5;
-				System.out.println("More than 0" + " lastCol: " + w);
+				shiftBy = -1 * shiftBy;
 				
 			}
 		}
@@ -168,23 +190,27 @@ public class Board extends JPanel {
 			}
 			
 		}
-		
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
 
 		if (!gameOver) {
+			//Paint Enemies
 			for (int r = 0; r < enemyRow; r++) {
 				for (int c = 0; c < enemyCol; c++) {
-
 					Enemy enemy = enemies.get(r).get(c);
 					enemy.setWidth(enemy.getImage().getWidth() / 9);
 					enemy.setHeight(enemy.getImage().getHeight() / 9);
 					enemy.paintComponent(g);
 				}
 			}
+			//Paint Spaceship
+			spaceship.setWidth(spaceship.getImage().getWidth()/9);
+			spaceship.setHeight(spaceship.getImage().getHeight()/9);
+			spaceship.paintComponent(g);
+			
+			
 		}
 
 	}
