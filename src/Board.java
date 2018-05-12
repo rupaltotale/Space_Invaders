@@ -1,3 +1,4 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -9,7 +10,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
@@ -23,6 +27,7 @@ import javax.swing.UIManager;
 
 public class Board extends JPanel {
 
+	static JFrame frame = new JFrame("Space Invaders");
 	static Board board = new Board(); // JPanel
 	static int width = 1200; // panel width
 	static int height = 800; // panel height
@@ -43,8 +48,7 @@ public class Board extends JPanel {
 	static int moveLimit = 40;
 	static int movedBy = moveLimit;
 	static int direction = 0; // -1 is left, 1 is right
-
-	static ArrayList<Projectile> sProjectiles = new ArrayList();
+	static ArrayList<Projectile> sProjectiles = new ArrayList(); // list of projectiles thrown by the spaceship
 
 	public static void main(String[] args) {
 
@@ -54,20 +58,52 @@ public class Board extends JPanel {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		JFrame frame = new JFrame("Space Invaders");
+
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(board);
 		board.setPreferredSize(new Dimension(width, height));
-		board.setBackground(Color.BLACK);
+		// board.setLabelBackground();
+		// board.setBackground(Color.BLACK);
 		frame.pack();
 		frame.setVisible(true);
 		board.setUpKeyMappings(); // sets up the keys' (left, right, spcae) functionalities
 		createEnemies();
-		board.repaint();
 		setupTimer();
 
 	}
 
+	/*
+	 * an alternate way to set the background. More energy efficient
+	 */
+	private void setLabelBackground() {
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		InputStream input = classLoader.getResourceAsStream("SpaceBackground.png");
+		BufferedImage img = null;
+
+		try {
+			img = ImageIO.read(input);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		BufferedImage newImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+		Graphics g = newImage.createGraphics();
+		g.drawImage(img, 0, 0, width, height, null);
+		g.dispose();
+
+		ImageIcon icon = new ImageIcon(newImage);
+		JLabel contentPane = new JLabel();
+		contentPane.setOpaque(false);
+		contentPane.setIcon(icon);
+		contentPane.setBounds(0, 0, width, height);
+		board.add(contentPane);
+
+	}
+
+	/*
+	 * Defines functionalities of different keys: Right, Left, Space
+	 */
 	private void setUpKeyMappings() {
 
 		this.getInputMap().put(KeyStroke.getKeyStroke("LEFT"), "left");
@@ -117,6 +153,9 @@ public class Board extends JPanel {
 
 	}
 
+	/*
+	 * Creates the enemies visually and adds rows of them to the enemies list.
+	 */
 	public static void createEnemies() {
 		int spacing = (width - margin * 2) / (enemyCol + 1);
 		for (int r = 0; r < enemyRow; r++) {
@@ -141,6 +180,10 @@ public class Board extends JPanel {
 
 	}
 
+	/*
+	 * Adds an action listener to the timer. This action is performed every 1
+	 * millisecond.
+	 */
 	private static void setupTimer() {
 		timer.addActionListener(new ActionListener() {
 			@Override
@@ -154,6 +197,9 @@ public class Board extends JPanel {
 
 	}
 
+	/*
+	 * This function is executed every millisecond.
+	 */
 	protected static void tick() {
 		moveEnemies();
 		moveSpaceship();
@@ -161,61 +207,10 @@ public class Board extends JPanel {
 
 	}
 
-	private static void shootSpaceshipProjectile() {
-		if (sProjectiles.size() > 0) {
-			for (int i = 0; i < sProjectiles.size(); i++) {
-				Projectile projectile = sProjectiles.get(i);
-				if (projectile.getRow() < 0) {
-					sProjectiles.remove(projectile);
-				} else {
-					projectile.move();
-
-					int row = projectile.getRow();
-					int col = projectile.getCol();
-					ArrayList<Enemy> lastRow = enemies.get(enemyRow - 1);
-					for (int c = 0; c < lastRow.size(); c++) {
-
-						Enemy enemy = lastRow.get(c);
-
-						if (row >= enemy.getRow() && row <= enemy.getRow() + enemy.getHeight() && col >= enemy.getCol()
-								&& col <= enemy.getCol() + enemy.getWidth() && !enemy.isInvalid()) {
-							enemies.get(enemyRow - 1).get(c).setInvalid(true);
-							sProjectiles.remove(projectile);
-							// System.out.println("Touching");
-						}
-					}
-					for (int r = 0; r < enemies.size() - 1; r++) {
-						for (int c = 0; c < enemies.get(r).size(); c++) {
-							Enemy enemy = enemies.get(r).get(c);
-							Enemy nextEnemy = enemies.get(r + 1).get(c);
-							if (row >= enemy.getRow() && row <= enemy.getRow() + enemy.getHeight()
-									&& col >= enemy.getCol() && col <= enemy.getCol() + enemy.getWidth()
-									&& nextEnemy.isInvalid() && !enemy.isInvalid()) {
-								enemy.setInvalid(true);
-								sProjectiles.remove(projectile);
-
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	private static void moveSpaceship() {
-		int change = 20;
-		if (movedBy < moveLimit) {
-			if (direction == 1 & spaceship.getCol() + change + spaceship.getWidth()<= width) {
-				spaceship.setCol(spaceship.getCol() + change);
-				movedBy += change;
-			} else if (direction == -1 && spaceship.getCol() - change >= 0) {
-				spaceship.setCol(spaceship.getCol() - change);
-				movedBy += change;
-			}
-		}
-
-	}
-
+	/*
+	 * Checks if enemies are near the edge of the panel and based on that shifts the
+	 * enemy left or right
+	 */
 	public static void moveEnemies() {
 		int lastCol = -1;
 		int firstCol = -1;
@@ -255,7 +250,10 @@ public class Board extends JPanel {
 
 		}
 	}
-
+	
+	/*
+	 * Moves enemies down at the when their direction of movement is changed. 
+	 */
 	private static void moveEnemiesDown() {
 		for (int r = 0; r < enemies.size(); r++) {
 			for (int c = 0; c < enemies.get(r).size(); c++) {
@@ -266,6 +264,69 @@ public class Board extends JPanel {
 			}
 		}
 	}
+
+	/*
+	 * Moves the spaceship either left or right
+	 */
+	private static void moveSpaceship() {
+		int change = 20;
+		if (movedBy < moveLimit) {
+			if (direction == 1 & spaceship.getCol() + change + spaceship.getWidth() <= width) {
+				spaceship.setCol(spaceship.getCol() + change);
+				movedBy += change;
+			} else if (direction == -1 && spaceship.getCol() - change >= 0) {
+				spaceship.setCol(spaceship.getCol() - change);
+				movedBy += change;
+			}
+		}
+
+	}
+
+	/*
+	 * moves the projectile up and checks for collision between projectile and exposed enemy
+	 */
+	private static void shootSpaceshipProjectile() {
+		if (sProjectiles.size() > 0) {
+			for (int i = 0; i < sProjectiles.size(); i++) {
+				Projectile projectile = sProjectiles.get(i);
+				if (projectile.getRow() < 0) { // above the panel
+					sProjectiles.remove(projectile);
+				} else {
+					projectile.move();
+
+					// checks if the projectile is colliding with an enemy
+					int row = projectile.getRow();
+					int col = projectile.getCol();
+					ArrayList<Enemy> lastRow = enemies.get(enemyRow - 1);
+					for (int c = 0; c < lastRow.size(); c++) {
+						Enemy enemy = lastRow.get(c);
+						if (row >= enemy.getRow() && row <= enemy.getRow() + enemy.getHeight() && col >= enemy.getCol()
+								&& col <= enemy.getCol() + enemy.getWidth() && !enemy.isInvalid()) {
+							enemies.get(enemyRow - 1).get(c).setInvalid(true); // invalid = don't paint
+							sProjectiles.remove(projectile);
+						}
+					}
+					// checks above rows to see if enemies on those rows are exposed
+					for (int r = 0; r < enemies.size() - 1; r++) {
+						for (int c = 0; c < enemies.get(r).size(); c++) {
+							Enemy enemy = enemies.get(r).get(c);
+							Enemy nextEnemy = enemies.get(r + 1).get(c);
+							if (row >= enemy.getRow() && row <= enemy.getRow() + enemy.getHeight()
+									&& col >= enemy.getCol() && col <= enemy.getCol() + enemy.getWidth()
+									&& nextEnemy.isInvalid() && !enemy.isInvalid()) {
+								enemy.setInvalid(true);
+								sProjectiles.remove(projectile);
+
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	
+	
 
 	@Override
 	public void paintComponent(Graphics g) {
@@ -305,6 +366,9 @@ public class Board extends JPanel {
 
 	}
 
+	/*
+	 * Sets the background of the panel
+	 */
 	private void setBackground(Graphics g) {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		InputStream input = classLoader.getResourceAsStream("SpaceBackground.png");
@@ -315,6 +379,7 @@ public class Board extends JPanel {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 		g.drawImage(img, 0, 0, width, height, null);
 
 	}

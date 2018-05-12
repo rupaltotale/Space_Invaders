@@ -63,16 +63,7 @@ public class Enemy extends JPanel{
 	
 	
 	//getters and setters
-//	public void updateListOfPixelsCovered() {
-//		for (int i = 0; i < pixelsCovered.size(); i++) {
-//			int row = pixelsCovered.get(i).get(0) + this.row;
-//			int col = pixelsCovered.get(i).get(1) + this.col;
-//			ArrayList<Integer> loc = new ArrayList<Integer>();
-//			loc.add(row);
-//			loc.add(col);
-//			pixelsCovered.set(i, loc);
-//		}
-//	}
+
 	public int getRow() {
 		return row;
 	}

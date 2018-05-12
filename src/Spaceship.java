@@ -13,10 +13,6 @@ public class Spaceship extends JPanel{
 	int width;
 	int height;
 	Projectile projectile = new Projectile("Rocket");
-
-	
-
-	
 	BufferedImage image;
 	String imageName = "Spaceship.png";
 	
@@ -45,6 +41,8 @@ public class Spaceship extends JPanel{
 		g.drawImage(image, col, row, width, height, this);
 		
 	}
+	
+	//Getters and setters
 	public Projectile getProjectile() {
 		return projectile;
 	}

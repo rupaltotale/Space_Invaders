@@ -106,7 +106,6 @@ public class Projectile extends JPanel {
 			try {
 				ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 				image = ImageIO.read(classLoader.getResourceAsStream("YellowRocket.png"));
-//				image = ImageIO.read(new File("src/rocket.png"));
 
 			} catch (IOException e) {
 
@@ -121,14 +120,12 @@ public class Projectile extends JPanel {
 	}
 
 	public void move() {
-
 		row -= speed;
-
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
-		g.setColor(color);
+//		g.setColor(color);
 //		if (projectile == ProjectileTypes.Boomerang) {
 //			// ((Graphics2D) g).rotate(Math.toRadians(90));
 //			// The above statement does not rotate the image. Rotating the image will be
@@ -216,21 +213,6 @@ public class Projectile extends JPanel {
 
 	public void setColor(Color color) {
 		this.color = color;
-//		if (image != null) {
-//			BufferedImage colorImage = new BufferedImage(image.getWidth(), image.getHeight(),
-//					BufferedImage.TYPE_INT_ARGB);
-//			for (int row = 0; row < image.getWidth(); row++) {
-//				for (int col = 0; col < image.getHeight(); col++) {
-//					int pixel = image.getRGB(row, col);
-//					if (!((pixel >> 24) == 0x00)) {
-//						colorImage.setRGB(row, col, this.color.getRGB());
-//					}
-//				}
-//
-//			}
-//			image = colorImage;
-//		}
-
 	}
 
 }
