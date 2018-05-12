@@ -40,7 +40,7 @@ public class Board extends JPanel {
 	private static int moveDownBy;
 
 	static Spaceship spaceship = new Spaceship(height - 100, margin);// for the spaceship characteristics
-	static int moveLimit = 30;
+	static int moveLimit = 40;
 	static int movedBy = moveLimit;
 	static int direction = 0; // -1 is left, 1 is right
 
@@ -102,14 +102,13 @@ public class Board extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				// ADD implementation of space key here
 
-				Projectile projectile = new Projectile("Rocket");
-				int row = spaceship.getRow() - projectile.getHeight();
-				int col = spaceship.getCol() + spaceship.getWidth() / 2 - projectile.getWidth() / 2;
-				projectile.setLocation(row, col);
-				// projectile.setColor(Color.decode("#F7DC6F"));
-				// Color.decode("#F7DC6F")
-				sProjectiles.add(projectile);
-				// System.out.println("Space Key!");
+				if (sProjectiles.size() == 0) {
+					Projectile projectile = new Projectile("Rocket");
+					int row = spaceship.getRow() - projectile.getHeight();
+					int col = spaceship.getCol() + spaceship.getWidth() / 2 - projectile.getWidth() / 2;
+					projectile.setLocation(row, col);
+					sProjectiles.add(projectile);
+				}
 
 			}
 		});
@@ -206,7 +205,7 @@ public class Board extends JPanel {
 	private static void moveSpaceship() {
 		int change = 20;
 		if (movedBy < moveLimit) {
-			if (direction == 1 & spaceship.getCol() + change <= width) {
+			if (direction == 1 & spaceship.getCol() + change + spaceship.getWidth()<= width) {
 				spaceship.setCol(spaceship.getCol() + change);
 				movedBy += change;
 			} else if (direction == -1 && spaceship.getCol() - change >= 0) {
@@ -222,14 +221,14 @@ public class Board extends JPanel {
 		int firstCol = -1;
 		for (int c = 0; c < enemyCol; c++) {
 			for (int r = 0; r < enemies.size(); r++) {
-				if(!enemies.get(r).get(c).isInvalid()) {
+				if (!enemies.get(r).get(c).isInvalid()) {
 					lastCol = enemies.get(r).get(c).getCol();
 				}
 			}
 		}
-		for (int c = enemyCol-1; c >=0; c--) {
+		for (int c = enemyCol - 1; c >= 0; c--) {
 			for (int r = 0; r < enemies.size(); r++) {
-				if(!enemies.get(r).get(c).isInvalid()) {
+				if (!enemies.get(r).get(c).isInvalid()) {
 					firstCol = enemies.get(r).get(c).getCol();
 				}
 			}
