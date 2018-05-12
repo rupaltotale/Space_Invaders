@@ -42,7 +42,6 @@ public class Spaceship extends JPanel{
 	
 	@Override
 	public void paintComponent(Graphics g) {
-		// TODO Auto-generated method stub
 		g.drawImage(image, col, row, width, height, this);
 		
 	}

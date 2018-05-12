@@ -1,24 +1,17 @@
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
-
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 
@@ -33,26 +26,26 @@ public class Board extends JPanel {
 	static Board board = new Board(); // JPanel
 	static int width = 1200; // panel width
 	static int height = 800; // panel height
-	static int margin = 100;
+	static int margin = 150;
 
 	static boolean gameOver = true;
 
 	static int time = 1; // in milliseconds
 	static Timer timer = new Timer(time, null);
 
-
 	static ArrayList<ArrayList<Enemy>> enemies = new ArrayList<ArrayList<Enemy>>();
-	static int enemyRow = 7;
+	static int enemyRow = 5;
 	static int enemyCol = 12;
 	static int shiftBy = 3;
+	private static int moveDownBy;
 
-	static Spaceship spaceship = new Spaceship(height - 100, 100);//for the spaceship characteristics
+	static Spaceship spaceship = new Spaceship(height - 100, 100);// for the spaceship characteristics
 	static int moveLimit = 30;
 	static int movedBy = moveLimit;
 	static int direction = 0; // -1 is left, 1 is right
-	static boolean shootProjectile = true;
 
 	static ArrayList<Projectile> sProjectiles = new ArrayList();
+	
 
 	public static void main(String[] args) {
 
@@ -98,7 +91,6 @@ public class Board extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// ADD implementation of left key here
-				// System.out.println("Left Key Pressed");
 				direction = -1;
 				movedBy = 0;
 
@@ -118,7 +110,7 @@ public class Board extends JPanel {
 				// projectile.setColor(Color.decode("#F7DC6F"));
 				// Color.decode("#F7DC6F")
 				sProjectiles.add(projectile);
-//				System.out.println("Space Key!");
+				// System.out.println("Space Key!");
 
 			}
 		});
@@ -128,15 +120,16 @@ public class Board extends JPanel {
 	}
 
 	public static void createEnemies() {
-		int spacing = (width - margin * 2) / enemyCol;
+		int spacing = (width - margin * 2) / (enemyCol + 1);
 		for (int r = 0; r < enemyRow; r++) {
 			ArrayList<Enemy> enemyRow = new ArrayList<Enemy>();
 			for (int c = 0; c < enemyCol; c++) {
-				if (r < 2) {
-					Enemy enemy = new Enemy(r * spacing, c * spacing + margin, "EnemyBlue.png");
-					enemyRow.add(enemy);
-				} else if (r < 4) {
+				if (r < 1) {
 					Enemy enemy = new Enemy(r * spacing, c * spacing + margin, "EnemyPurple.png");
+					moveDownBy = enemy.getHeight()/2;
+					enemyRow.add(enemy);
+				} else if (r < 3) {
+					Enemy enemy = new Enemy(r * spacing, c * spacing + margin, "EnemyBlue.png");
 					enemyRow.add(enemy);
 				} else {
 					Enemy enemy = new Enemy(r * spacing, c * spacing + margin, "EnemyRed.png");
@@ -179,8 +172,6 @@ public class Board extends JPanel {
 				} else {
 					projectile.move();
 
-					ArrayList<Integer> loc = new ArrayList();
-					int touching = 0;
 					int row = projectile.getRow();
 					int col = projectile.getCol();
 					ArrayList<Enemy> lastRow = enemies.get(enemyRow - 1);
@@ -192,7 +183,7 @@ public class Board extends JPanel {
 								&& col <= enemy.getCol() + enemy.getWidth() && !enemy.isInvalid()) {
 							enemies.get(enemyRow - 1).get(c).setInvalid(true);
 							sProjectiles.remove(projectile);
-//							System.out.println("Touching");
+							// System.out.println("Touching");
 						}
 					}
 					for (int r = 0; r < enemies.size() - 1; r++) {
@@ -201,33 +192,14 @@ public class Board extends JPanel {
 							Enemy nextEnemy = enemies.get(r + 1).get(c);
 							if (row >= enemy.getRow() && row <= enemy.getRow() + enemy.getHeight()
 									&& col >= enemy.getCol() && col <= enemy.getCol() + enemy.getWidth()
-									&& nextEnemy.isInvalid()  && !enemy.isInvalid()) {
+									&& nextEnemy.isInvalid() && !enemy.isInvalid()) {
 								enemy.setInvalid(true);
 								sProjectiles.remove(projectile);
-//								System.out.println("Touching");
 
 							}
 
 						}
 					}
-
-					
-//					loc.add(projectile.getRow());
-//					loc.add(projectile.getCol());
-//					for (int r = 0; r < enemies.size(); r++) {
-//						Enemy enemy = enemies.get(r).get(enemies.get(r).size() - 1);
-//						enemy.updateListOfPixelsCovered();
-//						for(int j = 0; j< enemy.getPixelsCovered().size(); j++) {
-//							if(enemy.getPixelsCovered().get(j).get(0) == loc.get(0)
-//									&& enemy.getPixelsCovered().get(j).get(1) == loc.get(1)
-//									
-//									) {
-//								System.out.println("Touching!");
-//							} 
-//						}
-//					}
-
-					
 
 				}
 			}
@@ -258,10 +230,12 @@ public class Board extends JPanel {
 		if (Math.signum(shiftBy) > 0) { // moving right
 			if (total > width) {
 				shiftBy = -1 * shiftBy;
+				moveEnemiesDown();
 			}
 		} else if (Math.signum(shiftBy) < 0) {
 			if (firstCol - shiftBy < 0) {
 				shiftBy = -1 * shiftBy;
+				moveEnemiesDown();
 
 			}
 		}
@@ -271,6 +245,17 @@ public class Board extends JPanel {
 				enemy.setCol(enemy.getCol() + shiftBy);
 			}
 
+		}
+	}
+
+	private static void moveEnemiesDown() {
+		for (int r = 0; r < enemies.size(); r++) {
+			for (int c = 0; c < enemies.get(r).size(); c++) {
+				Enemy enemy = enemies.get(r).get(c);
+				int initialY = enemy.getRow();
+				int newY = initialY + moveDownBy;
+				enemy.setRow(newY);
+			}
 		}
 	}
 
@@ -285,8 +270,8 @@ public class Board extends JPanel {
 				for (int c = 0; c < enemies.get(r).size(); c++) {
 					Enemy enemy = enemies.get(r).get(c);
 					if (!enemy.isInvalid()) {
-						enemy.setWidth(enemy.getImage().getWidth() / 9);
-						enemy.setHeight(enemy.getImage().getHeight() / 9);
+						enemy.setWidth(enemy.getImage().getWidth() / 8);
+						enemy.setHeight(enemy.getImage().getHeight() / 8);
 						enemy.paintComponent(g);
 					}
 
@@ -298,13 +283,12 @@ public class Board extends JPanel {
 			spaceship.paintComponent(g);
 
 			// shoot projectile
-			if (shootProjectile) {
-				if (sProjectiles.size() > 0) {
-					for (int i = 0; i < sProjectiles.size(); i++) {
-						Projectile projectile = sProjectiles.get(i);
-						projectile.paintComponent(g);
 
-					}
+			if (sProjectiles.size() > 0) {
+				for (int i = 0; i < sProjectiles.size(); i++) {
+					Projectile projectile = sProjectiles.get(i);
+					projectile.paintComponent(g);
+
 				}
 
 			}
