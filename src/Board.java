@@ -39,13 +39,12 @@ public class Board extends JPanel {
 	static int shiftBy = 3;
 	private static int moveDownBy;
 
-	static Spaceship spaceship = new Spaceship(height - 100, 100);// for the spaceship characteristics
+	static Spaceship spaceship = new Spaceship(height - 100, margin);// for the spaceship characteristics
 	static int moveLimit = 30;
 	static int movedBy = moveLimit;
 	static int direction = 0; // -1 is left, 1 is right
 
 	static ArrayList<Projectile> sProjectiles = new ArrayList();
-	
 
 	public static void main(String[] args) {
 
@@ -126,7 +125,7 @@ public class Board extends JPanel {
 			for (int c = 0; c < enemyCol; c++) {
 				if (r < 1) {
 					Enemy enemy = new Enemy(r * spacing, c * spacing + margin, "EnemyPurple.png");
-					moveDownBy = enemy.getHeight()/2;
+					moveDownBy = enemy.getHeight() / 2;
 					enemyRow.add(enemy);
 				} else if (r < 3) {
 					Enemy enemy = new Enemy(r * spacing, c * spacing + margin, "EnemyBlue.png");
@@ -197,15 +196,11 @@ public class Board extends JPanel {
 								sProjectiles.remove(projectile);
 
 							}
-
 						}
 					}
-
 				}
 			}
-
 		}
-
 	}
 
 	private static void moveSpaceship() {
@@ -223,9 +218,23 @@ public class Board extends JPanel {
 	}
 
 	public static void moveEnemies() {
-		int lastCol = enemies.get(0).get(enemyCol - 1).getCol();
+		int lastCol = -1;
+		int firstCol = -1;
+		for (int c = 0; c < enemyCol; c++) {
+			for (int r = 0; r < enemies.size(); r++) {
+				if(!enemies.get(r).get(c).isInvalid()) {
+					lastCol = enemies.get(r).get(c).getCol();
+				}
+			}
+		}
+		for (int c = enemyCol-1; c >=0; c--) {
+			for (int r = 0; r < enemies.size(); r++) {
+				if(!enemies.get(r).get(c).isInvalid()) {
+					firstCol = enemies.get(r).get(c).getCol();
+				}
+			}
+		}
 		int w = enemies.get(0).get(enemyCol - 1).getImage().getWidth() / 9;
-		int firstCol = enemies.get(0).get(0).getCol();
 		int total = lastCol + shiftBy + w;
 		if (Math.signum(shiftBy) > 0) { // moving right
 			if (total > width) {
