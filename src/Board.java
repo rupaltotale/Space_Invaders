@@ -37,16 +37,17 @@ public class Board extends JPanel {
 
 	static boolean gameOver = true;
 
-	static int time = 30; // in milliseconds
+	static int time = 1; // in milliseconds
 	static Timer timer = new Timer(time, null);
+
 
 	static ArrayList<ArrayList<Enemy>> enemies = new ArrayList<ArrayList<Enemy>>();
 	static int enemyRow = 7;
 	static int enemyCol = 12;
 	static int shiftBy = 3;
 
-	static Spaceship spaceship = new Spaceship(height - 100, 100);
-	static int moveLimit = 75;
+	static Spaceship spaceship = new Spaceship(height - 100, 100);//for the spaceship characteristics
+	static int moveLimit = 30;
 	static int movedBy = moveLimit;
 	static int direction = 0; // -1 is left, 1 is right
 	static boolean shootProjectile = true;
@@ -177,6 +178,7 @@ public class Board extends JPanel {
 					sProjectiles.remove(projectile);
 				} else {
 					projectile.move();
+
 					ArrayList<Integer> loc = new ArrayList();
 					int touching = 0;
 					int row = projectile.getRow();
@@ -208,6 +210,23 @@ public class Board extends JPanel {
 
 						}
 					}
+
+					
+//					loc.add(projectile.getRow());
+//					loc.add(projectile.getCol());
+//					for (int r = 0; r < enemies.size(); r++) {
+//						Enemy enemy = enemies.get(r).get(enemies.get(r).size() - 1);
+//						enemy.updateListOfPixelsCovered();
+//						for(int j = 0; j< enemy.getPixelsCovered().size(); j++) {
+//							if(enemy.getPixelsCovered().get(j).get(0) == loc.get(0)
+//									&& enemy.getPixelsCovered().get(j).get(1) == loc.get(1)
+//									
+//									) {
+//								System.out.println("Touching!");
+//							} 
+//						}
+//					}
+
 					
 
 				}
@@ -218,7 +237,7 @@ public class Board extends JPanel {
 	}
 
 	private static void moveSpaceship() {
-		int change = 5;
+		int change = 20;
 		if (movedBy < moveLimit) {
 			if (direction == 1 & spaceship.getCol() + change <= width) {
 				spaceship.setCol(spaceship.getCol() + change);
