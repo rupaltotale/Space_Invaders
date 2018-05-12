@@ -41,7 +41,7 @@ public class Board extends JPanel {
 	static Timer timer = new Timer(time, null);
 
 	static ArrayList<ArrayList<Enemy>> enemies = new ArrayList<ArrayList<Enemy>>();
-	static int enemyRow = 3;
+	static int enemyRow = 7;
 	static int enemyCol = 12;
 	static int shiftBy = 3;
 
@@ -109,7 +109,7 @@ public class Board extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// ADD implementation of space key here
-				System.out.println("Space Key Pressed");
+
 				Projectile projectile = new Projectile("Rocket");
 				int row = spaceship.getRow() - projectile.getHeight();
 				int col = spaceship.getCol() + spaceship.getWidth() / 2 - projectile.getWidth() / 2;
@@ -117,6 +117,7 @@ public class Board extends JPanel {
 				// projectile.setColor(Color.decode("#F7DC6F"));
 				// Color.decode("#F7DC6F")
 				sProjectiles.add(projectile);
+//				System.out.println("Space Key!");
 
 			}
 		});
@@ -130,8 +131,17 @@ public class Board extends JPanel {
 		for (int r = 0; r < enemyRow; r++) {
 			ArrayList<Enemy> enemyRow = new ArrayList<Enemy>();
 			for (int c = 0; c < enemyCol; c++) {
-				Enemy enemy = new Enemy(r * spacing, c * spacing + margin, "Enemy1.png");
-				enemyRow.add(enemy);
+				if (r < 2) {
+					Enemy enemy = new Enemy(r * spacing, c * spacing + margin, "EnemyBlue.png");
+					enemyRow.add(enemy);
+				} else if (r < 4) {
+					Enemy enemy = new Enemy(r * spacing, c * spacing + margin, "EnemyPurple.png");
+					enemyRow.add(enemy);
+				} else {
+					Enemy enemy = new Enemy(r * spacing, c * spacing + margin, "EnemyRed.png");
+					enemyRow.add(enemy);
+				}
+
 			}
 			enemies.add(enemyRow);
 		}
@@ -167,22 +177,39 @@ public class Board extends JPanel {
 					sProjectiles.remove(projectile);
 				} else {
 					projectile.move();
-					ArrayList<Integer> loc= new ArrayList();
-//					loc.add(projectile.getRow());
-//					loc.add(projectile.getCol());
-//					for (int r = 0; r < enemies.size(); r++) {
-//						Enemy enemy = enemies.get(r).get(enemies.get(r).size() - 1);
-//						enemy.updateListOfPixelsCovered();
-//						for(int j = 0; j< enemy.getPixelsCovered().size(); j++) {
-//							if(enemy.getPixelsCovered().get(j).get(0) == loc.get(0)
-//									&& enemy.getPixelsCovered().get(j).get(1) == loc.get(1)
-//									
-//									) {
-//								System.out.println("Touching!");
-//							}
-//						}
-//					}
+					ArrayList<Integer> loc = new ArrayList();
+					int touching = 0;
+					int row = projectile.getRow();
+					int col = projectile.getCol();
+					ArrayList<Enemy> lastRow = enemies.get(enemyRow - 1);
+					for (int c = 0; c < lastRow.size(); c++) {
+
+						Enemy enemy = lastRow.get(c);
+
+						if (row >= enemy.getRow() && row <= enemy.getRow() + enemy.getHeight() && col >= enemy.getCol()
+								&& col <= enemy.getCol() + enemy.getWidth() && !enemy.isInvalid()) {
+							enemies.get(enemyRow - 1).get(c).setInvalid(true);
+							sProjectiles.remove(projectile);
+//							System.out.println("Touching");
+						}
+					}
+					for (int r = 0; r < enemies.size() - 1; r++) {
+						for (int c = 0; c < enemies.get(r).size(); c++) {
+							Enemy enemy = enemies.get(r).get(c);
+							Enemy nextEnemy = enemies.get(r + 1).get(c);
+							if (row >= enemy.getRow() && row <= enemy.getRow() + enemy.getHeight()
+									&& col >= enemy.getCol() && col <= enemy.getCol() + enemy.getWidth()
+									&& nextEnemy.isInvalid()  && !enemy.isInvalid()) {
+								enemy.setInvalid(true);
+								sProjectiles.remove(projectile);
+//								System.out.println("Touching");
+
+							}
+
+						}
+					}
 					
+
 				}
 			}
 
@@ -219,8 +246,8 @@ public class Board extends JPanel {
 
 			}
 		}
-		for (int r = 0; r < enemyRow; r++) {
-			for (int c = 0; c < enemyCol; c++) {
+		for (int r = 0; r < enemies.size(); r++) {
+			for (int c = 0; c < enemies.get(r).size(); c++) {
 				Enemy enemy = enemies.get(r).get(c);
 				enemy.setCol(enemy.getCol() + shiftBy);
 			}
@@ -232,15 +259,18 @@ public class Board extends JPanel {
 	public void paintComponent(Graphics g) {
 
 		if (!gameOver) {
-			
+
 			setBackground(g);
 			// Paint Enemies
-			for (int r = 0; r < enemyRow; r++) {
-				for (int c = 0; c < enemyCol; c++) {
+			for (int r = 0; r < enemies.size(); r++) {
+				for (int c = 0; c < enemies.get(r).size(); c++) {
 					Enemy enemy = enemies.get(r).get(c);
-					enemy.setWidth(enemy.getImage().getWidth() / 9);
-					enemy.setHeight(enemy.getImage().getHeight() / 9);
-					enemy.paintComponent(g);
+					if (!enemy.isInvalid()) {
+						enemy.setWidth(enemy.getImage().getWidth() / 9);
+						enemy.setHeight(enemy.getImage().getHeight() / 9);
+						enemy.paintComponent(g);
+					}
+
 				}
 			}
 			// Paint Spaceship
@@ -275,6 +305,6 @@ public class Board extends JPanel {
 			e.printStackTrace();
 		}
 		g.drawImage(img, 0, 0, width, height, null);
-		
+
 	}
 }

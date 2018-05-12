@@ -19,7 +19,14 @@ public class Enemy extends JPanel{
 	private int height = 100;
 	private ArrayList<ArrayList<Integer>> pixelsCovered = new ArrayList<ArrayList<Integer>>();
 	private String imageName;
+	private boolean invalid = false;
 	
+	public boolean isInvalid() {
+		return invalid;
+	}
+	public void setInvalid(boolean invalid) {
+		this.invalid = invalid;
+	}
 	private Projectile projectile;
 
 	
@@ -55,7 +62,7 @@ public class Enemy extends JPanel{
 				}
 			}
 		}
-		image =  transparentBackground;
+		image =  img;
 
 	}
 	@Override
