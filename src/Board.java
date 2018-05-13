@@ -461,30 +461,52 @@ public class Board extends JPanel {
 	}
 	
 	private static void enemiesShoot() {
+		
+//KEEP FOR MORE DIFFICULT LEVELS (MULTIPLE ENEMIES SHOOTING AT ONCE)
+//		for(int row = enemies.size()-1; row > 0; row--) {
+//			for (int col= enemies.get(row).size()-1; col>=0; col--) {
+//				if (row == enemies.size()-1 && enemies.get(row).get(col) != null) {
+//					int random1 = (int)(Math.random()*250);
+//					if(random1>=249) {
+//						Projectile temp = new Projectile("Rocket","Enemy");
+//						int r = enemies.get(row).get(col).getRow() + enemies.get(row-1).get(col).getHeight();
+//						int c = enemies.get(row).get(col).getCol() + enemies.get(row).get(col).getWidth() / 2 - temp.getWidth() / 2;
+//						temp.setLocation(r, c);
+//						eProjectiles.add(temp);
+//				}
+//				if (enemies.get(row).get(col) == null && enemies.get(row-1).get(col) != null) {
+//					int random2 = (int)(Math.random()*250);
+//					if(random2>=249) {
+//						Projectile temp = new Projectile("Rocket","Enemy");
+//						int r = enemies.get(row-1).get(col).getRow() + enemies.get(row-1).get(col).getHeight();
+//						int c = enemies.get(row-1).get(col).getCol() + enemies.get(row-1).get(col).getWidth() / 2 - temp.getWidth() / 2;
+//						temp.setLocation(r, c);
+//						eProjectiles.add(temp);
+//					}
+//				}
+//			}
+//		}
+//	}
+		ArrayList<Enemy> shooters = new ArrayList<Enemy>();
 		for(int row = enemies.size()-1; row > 0; row--) {
-			for (int col= enemies.get(row).size()-1; col>=0; col--) {
-				if (row == enemies.size()-1 && enemies.get(row).get(col) != null) {
-					int random1 = (int)(Math.random()*250);
-					if(random1>=249) {
-						Projectile temp = new Projectile("Rocket","Enemy");
-						int r = enemies.get(row).get(col).getRow() + enemies.get(row-1).get(col).getHeight();
-						int c = enemies.get(row).get(col).getCol() + enemies.get(row).get(col).getWidth() / 2 - temp.getWidth() / 2;
-						temp.setLocation(r, c);
-						eProjectiles.add(temp);
-				}
-				if (enemies.get(row).get(col) == null && enemies.get(row-1).get(col) != null) {
-					int random2 = (int)(Math.random()*250);
-					if(random2>=249) {
-						Projectile temp = new Projectile("Rocket","Enemy");
-						int r = enemies.get(row-1).get(col).getRow() + enemies.get(row-1).get(col).getHeight();
-						int c = enemies.get(row-1).get(col).getCol() + enemies.get(row-1).get(col).getWidth() / 2 - temp.getWidth() / 2;
-						temp.setLocation(r, c);
-						eProjectiles.add(temp);
-					}
-				}
+		for (int col= enemies.get(row).size()-1; col>=0; col--) {
+			if (row == enemies.size()-1 && enemies.get(row).get(col) != null) {
+				shooters.add(enemies.get(row).get(col));
+			}
+			if (enemies.get(row).get(col) == null && enemies.get(row-1).get(col) != null) {
+				shooters.add(enemies.get(row-1).get(col));
 			}
 		}
 	}
+		int random2 = (int)(Math.random()*20);
+		if(random2>=19) {
+		int random = (int) (Math.random()*shooters.size());
+		Projectile temp = new Projectile("Rocket","Enemy");
+		int r = shooters.get(random).getRow() + shooters.get(random).getHeight();
+		int c = shooters.get(random).getCol() + shooters.get(random).getWidth() / 2 - temp.getWidth() / 2;
+		temp.setLocation(r,c);
+		eProjectiles.add(temp);
+		}
 	}
 	
 	private static void shootEnemyProjectile(){
