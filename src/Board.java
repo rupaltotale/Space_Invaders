@@ -1,6 +1,8 @@
 import java.awt.BorderLayout;
+import java.awt.Button;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,43 +29,49 @@ import javax.swing.UIManager;
 
 public class Board extends JPanel {
 
+	/* Frame and board */
 	static JFrame frame = new JFrame("Space Invaders");
 	static Board board = new Board(); // JPanel
+
+	/* Game settings */
 	static int width = 1200; // panel width
 	static int height = 800; // panel height
 	static int margin = 150;
-	static int timeElapsed = 0;
 	static BufferedImage background;
-
-	static boolean gameOver = true;
-
+	static boolean gameOver = false;
+	static int score = 0;
+	static int livesLeft;
+	static int timeElapsed = 0;
 	static int time = 20; // in milliseconds
 	static Timer timer = new Timer(time, null);
 
+	/* Regular enemies */
 	static ArrayList<ArrayList<Enemy>> enemies = new ArrayList<ArrayList<Enemy>>();
 	static int enemyRow = 5;
 	static int enemyCol = 12;
 	static int eChange = 1;
 	private static int moveDownBy;
 	static ArrayList<Projectile> eProjectiles = new ArrayList();
-	static int epSpeed = 15;
+	static int epSpeed = 10;
 
+	/* Flying enemies */
 	static int fRow = margin / 3;
 	static int fCol = margin;
 	static Enemy flyingEnemy = new Enemy(fRow, fCol, "FlyingEnemy.png");
-	static int fTime = 10 * 1000 / time; // every 10 seconds
+	static int fTime = 20 * 1000 / time; // every 10 seconds
 	static int fSpeed = 3;
 
+	/* Spaceship */
 	static int sRow = height - 100;
 	static int sCol = margin;
-	static Spaceship spaceship = new Spaceship(sRow, sCol);// for the spaceship characteristics
-	static int moveLimit = 40;
+	static int lives = 4;
+	static Spaceship spaceship = new Spaceship(sRow, sCol, lives);// for the spaceship characteristics
+	static int moveLimit = 50;
 	static int movedBy = moveLimit;
 	static int direction = 0; // -1 is left, 1 is right
-	static boolean shootProjectile = true;
 	static boolean timing = true;
 	static boolean isAlive = true;
-	static int sChange = 20;
+	static int sChange = 5;
 	static int spSpeed = -20;
 	static ArrayList<Projectile> sProjectiles = new ArrayList(); // list of projectiles thrown by the spaceship
 
@@ -82,10 +90,33 @@ public class Board extends JPanel {
 		frame.pack();
 		frame.setVisible(true);
 		board.setUpKeyMappings();
-		createEnemies();
-		flyingEnemy.setInvalid(true);
+		startNewGame();
 		setupTimer();
 
+	}
+
+	public static void startNewGame() {
+		createEnemies();
+		flyingEnemy.setInvalid(true);
+		flyingEnemy.setCol(margin);
+		gameOver = false;
+		score = 0;
+		livesLeft = lives - 1;
+		timeElapsed = 0;
+		// setupTimer();
+		timer.start();
+		spaceship.setLives(lives);
+		if (sProjectiles.size() > 0) {
+			for (int i = 0; i < sProjectiles.size(); i++) {
+				sProjectiles.remove(i);
+			}
+		}
+		if (eProjectiles.size() > 0) {
+			for (int i = 0; i < eProjectiles.size(); i++) {
+				eProjectiles.remove(i);
+			}
+		}
+		board.removeAll();
 	}
 
 	/*
@@ -126,16 +157,20 @@ public class Board extends JPanel {
 				// ADD implementation of space key here
 
 				// System.out.println("Space Key Pressed");
+				if (!gameOver) {
 
-				if (sProjectiles.size() == 0) {
-					Projectile projectile = new Projectile("Rocket", spSpeed);
-					int row = spaceship.getRow() - projectile.getHeight();
-					int col = spaceship.getCol() + spaceship.getWidth() / 2 - projectile.getWidth() / 2;
-					projectile.setLocation(row, col);
-					sProjectiles.add(projectile);
+					if (sProjectiles.size() == 0) {
+						Projectile projectile = new Projectile("Rocket", spSpeed);
+						int row = spaceship.getRow() - projectile.getHeight();
+						int col = spaceship.getCol() + spaceship.getWidth() / 2 - projectile.getWidth() / 2;
+						projectile.setLocation(row, col);
+						sProjectiles.add(projectile);
+					}
+				} else {
+					startNewGame();
 				}
-
 			}
+
 		});
 
 		this.requestFocusInWindow();
@@ -146,6 +181,7 @@ public class Board extends JPanel {
 	 * Creates the enemies visually and adds rows of them to the enemies list.
 	 */
 	public static void createEnemies() {
+		enemies = new ArrayList();
 		int colSpacing = (width - margin * 2) / (enemyCol + 1);
 		int rowSpacing = (int) ((height * 0.3) / (enemyRow));
 		for (int r = 0; r < enemyRow; r++) {
@@ -166,7 +202,6 @@ public class Board extends JPanel {
 			}
 			enemies.add(enemyRow);
 		}
-		gameOver = false;
 
 	}
 
@@ -196,9 +231,12 @@ public class Board extends JPanel {
 		moveSpaceship();
 		shootSpaceshipProjectile();
 		moveFlyingEnemy();
-		addEnemiesProjectiles();
+		// addEnemiesProjectiles();
+		chooseRandomEnemyForProjectile();
 		moveEnemiesProjectiles();
-		isAlive = spaceship.alive();
+		repaintAllEnemies();
+		isGameOver();
+		// isAlive = spaceship.alive();
 
 	}
 
@@ -210,6 +248,7 @@ public class Board extends JPanel {
 			if (timeElapsed % fTime == 0 && timeElapsed != 0) {
 				// showFlyingEnemy = true;
 				flyingEnemy.setInvalid(false);
+				flyingEnemy.setCol(margin);
 
 			}
 		} else {
@@ -317,6 +356,7 @@ public class Board extends JPanel {
 							Enemy enemy = enemies.get(r).get(c);
 							if (isColliding(enemy, projectile)) {
 								enemy.setInvalid(true);
+								updateScore(enemy);
 								sProjectiles.remove(projectile);
 
 							}
@@ -327,11 +367,28 @@ public class Board extends JPanel {
 					if (isColliding(flyingEnemy, projectile)) {
 						flyingEnemy.setInvalid(true);
 						sProjectiles.remove(projectile);
+						updateScore(flyingEnemy);
 
 					}
 				}
 			}
 		}
+	}
+
+	private static void updateScore(Enemy enemy) {
+		if (enemy.getImageName().equals("EnemyRed.png")) {
+			score += 50;
+		}
+		if (enemy.getImageName().equals("EnemyBlue.png")) {
+			score += 100;
+		}
+		if (enemy.getImageName().equals("EnemyPurple.png")) {
+			score += 150;
+		}
+		if (enemy.getImageName().equals("FlyingEnemy.png")) {
+			score += 300;
+		}
+
 	}
 
 	private static boolean isColliding(Object obj, Projectile projectile) {
@@ -354,19 +411,104 @@ public class Board extends JPanel {
 			// && nextEnemy.isInvalid()
 			// && !spaceship.isInvalid()
 			) {
-				System.out.println("Your Spaceship has been hit!");
+				// System.out.println("Your Spaceship has been hit!");
 				return true;
 			}
 		}
 		return false;
 	}
 
+	private static ArrayList<Enemy> findEnemiesForProjectile() {
+		ArrayList<Enemy> enemiesForProjectile = new ArrayList<Enemy>();
+		for (int c = enemyCol - 1; c >= 0; c--) {
+			for (int r = enemyRow - 1; r >= 0; r--) {
+				if (!enemies.get(r).get(c).isInvalid()) {
+					enemiesForProjectile.add(enemies.get(r).get(c));
+					break;
+				}
+			}
+		}
+		return enemiesForProjectile;
+	}
+
+	public static void chooseRandomEnemyForProjectile() {
+		ArrayList<Enemy> enemiesForProjectile = findEnemiesForProjectile();
+		if (enemiesForProjectile.size() != 0) {
+			int random = (int) (enemiesForProjectile.size() * Math.random());
+			Enemy enemy = enemiesForProjectile.get(random);
+			Projectile projectile = new Projectile("Rocket", epSpeed);
+			projectile.setCol(enemy.getCol() + enemy.getWidth() / 2 - projectile.getWidth() / 2);
+			projectile.setRow(enemy.getRow() + enemy.getHeight());
+			if (eProjectiles.size() == 0) {
+				eProjectiles.add(projectile);
+			}
+		}
+	}
+
+	private static void moveEnemiesProjectiles() {
+		// Either moves projectile down or removes it from eProjectiles if it is greater
+		// than height
+		if (eProjectiles.size() > 0) {
+			for (int i = 0; i < eProjectiles.size(); i++) {
+				Projectile projectile = eProjectiles.get(i);
+				if (projectile.getRow() > height) {
+					eProjectiles.remove(projectile);
+				} else {
+					projectile.move();
+				}
+			}
+		}
+		// Checks for collision between spaceship and enemy's projectile
+		for (int p = 0; p < eProjectiles.size(); p++) {
+			Projectile pro = eProjectiles.get(p);
+			if (isColliding(spaceship, pro)) {
+				spaceship.hit(pro.getDamage());
+				spaceship.removeLife();
+				livesLeft = spaceship.getLives();
+				eProjectiles.remove(pro);
+
+			}
+
+		}
+	}
+
+	public static void repaintAllEnemies() {
+		boolean allKilled = true;
+		for (int r = 0; r < enemies.size(); r++) {
+			for (int c = 0; c < enemies.get(r).size(); c++) {
+				if (!enemies.get(r).get(c).isInvalid()) {
+					allKilled = false;
+				}
+			}
+		}
+		if (allKilled) {
+			enemies = new ArrayList<ArrayList<Enemy>>();
+			createEnemies();
+		}
+	}
+
+	public static void isGameOver() {
+		boolean belowSpaceship = false;
+		for (int r = 0; r < enemies.size(); r++) {
+			for (int c = 0; c < enemies.get(r).size(); c++) {
+				if (!enemies.get(r).get(c).isInvalid()
+						&& enemies.get(r).get(c).getRow() + enemies.get(r).get(c).getHeight() > spaceship.getRow()) {
+					belowSpaceship = true;
+				}
+			}
+		}
+		if (spaceship.isDead() || belowSpaceship) {
+			gameOver = true;
+			timer.stop();
+		}
+
+	}
+
 	@Override
 	public void paintComponent(Graphics g) {
 
+		g.drawImage(background, 0, 0, width, height, null);
 		if (!gameOver) {
-
-			g.drawImage(background, 0, 0, width, height, null);
 			// Paint Enemies
 			for (int r = 0; r < enemies.size(); r++) {
 				for (int c = 0; c < enemies.get(r).size(); c++) {
@@ -419,18 +561,55 @@ public class Board extends JPanel {
 			//
 			//
 
+			// Paint Flying Enemy
+			if (!flyingEnemy.isInvalid() && timeElapsed != 0) {
+				// System.out.println(timeElapsed + ", Flying Enemy");
+				flyingEnemy.setWidth(flyingEnemy.getImage().getWidth() / 7);
+				flyingEnemy.setHeight(flyingEnemy.getImage().getHeight() / 7);
+				flyingEnemy.paintComponent(g);
+			}
+			// Lives Left in left corner
+			g.setColor(Color.WHITE);
+			g.setFont(new Font("TimesRoman", Font.PLAIN, 25));
+			g.drawString("Lives Left: " + livesLeft, margin / 3, margin / 3);
+
+			// Score in right corner
+			g.setColor(Color.WHITE);
+			g.setFont(new Font("TimesRoman", Font.PLAIN, 25));
+			String s = "Score: " + score;
+			g.drawString(s, width - margin / 3 - 15 * s.length(), margin / 3);
 		}
 
-		if (!flyingEnemy.isInvalid() && timeElapsed != 0) {
-			// System.out.println(timeElapsed + ", Flying Enemy");
-			flyingEnemy.setWidth(flyingEnemy.getImage().getWidth() / 7);
-			flyingEnemy.setHeight(flyingEnemy.getImage().getHeight() / 7);
-			flyingEnemy.paintComponent(g);
-		}
+		// Write Score
+		// if (!isAlive) {
+		// g.setColor(new Color(255, 255, 255));
+		// g.drawString("YOU ARE DEAD", frame.getWidth() / 2 - 20, margin);
+		// }
+		// if (spaceship.isDead()) {
+		// g.setColor(new Color(255, 255, 255));
+		// // g.drawString("Spaceship is dead", 10, 10);
+		// System.out.println("spaceship is dead");
+		// }
+		else if (gameOver) { // if game is over
+			// System.out.println(gameOver);
+			String buttonText = "<html>" + "<body" + "'>" + "<center><h1>Game Over</h1>"
+					+ "<h2>Press SPACE to start a new game or click HERE</h2>" + "<h4> Score: " + score + "</h4>"
+					+ "<h4> Time: " + timeElapsed / time / 2 + " seconds. </h4></center>";
+			Button gameOverButton = new Button();
+			gameOverButton.setLabel(buttonText);
+			board.add(gameOverButton);
+			gameOverButton.setBounds(width / 4, height / 4, width / 2, height / 2);
+			gameOverButton.addActionListener(new ActionListener() {
 
-		if (!isAlive) {
-			g.setColor(new Color(255, 255, 255));
-			g.drawString("YOU ARE DEAD", frame.getWidth() / 2 - 20, margin);
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					System.out.println("Starting new game");
+					startNewGame();
+
+				}
+
+			});
+
 		}
 
 	}
@@ -479,31 +658,6 @@ public class Board extends JPanel {
 					}
 				}
 			}
-		}
-	}
-
-	private static void moveEnemiesProjectiles() {
-		// Either moves projectile down or removes it from eProjectiles if it is greater
-		// than height
-		if (eProjectiles.size() > 0) {
-			for (int i = 0; i < eProjectiles.size(); i++) {
-				Projectile projectile = eProjectiles.get(i);
-				if (projectile.getRow() > height) {
-					eProjectiles.remove(projectile);
-				} else {
-					projectile.move();
-				}
-			}
-		}
-		// Checks for collision between spaceship and enemy's projectile
-		for (int p = 0; p < eProjectiles.size(); p++) {
-			Projectile pro = eProjectiles.get(p);
-			if (isColliding(spaceship, pro)) {
-				spaceship.hit(pro.getDamage());
-				eProjectiles.remove(pro);
-
-			}
-
 		}
 	}
 

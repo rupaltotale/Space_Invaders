@@ -14,18 +14,24 @@ public class Spaceship extends JPanel{
 	int height;
 	int health;
 	int lives;
+	public int getLives() {
+		return lives;
+	}
+	public void setLives(int lives) {
+		this.lives = lives;
+	}
 	Projectile projectile = new Projectile("Rocket", "Spaceship");
 
 	
 	BufferedImage image;
 	String imageName = "Spaceship.png";
 	
-	public Spaceship(int row, int col) {
+	public Spaceship(int row, int col, int lives) {
 		this.row = row;
 		this.col = col;
 		setImage(imageName);
 		health = 100;
-		lives = 3;
+		this.lives = lives;
 		
 	}
 	void setImage(String imageName){
@@ -92,8 +98,18 @@ public class Spaceship extends JPanel{
 		this.imageName = imageName;
 	}
 
+	public void removeLife() {
+		lives -= 1;
+	}
 	public void hit(int damage) {
 		health -= damage;
+	}
+	
+	public boolean isDead() {
+		if(lives <= 0) {
+			return true;
+		}
+		return false;
 	}
 	public boolean alive() {
 		if (health<=0) {
