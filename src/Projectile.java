@@ -22,8 +22,9 @@ public class Projectile extends JPanel {
 	private int damage;
 	private int pointValue;
 	private BufferedImage image;
+	private boolean spaceship;
 
-	public Projectile(String projectile) {
+	public Projectile(String projectile, String spaceship) {
 		if (projectile.equals("Boomerang"))
 			this.projectile = ProjectileTypes.Boomerang;
 		if (projectile.equals("LaserGun"))
@@ -32,6 +33,11 @@ public class Projectile extends JPanel {
 			this.projectile = ProjectileTypes.Cannon;
 		if (projectile.equals("Rocket"))
 			this.projectile = ProjectileTypes.Rocket;
+		if (spaceship.equals("Spaceship")) 
+			this.spaceship = true;
+		else
+			this.spaceship = false;
+		
 		getImage();
 		setSpeed();
 		setSize();
@@ -123,7 +129,10 @@ public class Projectile extends JPanel {
 
 		// I changed this to minus because the projectile moves up and and up in java is
 		// less than down
+		if(spaceship)
 		row -= speed;
+		else
+		row += speed;
 
 	}
 
@@ -214,6 +223,7 @@ public class Projectile extends JPanel {
 	public Color getColor() {
 		return color;
 	}
+
 
 	public void setColor(Color color) {
 		this.color = color;

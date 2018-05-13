@@ -52,6 +52,7 @@ public class Board extends JPanel {
 	static boolean shootProjectile = true;
 
 	static ArrayList<Projectile> sProjectiles = new ArrayList();
+	static ArrayList<Projectile> eProjectiles = new ArrayList();
 
 	public static void main(String[] args) {
 
@@ -110,7 +111,7 @@ public class Board extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				// ADD implementation of space key here
 				System.out.println("Space Key Pressed");
-				Projectile projectile = new Projectile("Rocket");
+				Projectile projectile = new Projectile("Rocket", "Spaceship");
 				int row = spaceship.getRow() - projectile.getHeight();
 				int col = spaceship.getCol() + spaceship.getWidth() / 2 - projectile.getWidth() / 2;
 				projectile.setLocation(row, col);
@@ -156,6 +157,9 @@ public class Board extends JPanel {
 		moveEnemies();
 		moveSpaceship();
 		shootSpaceshipProjectile();
+		enemiesShoot();
+		shootEnemyProjectile();
+		
 
 	}
 
@@ -257,6 +261,14 @@ public class Board extends JPanel {
 
 					}
 				}
+				
+				if (eProjectiles.size() > 0) {
+					for (int i = 0; i < eProjectiles.size(); i++) {
+						Projectile projectile = eProjectiles.get(i);
+						projectile.paintComponent(g);
+
+					}
+				}
 
 			}
 
@@ -277,4 +289,48 @@ public class Board extends JPanel {
 		g.drawImage(img, 0, 0, width, height, null);
 		
 	}
+	
+	private static void enemiesShoot() {
+		for(int row = enemies.size()-1; row >= 0; row--) {
+			for (int col= enemies.get(row).size()-1; col>=0; col--) {
+				if (row == enemies.size()-1) {
+					int random1 = (int)(Math.random()*100);
+					if(random1>=99) {
+						Projectile temp = new Projectile("Rocket","Enemy");
+						int r = enemies.get(row).get(col).getRow() + temp.getHeight();
+						int c = enemies.get(row).get(col).getCol() + enemies.get(row).get(col).getWidth() / 2 - temp.getWidth() / 2;
+						temp.setLocation(r, c);
+						eProjectiles.add(temp);
+				}
+				if (enemies.get(row).get(col) == null && enemies.get(row-1).get(col) != null) {
+					int random2 = (int)(Math.random()*100);
+					if(random2>=99) {
+						Projectile temp = new Projectile("LaserGun","Enemy");
+						int r = enemies.get(row-1).get(col).getRow() + temp.getHeight();
+						int c = enemies.get(row-1).get(col).getCol() + enemies.get(row-1).get(col).getWidth() / 2 - temp.getWidth() / 2;
+						temp.setLocation(r, c);
+						eProjectiles.add(temp);
+					}
+				}
+			}
+		}
+	}
+	}
+	
+	private static void shootEnemyProjectile(){
+		if (eProjectiles.size() > 0) {
+			for (int i = 0; i < eProjectiles.size(); i++) {
+				Projectile projectile = eProjectiles.get(i);
+				if (projectile.getRow() < 0) {
+					eProjectiles.remove(projectile);
+				} else {
+					projectile.move();
+					//ArrayList<Integer> loc= new ArrayList();
+				}
+	}
+		}
+	}
+
+	
+
 }

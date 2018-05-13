@@ -12,7 +12,9 @@ public class Spaceship extends JPanel{
 	int col;
 	int width;
 	int height;
-	Projectile projectile = new Projectile("Rocket");
+	int health;
+	int lives;
+	Projectile projectile = new Projectile("Rocket", "Spaceship");
 
 	
 
@@ -24,6 +26,8 @@ public class Spaceship extends JPanel{
 		this.row = row;
 		this.col = col;
 		setImage(imageName);
+		health = 100;
+		lives = 3;
 		
 	}
 	void setImage(String imageName){
@@ -89,4 +93,7 @@ public class Spaceship extends JPanel{
 		this.imageName = imageName;
 	}
 
+	public void hit(int damage) {
+		health -= damage;
+	}
 }

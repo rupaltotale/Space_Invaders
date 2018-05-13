@@ -113,7 +113,7 @@ public class Enemy extends JPanel{
 		return this.image;
 	}
 	
-	
+
 	
 
 }
