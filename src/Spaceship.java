@@ -17,8 +17,6 @@ public class Spaceship extends JPanel{
 	Projectile projectile = new Projectile("Rocket", "Spaceship");
 
 	
-
-	
 	BufferedImage image;
 	String imageName = "Spaceship.png";
 	
@@ -46,10 +44,11 @@ public class Spaceship extends JPanel{
 	
 	@Override
 	public void paintComponent(Graphics g) {
-		// TODO Auto-generated method stub
 		g.drawImage(image, col, row, width, height, this);
 		
 	}
+	
+	//Getters and setters
 	public Projectile getProjectile() {
 		return projectile;
 	}
@@ -96,4 +95,11 @@ public class Spaceship extends JPanel{
 	public void hit(int damage) {
 		health -= damage;
 	}
+	public boolean alive() {
+		if (health<=0) {
+			return false;
+		}
+		return true;
+	}
+
 }
