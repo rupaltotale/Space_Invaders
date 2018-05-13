@@ -302,7 +302,7 @@ public class Board extends JPanel {
 					for (int r = 0; r < enemies.size(); r++) {
 						for (int c = 0; c < enemies.get(r).size(); c++) {
 							Enemy enemy = enemies.get(r).get(c);
-							if (isColliding(flyingEnemy, projectile)) {
+							if (isColliding(enemy, projectile)) {
 								enemy.setInvalid(true);
 								sProjectiles.remove(projectile);
 
