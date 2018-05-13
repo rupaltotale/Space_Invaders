@@ -32,27 +32,39 @@ public class Board extends JPanel {
 	static int width = 1200; // panel width
 	static int height = 800; // panel height
 	static int margin = 150;
+	static int timeElapsed = 0;
+	static BufferedImage background;
 
 	static boolean gameOver = true;
 
-	static int time = 1; // in milliseconds
+	static int time = 20; // in milliseconds
 	static Timer timer = new Timer(time, null);
 
 	static ArrayList<ArrayList<Enemy>> enemies = new ArrayList<ArrayList<Enemy>>();
 	static int enemyRow = 5;
 	static int enemyCol = 12;
-	static int shiftBy = 3;
+	static int eChange = 1;
 	private static int moveDownBy;
 
-	static Spaceship spaceship = new Spaceship(height - 100, margin);// for the spaceship characteristics
+	static int fRow = margin / 3;
+	static int fCol = margin;
+	static Enemy flyingEnemy = new Enemy(fRow, fCol, "FlyingEnemy.png");
+	static int fTime = 10000 / time; // every 10 seconds
+//	private static boolean showFlyingEnemy = false;
+	static int speed = 3;
+	
+
+	static int sRow = height - 100;
+	static int sCol = margin;
+	static Spaceship spaceship = new Spaceship(sRow, sCol);// for the spaceship characteristics
 	static int moveLimit = 40;
 	static int movedBy = moveLimit;
 	static int direction = 0; // -1 is left, 1 is right
+	static int sChange = 20;
 	static ArrayList<Projectile> sProjectiles = new ArrayList(); // list of projectiles thrown by the spaceship
 
 	public static void main(String[] args) {
 
-		// Just some copy pasted code from a previous project to setup JPanel
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
@@ -62,42 +74,13 @@ public class Board extends JPanel {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(board);
 		board.setPreferredSize(new Dimension(width, height));
-		// board.setLabelBackground();
-		// board.setBackground(Color.BLACK);
+		setBackground();
 		frame.pack();
 		frame.setVisible(true);
-		board.setUpKeyMappings(); // sets up the keys' (left, right, spcae) functionalities
+		board.setUpKeyMappings();
 		createEnemies();
+		flyingEnemy.setInvalid(true);
 		setupTimer();
-
-	}
-
-	/*
-	 * an alternate way to set the background. More energy efficient
-	 */
-	private void setLabelBackground() {
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		InputStream input = classLoader.getResourceAsStream("SpaceBackground.png");
-		BufferedImage img = null;
-
-		try {
-			img = ImageIO.read(input);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		BufferedImage newImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-
-		Graphics g = newImage.createGraphics();
-		g.drawImage(img, 0, 0, width, height, null);
-		g.dispose();
-
-		ImageIcon icon = new ImageIcon(newImage);
-		JLabel contentPane = new JLabel();
-		contentPane.setOpaque(false);
-		contentPane.setIcon(icon);
-		contentPane.setBounds(0, 0, width, height);
-		board.add(contentPane);
 
 	}
 
@@ -157,19 +140,20 @@ public class Board extends JPanel {
 	 * Creates the enemies visually and adds rows of them to the enemies list.
 	 */
 	public static void createEnemies() {
-		int spacing = (width - margin * 2) / (enemyCol + 1);
+		int colSpacing = (width - margin * 2) / (enemyCol + 1);
+		int rowSpacing = (int) ((height * 0.3) / (enemyRow));
 		for (int r = 0; r < enemyRow; r++) {
 			ArrayList<Enemy> enemyRow = new ArrayList<Enemy>();
 			for (int c = 0; c < enemyCol; c++) {
 				if (r < 1) {
-					Enemy enemy = new Enemy(r * spacing, c * spacing + margin, "EnemyPurple.png");
+					Enemy enemy = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, "EnemyPurple.png");
 					moveDownBy = enemy.getHeight() / 2;
 					enemyRow.add(enemy);
 				} else if (r < 3) {
-					Enemy enemy = new Enemy(r * spacing, c * spacing + margin, "EnemyBlue.png");
+					Enemy enemy = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, "EnemyBlue.png");
 					enemyRow.add(enemy);
 				} else {
-					Enemy enemy = new Enemy(r * spacing, c * spacing + margin, "EnemyRed.png");
+					Enemy enemy = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, "EnemyRed.png");
 					enemyRow.add(enemy);
 				}
 
@@ -190,6 +174,7 @@ public class Board extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				tick();
 				board.repaint();
+				timeElapsed++;
 			}
 
 		});
@@ -204,6 +189,25 @@ public class Board extends JPanel {
 		moveEnemies();
 		moveSpaceship();
 		shootSpaceshipProjectile();
+		showFlyingEnemy();
+
+	}
+
+	private static void showFlyingEnemy() {
+		if (flyingEnemy.isInvalid()) {
+			if (timeElapsed % fTime == 0 && timeElapsed != 0) {
+				// showFlyingEnemy = true;
+				flyingEnemy.setInvalid(false);
+
+			}
+		} else {
+			int col = flyingEnemy.getCol() + speed;
+			flyingEnemy.setCol(col);
+			if (flyingEnemy.getCol() > width) {
+				// showFlyingEnemy = false;
+				flyingEnemy.setInvalid(true);
+			}
+		}
 
 	}
 
@@ -229,15 +233,15 @@ public class Board extends JPanel {
 			}
 		}
 		int w = enemies.get(0).get(enemyCol - 1).getImage().getWidth() / 9;
-		int total = lastCol + shiftBy + w;
-		if (Math.signum(shiftBy) > 0) { // moving right
+		int total = lastCol + eChange + w;
+		if (Math.signum(eChange) > 0) { // moving right
 			if (total > width) {
-				shiftBy = -1 * shiftBy;
+				eChange = -1 * eChange;
 				moveEnemiesDown();
 			}
-		} else if (Math.signum(shiftBy) < 0) {
-			if (firstCol - shiftBy < 0) {
-				shiftBy = -1 * shiftBy;
+		} else if (Math.signum(eChange) < 0) {
+			if (firstCol - eChange < 0) {
+				eChange = -1 * eChange;
 				moveEnemiesDown();
 
 			}
@@ -245,14 +249,14 @@ public class Board extends JPanel {
 		for (int r = 0; r < enemies.size(); r++) {
 			for (int c = 0; c < enemies.get(r).size(); c++) {
 				Enemy enemy = enemies.get(r).get(c);
-				enemy.setCol(enemy.getCol() + shiftBy);
+				enemy.setCol(enemy.getCol() + eChange);
 			}
 
 		}
 	}
-	
+
 	/*
-	 * Moves enemies down at the when their direction of movement is changed. 
+	 * Moves enemies down at the when their direction of movement is changed.
 	 */
 	private static void moveEnemiesDown() {
 		for (int r = 0; r < enemies.size(); r++) {
@@ -269,21 +273,21 @@ public class Board extends JPanel {
 	 * Moves the spaceship either left or right
 	 */
 	private static void moveSpaceship() {
-		int change = 20;
 		if (movedBy < moveLimit) {
-			if (direction == 1 & spaceship.getCol() + change + spaceship.getWidth() <= width) {
-				spaceship.setCol(spaceship.getCol() + change);
-				movedBy += change;
-			} else if (direction == -1 && spaceship.getCol() - change >= 0) {
-				spaceship.setCol(spaceship.getCol() - change);
-				movedBy += change;
+			if (direction == 1 & spaceship.getCol() + sChange + spaceship.getWidth() <= width) {
+				spaceship.setCol(spaceship.getCol() + sChange);
+				movedBy += sChange;
+			} else if (direction == -1 && spaceship.getCol() - sChange >= 0) {
+				spaceship.setCol(spaceship.getCol() - sChange);
+				movedBy += sChange;
 			}
 		}
 
 	}
 
 	/*
-	 * moves the projectile up and checks for collision between projectile and exposed enemy
+	 * moves the projectile up and checks for collision between projectile and
+	 * exposed enemy
 	 */
 	private static void shootSpaceshipProjectile() {
 		if (sProjectiles.size() > 0) {
@@ -294,7 +298,7 @@ public class Board extends JPanel {
 				} else {
 					projectile.move();
 
-					// checks if the projectile is colliding with an enemy
+					// checks if the projectile is colliding with a regular enemy
 					int row = projectile.getRow();
 					int col = projectile.getCol();
 					ArrayList<Enemy> lastRow = enemies.get(enemyRow - 1);
@@ -320,20 +324,26 @@ public class Board extends JPanel {
 							}
 						}
 					}
+
+					// checks if projectile is colliding with a flying enemy
+					if (!flyingEnemy.isInvalid() && row >= flyingEnemy.getRow()
+							&& row <= flyingEnemy.getRow() + flyingEnemy.getHeight() 
+							&& col >= flyingEnemy.getCol() && col <= flyingEnemy.getCol() + flyingEnemy.getWidth()) {
+						flyingEnemy.setInvalid(true);
+						sProjectiles.remove(projectile);
+
+					}
 				}
 			}
 		}
 	}
-
-	
-	
 
 	@Override
 	public void paintComponent(Graphics g) {
 
 		if (!gameOver) {
 
-			setBackground(g);
+			g.drawImage(background, 0, 0, width, height, null);
 			// Paint Enemies
 			for (int r = 0; r < enemies.size(); r++) {
 				for (int c = 0; c < enemies.get(r).size(); c++) {
@@ -351,7 +361,7 @@ public class Board extends JPanel {
 			spaceship.setHeight(spaceship.getImage().getHeight() / 9);
 			spaceship.paintComponent(g);
 
-			// shoot projectile
+			// Shoot projectile
 
 			if (sProjectiles.size() > 0) {
 				for (int i = 0; i < sProjectiles.size(); i++) {
@@ -362,6 +372,29 @@ public class Board extends JPanel {
 
 			}
 
+			// Paint Barriers
+			// ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+			// InputStream input = classLoader.getResourceAsStream("BarrierSpace.png");
+			// BufferedImage img = null;
+			//
+			// try {
+			// img = ImageIO.read(input);
+			// } catch (IOException e) {
+			// e.printStackTrace();
+			// }
+			//
+			// g.drawImage(img, margin -30, spaceship.getRow() - img.getHeight()/4,
+			// img.getWidth()/4, img.getHeight()/4, null);
+			//
+			//
+
+		}
+
+		if (!flyingEnemy.isInvalid() && timeElapsed != 0) {
+			// System.out.println(timeElapsed + ", Flying Enemy");
+			flyingEnemy.setWidth(flyingEnemy.getImage().getWidth() / 7);
+			flyingEnemy.setHeight(flyingEnemy.getImage().getHeight() / 7);
+			flyingEnemy.paintComponent(g);
 		}
 
 	}
@@ -369,7 +402,7 @@ public class Board extends JPanel {
 	/*
 	 * Sets the background of the panel
 	 */
-	private void setBackground(Graphics g) {
+	private static void setBackground() {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		InputStream input = classLoader.getResourceAsStream("SpaceBackground.png");
 		BufferedImage img = null;
@@ -380,7 +413,7 @@ public class Board extends JPanel {
 			e.printStackTrace();
 		}
 
-		g.drawImage(img, 0, 0, width, height, null);
+		background = img;
 
 	}
 }
