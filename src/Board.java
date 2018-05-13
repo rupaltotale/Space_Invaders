@@ -50,9 +50,8 @@ public class Board extends JPanel {
 	static int fCol = margin;
 	static Enemy flyingEnemy = new Enemy(fRow, fCol, "FlyingEnemy.png");
 	static int fTime = 10000 / time; // every 10 seconds
-//	private static boolean showFlyingEnemy = false;
+	// private static boolean showFlyingEnemy = false;
 	static int speed = 3;
-	
 
 	static int sRow = height - 100;
 	static int sCol = margin;
@@ -298,26 +297,12 @@ public class Board extends JPanel {
 				} else {
 					projectile.move();
 
-					// checks if the projectile is colliding with a regular enemy
-					int row = projectile.getRow();
-					int col = projectile.getCol();
-					ArrayList<Enemy> lastRow = enemies.get(enemyRow - 1);
-					for (int c = 0; c < lastRow.size(); c++) {
-						Enemy enemy = lastRow.get(c);
-						if (row >= enemy.getRow() && row <= enemy.getRow() + enemy.getHeight() && col >= enemy.getCol()
-								&& col <= enemy.getCol() + enemy.getWidth() && !enemy.isInvalid()) {
-							enemies.get(enemyRow - 1).get(c).setInvalid(true); // invalid = don't paint
-							sProjectiles.remove(projectile);
-						}
-					}
-					// checks above rows to see if enemies on those rows are exposed
-					for (int r = 0; r < enemies.size() - 1; r++) {
+					// checks if the projectile is colliding with any regular enemy
+
+					for (int r = 0; r < enemies.size(); r++) {
 						for (int c = 0; c < enemies.get(r).size(); c++) {
 							Enemy enemy = enemies.get(r).get(c);
-							Enemy nextEnemy = enemies.get(r + 1).get(c);
-							if (row >= enemy.getRow() && row <= enemy.getRow() + enemy.getHeight()
-									&& col >= enemy.getCol() && col <= enemy.getCol() + enemy.getWidth()
-									&& nextEnemy.isInvalid() && !enemy.isInvalid()) {
+							if (isColliding(flyingEnemy, projectile)) {
 								enemy.setInvalid(true);
 								sProjectiles.remove(projectile);
 
@@ -326,9 +311,7 @@ public class Board extends JPanel {
 					}
 
 					// checks if projectile is colliding with a flying enemy
-					if (!flyingEnemy.isInvalid() && row >= flyingEnemy.getRow()
-							&& row <= flyingEnemy.getRow() + flyingEnemy.getHeight() 
-							&& col >= flyingEnemy.getCol() && col <= flyingEnemy.getCol() + flyingEnemy.getWidth()) {
+					if (isColliding(flyingEnemy, projectile)) {
 						flyingEnemy.setInvalid(true);
 						sProjectiles.remove(projectile);
 
@@ -336,6 +319,20 @@ public class Board extends JPanel {
 				}
 			}
 		}
+	}
+
+	private static boolean isColliding(Object obj, Projectile projectile) {
+		if (obj instanceof Enemy) {
+			Enemy enemy = (Enemy) obj;
+			if (projectile.getRow() >= enemy.getRow() && projectile.getRow() <= enemy.getRow() + enemy.getHeight()
+					&& projectile.getCol() >= enemy.getCol() && projectile.getCol() <= enemy.getCol() + enemy.getWidth()
+					// && nextEnemy.isInvalid()
+					&& !enemy.isInvalid()) {
+				return true;
+			}
+
+		}
+		return false;
 	}
 
 	@Override
