@@ -22,7 +22,6 @@ public class Spaceship extends JPanel{
 	}
 	Projectile projectile = new Projectile("Rocket", "Spaceship");
 
-	
 	BufferedImage image;
 	String imageName = "Spaceship.png";
 	
