@@ -194,7 +194,7 @@ public class Board extends JPanel {
 			for (int c = 0; c < enemyCol; c++) {
 				if (r < 1) {
 					Enemy enemy = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, "EnemyPurple.png");
-					moveDownBy = enemy.getHeight() / 2;
+					moveDownBy = enemy.getHeight() / 4;
 					enemyRow.add(enemy);
 				} else if (r < 3) {
 					Enemy enemy = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, "EnemyBlue.png");
@@ -211,27 +211,28 @@ public class Board extends JPanel {
 	}
 
 	public static void createBarriers() {
-		//I changed the code a bit because the barriers became very spaced out when I clicked new game
+		// I changed the code a bit because the barriers became very spaced out when I
+		// clicked new game
 		barriers = new ArrayList();
-		int columns = numberOfBarriers * 2 +1;
-		int row = spaceship.getRow() - 150;
-		int widthOfBarrier = width/columns;
-		for(int i = 1; i < numberOfBarriers*2; i+=2) {
+		int columns = numberOfBarriers * 2 + 1;
+		int row = spaceship.getRow() - 100;
+		int widthOfBarrier = width / columns;
+		for (int i = 1; i < numberOfBarriers * 2; i += 2) {
 			int col = widthOfBarrier * i;
 			Barrier barrier = new Barrier(row, col);
 			barrier.setWidth(widthOfBarrier);
-			barrier.setHeight(widthOfBarrier/barrier.getImage().getWidth() * barrier.getImage().getHeight());
+			barrier.setHeight(widthOfBarrier / barrier.getImage().getWidth() * barrier.getImage().getHeight());
 			barriers.add(barrier);
 		}
-//		int barr1x = spaceship.getCol() - 25;
-//		int barr1y = spaceship.getRow() - 125;
-//		double gap = (width - barr1x * 2) / 3.5;
-//		Barrier barrier1 = new Barrier(barr1y, barr1x);
-//		barriers.add(barrier1);
-//		for (int i = 0; i < 3; i++) {
-//			Barrier bernard = new Barrier( barr1y, barr1x += gap,);
-//			barriers.add(bernard);
-//		}sss
+		// int barr1x = spaceship.getCol() - 25;
+		// int barr1y = spaceship.getRow() - 125;
+		// double gap = (width - barr1x * 2) / 3.5;
+		// Barrier barrier1 = new Barrier(barr1y, barr1x);
+		// barriers.add(barrier1);
+		// for (int i = 0; i < 3; i++) {
+		// Barrier bernard = new Barrier( barr1y, barr1x += gap,);
+		// barriers.add(bernard);
+		// }sss
 	}
 
 	/*
@@ -555,6 +556,14 @@ public class Board extends JPanel {
 
 		g.drawImage(background, 0, 0, width, height, null);
 		if (!gameOver) {
+			// Paint Barriers
+			for (Barrier br : barriers) {
+				br.setWidth((int) (br.getImage().getWidth() / 3.5));
+				br.setHeight((int) (br.getImage().getHeight() / 4.5));
+				br.paintComponent(g);
+
+			}
+
 			// Paint Enemies
 			for (int r = 0; r < enemies.size(); r++) {
 				for (int c = 0; c < enemies.get(r).size(); c++) {
@@ -589,14 +598,6 @@ public class Board extends JPanel {
 					projectile.paintComponent(g);
 
 				}
-			}
-
-			// Paint Barriers
-			for (Barrier br : barriers) {
-				br.setWidth((int) (br.getImage().getWidth() / 4.5));
-				br.setHeight((int) (br.getImage().getHeight() / 4.5));
-				br.paintComponent(g);
-
 			}
 
 			// Paint Flying Enemy

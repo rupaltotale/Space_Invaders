@@ -22,7 +22,7 @@ public class Barrier extends JPanel {
 	int height;
 	Color colBackground;
 	BufferedImage backgroundImage;
-	String imageName = "BarrierSpace.png";
+	String imageName = "GreenBarier.png";
 
 	public Barrier(int row, int col) {
 		this.col = col;
