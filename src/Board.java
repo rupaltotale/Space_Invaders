@@ -45,6 +45,9 @@ public class Board extends JPanel {
 	static int time = 20; // in milliseconds
 	static Timer timer = new Timer(time, null);
 
+	/* Barriers */
+	static ArrayList<Barriers> barriers = new ArrayList<Barriers>();
+
 	/* Regular enemies */
 	static ArrayList<ArrayList<Enemy>> enemies = new ArrayList<ArrayList<Enemy>>();
 	static int enemyRow = 5;
@@ -97,6 +100,7 @@ public class Board extends JPanel {
 
 	public static void startNewGame() {
 		createEnemies();
+		createBarriers();
 		flyingEnemy.setInvalid(true);
 		flyingEnemy.setCol(margin);
 		gameOver = false;
@@ -203,6 +207,19 @@ public class Board extends JPanel {
 			enemies.add(enemyRow);
 		}
 
+	}
+
+	public static void createBarriers() {
+		barriers = new ArrayList();
+		int barr1x = spaceship.getCol() - 25;
+		int barr1y = spaceship.getRow() - 125;
+		double gap = (width - barr1x * 2) / 3.5;
+		Barriers barrier1 = new Barriers(barr1x, barr1y);
+		barriers.add(barrier1);
+		for (int i = 0; i < 3; i++) {
+			Barriers bernard = new Barriers(barr1x += gap, barr1y);
+			barriers.add(bernard);
+		}
 	}
 
 	/*
@@ -546,20 +563,12 @@ public class Board extends JPanel {
 			}
 
 			// Paint Barriers
-			// ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-			// InputStream input = classLoader.getResourceAsStream("BarrierSpace.png");
-			// BufferedImage img = null;
-			//
-			// try {
-			// img = ImageIO.read(input);
-			// } catch (IOException e) {
-			// e.printStackTrace();
-			// }
-			//
-			// g.drawImage(img, margin -30, spaceship.getRow() - img.getHeight()/4,
-			// img.getWidth()/4, img.getHeight()/4, null);
-			//
-			//
+			for (Barriers br: barriers) {
+				br.setWidth((int) (br.getImage().getWidth()/4.5));
+				br.setHeight((int) (br.getImage().getHeight()/4.5));
+				br.paintComponent(g);
+
+			}
 
 			// Paint Flying Enemy
 			if (!flyingEnemy.isInvalid() && timeElapsed != 0) {
