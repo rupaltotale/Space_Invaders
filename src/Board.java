@@ -1,6 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -12,8 +13,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -35,6 +36,7 @@ public class Board extends JPanel {
 
 	/* Game settings */
 	static int width = 1200; // panel width
+<<<<<<< Updated upstream
 	static int height = 800; // panel height
 	static int margin = 150;
 	static BufferedImage background;
@@ -43,6 +45,15 @@ public class Board extends JPanel {
 	static int livesLeft;
 	static int timeElapsed = 0;
 	static int time = 20; // in milliseconds
+=======
+	static int height = 500; // panel height REMEMBER TO CHANGE THIS BACK TO 800 BEFORE PUSHING ANJANA
+	static int margin = 100;
+
+	static boolean gameOver = true;
+	
+	
+	static int time = 30; // in milliseconds
+>>>>>>> Stashed changes
 	static Timer timer = new Timer(time, null);
 
 	/* Barriers */
@@ -50,7 +61,12 @@ public class Board extends JPanel {
 
 	/* Regular enemies */
 	static ArrayList<ArrayList<Enemy>> enemies = new ArrayList<ArrayList<Enemy>>();
+<<<<<<< Updated upstream
 	static int enemyRow = 5;
+=======
+	static ArrayList<Barriers> barriers = new ArrayList<Barriers>();
+	static int enemyRow = 3;
+>>>>>>> Stashed changes
 	static int enemyCol = 12;
 	static int eChange = 1;
 	private static int moveDownBy;
@@ -71,13 +87,21 @@ public class Board extends JPanel {
 	static Spaceship spaceship = new Spaceship(sRow, sCol, lives);// for the spaceship characteristics
 	static int moveLimit = 50;
 	static int movedBy = moveLimit;
+<<<<<<< Updated upstream
 	static int direction = 0; // -1 is left, 1 is right
 	static boolean timing = true;
 	static boolean isAlive = true;
 	static int sChange = 5;
 	static int spSpeed = -20;
 	static ArrayList<Projectile> sProjectiles = new ArrayList(); // list of projectiles thrown by the spaceship
+=======
+	static int direction = 0; //-1 is left, 1 is right
+	
+	
+>>>>>>> Stashed changes
 
+	
+	
 	public static void main(String[] args) {
 
 		try {
@@ -92,8 +116,15 @@ public class Board extends JPanel {
 		setBackground();
 		frame.pack();
 		frame.setVisible(true);
+<<<<<<< Updated upstream
 		board.setUpKeyMappings();
 		startNewGame();
+=======
+		board.setUpKeyMappings(); // sets up the keys' (left, right, spcae) functionalities 
+		createEnemies();
+		createBarriers();
+		board.repaint();
+>>>>>>> Stashed changes
 		setupTimer();
 
 	}
@@ -208,6 +239,7 @@ public class Board extends JPanel {
 		}
 
 	}
+<<<<<<< Updated upstream
 
 	public static void createBarriers() {
 		barriers = new ArrayList();
@@ -226,6 +258,23 @@ public class Board extends JPanel {
 	 * Adds an action listener to the timer. This action is performed every 1
 	 * millisecond.
 	 */
+=======
+	public static void createBarriers() {
+		int barr1x = spaceship.getCol()-25;
+		int barr1y = spaceship.getRow()-125;
+		double gap = (width - barr1x*2)/3.5;
+		
+		Barriers barrier1 = new Barriers(barr1x, barr1y);
+		barriers.add(barrier1);
+		
+		
+		for (int i = 0; i < 3; i++) {
+			Barriers bernard = new Barriers(barr1x+=gap, barr1y);
+			barriers.add(bernard); 
+		}
+
+	}
+>>>>>>> Stashed changes
 	private static void setupTimer() {
 		timer.addActionListener(new ActionListener() {
 			@Override
@@ -523,8 +572,13 @@ public class Board extends JPanel {
 
 	@Override
 	public void paintComponent(Graphics g) {
+<<<<<<< Updated upstream
 
 		g.drawImage(background, 0, 0, width, height, null);
+=======
+		//g.drawImage(background, 0, 0, width, height, null);
+		
+>>>>>>> Stashed changes
 		if (!gameOver) {
 			// Paint Enemies
 			for (int r = 0; r < enemies.size(); r++) {
@@ -542,6 +596,7 @@ public class Board extends JPanel {
 			spaceship.setWidth(spaceship.getImage().getWidth() / 9);
 			spaceship.setHeight(spaceship.getImage().getHeight() / 9);
 			spaceship.paintComponent(g);
+<<<<<<< Updated upstream
 
 			// Shoot sProjectiles
 
@@ -563,10 +618,15 @@ public class Board extends JPanel {
 			}
 
 			// Paint Barriers
+=======
+			
+			//painting the barriers
+>>>>>>> Stashed changes
 			for (Barriers br: barriers) {
 				br.setWidth((int) (br.getImage().getWidth()/4.5));
 				br.setHeight((int) (br.getImage().getHeight()/4.5));
 				br.paintComponent(g);
+<<<<<<< Updated upstream
 
 			}
 
@@ -619,6 +679,12 @@ public class Board extends JPanel {
 
 			});
 
+=======
+			}
+			
+			
+			
+>>>>>>> Stashed changes
 		}
 
 	}

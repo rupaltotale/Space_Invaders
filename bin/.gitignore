@@ -5,11 +5,15 @@
 /Board$3.class
 /Board$4.class
 /Board.class
+<<<<<<< Updated upstream
 /Boomerang.png
+=======
+>>>>>>> Stashed changes
 /Enemy.class
 /Enemy1.png
 /Projectile$ProjectileTypes.class
 /Projectile.class
+<<<<<<< Updated upstream
 /Rocket.png
 /SpaceBackground.png
 /SpaceImage2.png
@@ -22,3 +26,11 @@
 /EnemyRed.png
 /FlyingEnemy.png
 /SpaceBackgroundBig.png
+=======
+/SpaceBackground.jpg
+/SpaceImage2.png
+/Spaceship.class
+/Spaceship.png
+/spaceImage.jpg
+/Barriers.class
+>>>>>>> Stashed changes
