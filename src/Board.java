@@ -46,7 +46,8 @@ public class Board extends JPanel {
 	static Timer timer = new Timer(time, null);
 
 	/* Barriers */
-	static ArrayList<Barriers> barriers = new ArrayList<Barriers>();
+	static ArrayList<Barrier> barriers = new ArrayList<Barrier>();
+	private static int numberOfBarriers = 4;
 
 	/* Regular enemies */
 	static ArrayList<ArrayList<Enemy>> enemies = new ArrayList<ArrayList<Enemy>>();
@@ -69,13 +70,13 @@ public class Board extends JPanel {
 	static int sCol = margin;
 	static int lives = 4;
 	static Spaceship spaceship = new Spaceship(sRow, sCol, lives);// for the spaceship characteristics
-	static int moveLimit = 50;
+	static int moveLimit = 40;
 	static int movedBy = moveLimit;
 	static int direction = 0; // -1 is left, 1 is right
 	static boolean timing = true;
 	static boolean isAlive = true;
 	static int sChange = 5;
-	static int spSpeed = -20;
+	static int spSpeed = -25;
 	static ArrayList<Projectile> sProjectiles = new ArrayList(); // list of projectiles thrown by the spaceship
 
 	public static void main(String[] args) {
@@ -210,16 +211,27 @@ public class Board extends JPanel {
 	}
 
 	public static void createBarriers() {
+		//I changed the code a bit because the barriers became very spaced out when I clicked new game
 		barriers = new ArrayList();
-		int barr1x = spaceship.getCol() - 25;
-		int barr1y = spaceship.getRow() - 125;
-		double gap = (width - barr1x * 2) / 3.5;
-		Barriers barrier1 = new Barriers(barr1x, barr1y);
-		barriers.add(barrier1);
-		for (int i = 0; i < 3; i++) {
-			Barriers bernard = new Barriers(barr1x += gap, barr1y);
-			barriers.add(bernard);
+		int columns = numberOfBarriers * 2 +1;
+		int row = spaceship.getRow() - 150;
+		int widthOfBarrier = width/columns;
+		for(int i = 1; i < numberOfBarriers*2; i+=2) {
+			int col = widthOfBarrier * i;
+			Barrier barrier = new Barrier(row, col);
+			barrier.setWidth(widthOfBarrier);
+			barrier.setHeight(widthOfBarrier/barrier.getImage().getWidth() * barrier.getImage().getHeight());
+			barriers.add(barrier);
 		}
+//		int barr1x = spaceship.getCol() - 25;
+//		int barr1y = spaceship.getRow() - 125;
+//		double gap = (width - barr1x * 2) / 3.5;
+//		Barrier barrier1 = new Barrier(barr1y, barr1x);
+//		barriers.add(barrier1);
+//		for (int i = 0; i < 3; i++) {
+//			Barrier bernard = new Barrier( barr1y, barr1x += gap,);
+//			barriers.add(bernard);
+//		}sss
 	}
 
 	/*
@@ -387,6 +399,11 @@ public class Board extends JPanel {
 						updateScore(flyingEnemy);
 
 					}
+					for (int b = 0; b < barriers.size(); b++) {
+						if (isColliding(barriers.get(b), projectile)) {
+							sProjectiles.remove(projectile);
+						}
+					}
 				}
 			}
 		}
@@ -424,11 +441,15 @@ public class Board extends JPanel {
 			if (projectile.getRow() >= spaceship.getRow()
 					&& projectile.getRow() <= spaceship.getRow() + spaceship.getHeight()
 					&& projectile.getCol() >= spaceship.getCol()
-					&& projectile.getCol() <= spaceship.getCol() + spaceship.getWidth()
-			// && nextEnemy.isInvalid()
-			// && !spaceship.isInvalid()
-			) {
-				// System.out.println("Your Spaceship has been hit!");
+					&& projectile.getCol() <= spaceship.getCol() + spaceship.getWidth()) {
+				return true;
+			}
+		}
+		if (obj instanceof Barrier) {
+			Barrier barrier = (Barrier) obj;
+			if (projectile.getRow() >= barrier.getRow() && projectile.getRow() <= barrier.getRow() + barrier.getHeight()
+					&& projectile.getCol() >= barrier.getCol()
+					&& projectile.getCol() <= barrier.getCol() + barrier.getWidth()) {
 				return true;
 			}
 		}
@@ -477,16 +498,24 @@ public class Board extends JPanel {
 		}
 		// Checks for collision between spaceship and enemy's projectile
 		for (int p = 0; p < eProjectiles.size(); p++) {
-			Projectile pro = eProjectiles.get(p);
-			if (isColliding(spaceship, pro)) {
-				spaceship.hit(pro.getDamage());
+			Projectile projectile = eProjectiles.get(p);
+			if (isColliding(spaceship, projectile)) {
+				spaceship.hit(projectile.getDamage());
 				spaceship.removeLife();
 				livesLeft = spaceship.getLives();
-				eProjectiles.remove(pro);
+				eProjectiles.remove(projectile);
 
 			}
 
+			// checks for collision between barrier and eProjectile
+			for (int b = 0; b < barriers.size(); b++) {
+				if (isColliding(barriers.get(b), projectile)) {
+					eProjectiles.remove(projectile);
+				}
+			}
+
 		}
+
 	}
 
 	public static void repaintAllEnemies() {
@@ -563,9 +592,9 @@ public class Board extends JPanel {
 			}
 
 			// Paint Barriers
-			for (Barriers br: barriers) {
-				br.setWidth((int) (br.getImage().getWidth()/4.5));
-				br.setHeight((int) (br.getImage().getHeight()/4.5));
+			for (Barrier br : barriers) {
+				br.setWidth((int) (br.getImage().getWidth() / 4.5));
+				br.setHeight((int) (br.getImage().getHeight() / 4.5));
 				br.paintComponent(g);
 
 			}
@@ -639,35 +668,6 @@ public class Board extends JPanel {
 
 		background = img;
 
-	}
-
-	private static void addEnemiesProjectiles() {
-		for (int row = enemies.size() - 1; row >= 0; row--) {
-			for (int col = enemies.get(row).size() - 1; col >= 0; col--) {
-				if (row == enemies.size() - 1 && !enemies.get(row).get(col).isInvalid()) {
-					int random1 = (int) (Math.random() * 250);
-					if (random1 >= 249) {
-						Projectile projectile = new Projectile("Rocket", epSpeed);
-						int r = enemies.get(row).get(col).getRow() + enemies.get(row).get(col).getHeight();
-						int c = enemies.get(row).get(col).getCol() + enemies.get(row).get(col).getWidth() / 2
-								- projectile.getWidth() / 2;
-						projectile.setLocation(r, c);
-						eProjectiles.add(projectile);
-					}
-					if (enemies.get(row).get(col).isInvalid() && !enemies.get(row - 1).get(col).isInvalid()) {
-						int random2 = (int) (Math.random() * 250);
-						if (random2 >= 249) {
-							Projectile projectile = new Projectile("Rocket", epSpeed);
-							int r = enemies.get(row - 1).get(col).getRow() + enemies.get(row).get(col).getHeight();
-							int c = enemies.get(row - 1).get(col).getCol()
-									+ enemies.get(row - 1).get(col).getWidth() / 2 - projectile.getWidth() / 2;
-							projectile.setLocation(r, c);
-							eProjectiles.add(projectile);
-						}
-					}
-				}
-			}
-		}
 	}
 
 }

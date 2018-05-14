@@ -12,7 +12,7 @@ import javax.imageio.ImageIO;
 
 import javax.swing.JPanel;
 
-public class Barriers extends JPanel {
+public class Barrier extends JPanel {
 	int health; // the number of pixels it beings with
 	int attackedX;
 	int attackedY;
@@ -24,10 +24,10 @@ public class Barriers extends JPanel {
 	BufferedImage backgroundImage;
 	String imageName = "BarrierSpace.png";
 
-	public Barriers(int xLoc, int yLoc) {
-		this.col = xLoc;
+	public Barrier(int row, int col) {
+		this.col = col;
 
-		this.row = yLoc;
+		this.row = row;
 
 		setImage(imageName);
 
