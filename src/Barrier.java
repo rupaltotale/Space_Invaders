@@ -13,16 +13,19 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 public class Barrier extends JPanel {
-	int health; // the number of pixels it beings with
-	int attackedX;
-	int attackedY;
-	int col;
-	int row;
-	int width;
-	int height;
+	private int health; // the number of pixels it beings with
+	private int attackedX;
+	private int attackedY;
+	private int col;
+	private int row;
+	private int width;
+	private int height;
+	private boolean isAttacked = false;
+	private int attackedWidth;
+
 	Color colBackground;
 	BufferedImage backgroundImage;
-	String imageName = "GreenBarier.png";
+	String imageName = "RectangularBarriers.png";
 
 	public Barrier(int row, int col) {
 		this.col = col;
@@ -176,5 +179,22 @@ public class Barrier extends JPanel {
 
 		return height;
 
+	}
+
+	public boolean isAttacked() {
+		return isAttacked;
+	}
+
+	public void setAttacked(boolean isAttacked) {
+		this.isAttacked = isAttacked;
+	}
+
+	public void setAttackedWidth(int width) {
+
+		this.attackedWidth = width;
+	}
+
+	public int getAttackedWidth() {
+		return attackedWidth;
 	}
 }

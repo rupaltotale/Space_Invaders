@@ -20,7 +20,7 @@ public class Spaceship extends JPanel{
 	public void setLives(int lives) {
 		this.lives = lives;
 	}
-	Projectile projectile = new Projectile("Rocket", "Spaceship");
+	
 
 	BufferedImage image;
 	String imageName = "Spaceship.png";
@@ -54,12 +54,7 @@ public class Spaceship extends JPanel{
 	}
 	
 	//Getters and setters
-	public Projectile getProjectile() {
-		return projectile;
-	}
-	public void setProjectile(Projectile projectile) {
-		this.projectile = projectile;
-	}
+	
 	public int getRow() {
 		return row;
 	}

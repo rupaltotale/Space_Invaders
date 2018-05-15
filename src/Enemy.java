@@ -18,11 +18,21 @@ public class Enemy extends JPanel {
 	private ArrayList<ArrayList<Integer>> pixelsCovered = new ArrayList<ArrayList<Integer>>();
 	private String imageName;
 	private boolean invalid = false;
+	private int score;
+	private String projectileName;
 
-	public Enemy(int row, int col, String imageName) {
+	// Spaceship Theme: Score, imageName, projectileName
+	private static String[] redEnemy = { "50", "EnemyRed.png", "ProjectileRed.png" };
+	private static String[] blueEnemy = { "100", "EnemyBlue.png", "ProjectileBlue.png" };
+	private static String[] purpleEnemy = { "150", "EnemyPurple.png", "ProjectilePurple.png" };
+	private static String[] flyingEnemy = { "500", "FlyingEnemy.png", null };
+
+	public Enemy(int row, int col, String[] enemyType) {
 		this.row = row;
 		this.col = col;
-		this.imageName = imageName;
+		this.score = Integer.parseInt(enemyType[0]);
+		this.imageName = enemyType[1];
+		this.projectileName = enemyType[2];
 		setImage(this.imageName);
 	}
 
@@ -125,6 +135,58 @@ public class Enemy extends JPanel {
 
 	public void setInvalid(boolean invalid) {
 		this.invalid = invalid;
+	}
+
+	public static String[] getRedEnemy() {
+		return redEnemy;
+	}
+
+	public static void setRedEnemy(String[] redEnemy) {
+		Enemy.redEnemy = redEnemy;
+	}
+
+	public static String[] getBlueEnemy() {
+		return blueEnemy;
+	}
+
+	public static void setBlueEnemy(String[] blueEnemy) {
+		Enemy.blueEnemy = blueEnemy;
+	}
+
+	public static String[] getPurpleEnemy() {
+		return purpleEnemy;
+	}
+
+	public static void setPurpleEnemy(String[] purpleEnemy) {
+		Enemy.purpleEnemy = purpleEnemy;
+	}
+
+	public static void setFlyingEnemy(String[] flyingEnemy) {
+		Enemy.flyingEnemy = flyingEnemy;
+	}
+
+	public static String[] getFlyingEnemy() {
+		return flyingEnemy;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
+	}
+
+	public String getProjectileName() {
+		return projectileName;
+	}
+
+	public void setProjectileName(String projectileName) {
+		this.projectileName = projectileName;
+	}
+
+	public void setImage(BufferedImage image) {
+		this.image = image;
 	}
 
 }
