@@ -22,26 +22,11 @@ public class Projectile extends JPanel {
 	private int pointValue;
 	private BufferedImage image;
 	private boolean spaceship;
-
-	public Projectile(String projectile, String spaceship) {
-
-		if (projectile.equals("Rocket"))
-			this.projectile = ProjectileTypes.Rocket;
-		if (spaceship.equals("Spaceship"))
-			this.spaceship = true;
-		
-		getImage();
-		setSpeed(15);
-		setSize();
-		setDamage();
-
-	}
+	private String imageName;
 
 	public Projectile(String projectile, int speed) {
 
-		if (projectile.equals("Rocket"))
-			this.projectile = ProjectileTypes.Rocket;
-
+		this.imageName = projectile;
 		getImage();
 		setSpeed(speed);
 		setSize();
@@ -56,10 +41,9 @@ public class Projectile extends JPanel {
 
 	// should we make them all the same size?
 	public void setSize() {
-		if (projectile == ProjectileTypes.Rocket) {
-			height = image.getHeight() / 15;
-			width = image.getWidth() / 15;
-		}
+
+		height = image.getHeight() / 15;
+		width = image.getWidth() / 15;
 
 	}
 
@@ -71,16 +55,15 @@ public class Projectile extends JPanel {
 
 	public void getImage() {
 
-		if (projectile == ProjectileTypes.Rocket) {
-			try {
-				ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-				image = ImageIO.read(classLoader.getResourceAsStream("YellowRocket.png"));
+		try {
+			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+			image = ImageIO.read(classLoader.getResourceAsStream(imageName));
 
-			} catch (IOException e) {
+		} catch (IOException e) {
 
-				e.printStackTrace();
-			}
+			e.printStackTrace();
 		}
+
 	}
 
 	public void setLocation(int row, int col) {
@@ -89,14 +72,13 @@ public class Projectile extends JPanel {
 	}
 
 	public void move() {
-			row += speed;
+		row += speed;
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
-		if (projectile == ProjectileTypes.Rocket) {
-			g.drawImage(image, col, row, width, height, null);
-		}
+		g.drawImage(image, col, row, width, height, null);
+
 	}
 
 	// getters and setters
@@ -162,6 +144,30 @@ public class Projectile extends JPanel {
 
 	public void setColor(Color color) {
 		this.color = color;
+	}
+
+	public ProjectileTypes getProjectile() {
+		return projectile;
+	}
+
+	public void setProjectile(ProjectileTypes projectile) {
+		this.projectile = projectile;
+	}
+
+	public boolean isSpaceship() {
+		return spaceship;
+	}
+
+	public void setSpaceship(boolean spaceship) {
+		this.spaceship = spaceship;
+	}
+
+	public String getImageName() {
+		return imageName;
+	}
+
+	public void setImageName(String imageName) {
+		this.imageName = imageName;
 	}
 
 }
