@@ -57,7 +57,7 @@ public class Board extends JPanel {
 	static int eChange = 1;
 	private static int moveDownBy;
 	static ArrayList<Projectile> eProjectiles = new ArrayList();
-	static int epSpeed = 6;
+	static int epSpeed = 9;
 
 	/* Flying enemies */
 	static int fRow = margin / 3;
@@ -425,7 +425,7 @@ public class Board extends JPanel {
 		if (obj instanceof Barrier) {
 			Barrier barrier = (Barrier) obj;
 			if (projectile.getRow() >= barrier.getRow() && projectile.getRow() <= barrier.getRow() + barrier.getHeight()
-					&& projectile.getCol() >= barrier.getCol()
+					&& projectile.getCol() + projectile.getWidth() >= barrier.getCol()
 					&& projectile.getCol() <= barrier.getCol() + barrier.getWidth()) {
 				// This is just rough code for damage.
 				// barrier.setAttacked(true);
@@ -462,7 +462,8 @@ public class Board extends JPanel {
 			// System.out.println(enemy.getProjectileName());
 			projectile.setCol(enemy.getCol() + enemy.getWidth() / 2 - projectile.getWidth() / 2);
 			projectile.setRow(enemy.getRow() + enemy.getHeight());
-			if (eProjectiles.size() == 0) {
+			double randomAdd = Math.random() * 500;
+			if (eProjectiles.size() == 0 && randomAdd >490) {
 				eProjectiles.add(projectile);
 			}
 		}

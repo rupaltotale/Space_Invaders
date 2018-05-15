@@ -28,10 +28,9 @@ public class Barrier extends JPanel {
 	String imageName = "RectangularBarriers.png";
 
 	public Barrier(int row, int col) {
-		this.col = col;
 
 		this.row = row;
-
+		this.col = col;
 		setImage(imageName);
 
 	}
