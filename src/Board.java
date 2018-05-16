@@ -47,6 +47,7 @@ public class Board extends JPanel {
 	static int constant = 1;
 	static int time = 20 * constant; // in milliseconds
 	static Timer timer = new Timer(time, null);
+	private static boolean pause = false;
 
 	/* Barriers */
 	static ArrayList<Barrier> barriers = new ArrayList<Barrier>();
@@ -142,6 +143,7 @@ public class Board extends JPanel {
 		this.getInputMap().put(KeyStroke.getKeyStroke("LEFT"), "left");
 		this.getInputMap().put(KeyStroke.getKeyStroke("RIGHT"), "right");
 		this.getInputMap().put(KeyStroke.getKeyStroke("SPACE"), "space");
+		this.getInputMap().put(KeyStroke.getKeyStroke("P"), "pause");
 
 		this.getActionMap().put("right", new AbstractAction() {
 
@@ -184,6 +186,19 @@ public class Board extends JPanel {
 				} else {
 					startNewGame();
 				}
+			}
+
+		});
+		this.getActionMap().put("pause", new AbstractAction() {
+
+			
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// ADD implementation of space key here
+
+				// System.out.println("Space Key Pressed");
+				pause = !pause;
 			}
 
 		});
@@ -247,9 +262,12 @@ public class Board extends JPanel {
 		timer.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				tick();
-				board.repaint();
-				timeElapsed++;
+				if(!pause) {
+					tick();
+					board.repaint();
+					timeElapsed++;
+				}
+				
 			}
 
 		});
