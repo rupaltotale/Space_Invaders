@@ -40,6 +40,7 @@ public class Board extends JPanel {
 	static int margin = 150;
 	static BufferedImage background;
 	static boolean gameOver = false;
+//	static boolean startGame = false;
 	static int score = 0;
 	static int livesLeft;
 	static int timeElapsed = 0;
@@ -62,7 +63,7 @@ public class Board extends JPanel {
 	/* Flying enemies */
 	static int fRow = margin / 3;
 	static int fCol = margin;
-	static Enemy flyingEnemy = new Enemy(fRow, fCol, Enemy.getFlyingEnemy());
+	static Enemy flyingEnemy;
 	static int fTime = 20 * 1000 / time; // every 10 seconds
 	static int fSpeed = 3;
 
@@ -91,10 +92,13 @@ public class Board extends JPanel {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(board);
 		board.setPreferredSize(new Dimension(width, height));
-		setBackground();
 		frame.pack();
 		frame.setVisible(true);
 		board.setUpKeyMappings();
+		
+		Image.loadImages();
+		background = Image.getBackground();
+		Enemy.makeEnemyLists();
 		startNewGame();
 		setupTimer();
 
@@ -105,6 +109,8 @@ public class Board extends JPanel {
 		createBarriers();
 		flyingEnemy.setInvalid(true);
 		flyingEnemy.setCol(margin);
+		
+		spaceship.setImage(Image.getSpaceship());
 		gameOver = false;
 		score = 0;
 		livesLeft = lives - 1;
@@ -166,7 +172,7 @@ public class Board extends JPanel {
 				if (!gameOver) {
 
 					if (sProjectiles.size() == 0) {
-						Projectile projectile = new Projectile("yellowRocket.png", spSpeed);
+						Projectile projectile = new Projectile(Image.getYellowProjectile(), spSpeed);
 						int row = spaceship.getRow() - projectile.getHeight();
 						int col = spaceship.getCol() + spaceship.getWidth() / 2 - projectile.getWidth() / 2;
 						projectile.setLocation(row, col);
@@ -208,6 +214,7 @@ public class Board extends JPanel {
 			}
 			enemies.add(enemyRow);
 		}
+		flyingEnemy = new Enemy(fRow, fCol, Enemy.getFlyingEnemy());
 
 	}
 
@@ -226,6 +233,7 @@ public class Board extends JPanel {
 			barriers.add(barrier);
 		}
 	}
+	
 
 	/*
 	 * Adds an action listener to the timer. This action is performed every <time>
@@ -417,7 +425,7 @@ public class Board extends JPanel {
 		if (obj instanceof Spaceship) {
 			if (projectile.getRow() >= spaceship.getRow()
 					&& projectile.getRow() <= spaceship.getRow() + spaceship.getHeight()
-					&& projectile.getCol() >= spaceship.getCol()
+					&& projectile.getCol() + projectile.getWidth()>= spaceship.getCol()
 					&& projectile.getCol() <= spaceship.getCol() + spaceship.getWidth()) {
 				return true;
 			}
@@ -458,7 +466,7 @@ public class Board extends JPanel {
 		if (enemiesForProjectile.size() != 0) {
 			int random = (int) (enemiesForProjectile.size() * Math.random());
 			Enemy enemy = enemiesForProjectile.get(random);
-			Projectile projectile = new Projectile(enemy.getProjectileName(), epSpeed);
+			Projectile projectile = new Projectile(enemy.getProjectile(), epSpeed);
 			// System.out.println(enemy.getProjectileName());
 			projectile.setCol(enemy.getCol() + enemy.getWidth() / 2 - projectile.getWidth() / 2);
 			projectile.setRow(enemy.getRow() + enemy.getHeight());
@@ -540,7 +548,7 @@ public class Board extends JPanel {
 	public void paintComponent(Graphics g) {
 
 		g.drawImage(background, 0, 0, width, height, null);
-		if (!gameOver) {
+		if (!gameOver && timeElapsed != 0) {
 			// Paint Barriers
 			for (Barrier br : barriers) {
 				br.setWidth((int) (br.getImage().getWidth() / 4.5));
@@ -595,7 +603,7 @@ public class Board extends JPanel {
 			}
 
 			// Paint Flying Enemy
-			if (!flyingEnemy.isInvalid() && timeElapsed != 0) {
+			if (timeElapsed != 0 && !flyingEnemy.isInvalid()) {
 				flyingEnemy.setWidth(flyingEnemy.getImage().getWidth() / 7);
 				flyingEnemy.setHeight(flyingEnemy.getImage().getHeight() / 7);
 				flyingEnemy.paintComponent(g);
@@ -639,19 +647,6 @@ public class Board extends JPanel {
 	/*
 	 * Sets the background of the panel
 	 */
-	private static void setBackground() {
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		InputStream input = classLoader.getResourceAsStream("SpaceBackground.png");
-		BufferedImage img = null;
-
-		try {
-			img = ImageIO.read(input);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		background = img;
-
-	}
+	
 
 }

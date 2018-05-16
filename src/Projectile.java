@@ -24,10 +24,9 @@ public class Projectile extends JPanel {
 	private boolean spaceship;
 	private String imageName;
 
-	public Projectile(String projectile, int speed) {
+	public Projectile(BufferedImage projectile, int speed) {
 
-		this.imageName = projectile;
-		getImage();
+		this.image = projectile;
 		setSpeed(speed);
 		setSize();
 		setDamage();
@@ -53,16 +52,9 @@ public class Projectile extends JPanel {
 		}
 	}
 
-	public void getImage() {
+	public BufferedImage getImage() {
 
-		try {
-			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-			image = ImageIO.read(classLoader.getResourceAsStream(imageName));
-
-		} catch (IOException e) {
-
-			e.printStackTrace();
-		}
+		return image;
 
 	}
 

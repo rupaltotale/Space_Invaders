@@ -28,7 +28,6 @@ public class Spaceship extends JPanel{
 	public Spaceship(int row, int col, int lives) {
 		this.row = row;
 		this.col = col;
-		setImage(imageName);
 		health = 100;
 		this.lives = lives;
 		

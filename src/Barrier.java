@@ -31,8 +31,7 @@ public class Barrier extends JPanel {
 
 		this.row = row;
 		this.col = col;
-		setImage(imageName);
-
+		backgroundImage = Image.getSpaceBarrier(); 
 	}
 
 	public int[] getAttackedLocation() {
@@ -66,27 +65,7 @@ public class Barrier extends JPanel {
 	}
 
 	// getters and setters
-	public void setImage(String name) {
-
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-
-		InputStream input = classLoader.getResourceAsStream(name);
-
-		BufferedImage img = null;
-
-		try {
-
-			img = ImageIO.read(input);
-
-		} catch (IOException e) {
-
-			e.printStackTrace();
-
-		}
-
-		backgroundImage = img;
-
-	}
+	
 
 	public BufferedImage getImage() {
 		return backgroundImage;
