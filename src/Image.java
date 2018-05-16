@@ -38,7 +38,7 @@ public class Image {
 			spaceship };
 	private static String[] imageNames = {
 			"SpaceBackground.png", 
-			"RectangularBarriers.png", 
+			"RockySpaceBarrier.png", 
 			"EnemyBlue.png", 
 			"EnemyRed.png", 
 			"EnemyPurple.png", 

@@ -572,7 +572,7 @@ public class Board extends JPanel {
 		if(invalidRows > rowsInvalidated) {
 			rowsInvalidated ++;
 //			eSpeed += 1;
-			probabilityOfNotShooting -=0.04;
+			probabilityOfNotShooting -=0.02;
 //			System.out.println("New row of enemies has been killed!");
 		}
 		
