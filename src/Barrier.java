@@ -33,7 +33,7 @@ public class Barrier extends JPanel {
 
 		this.row = row;
 		this.col = col;
-		backgroundImage = Image.getSpaceBarrier(); 
+		backgroundImage = Image.getSpaceBarrier();
 	}
 
 	public int[] getAttackedLocation() {
@@ -63,17 +63,15 @@ public class Barrier extends JPanel {
 	public void paintComponent(Graphics g) {
 
 		g.drawImage(backgroundImage, col, row, width, height, this);
-		for(ArrayList<Integer> a: hitPixels) {
-			g.setColor(new Color(0,0,0));
+		for (ArrayList<Integer> a : hitPixels) {
+			g.setColor(new Color(0, 0, 0));
 			g.drawRect(a.get(1), a.get(0), 1, 1);
 			g.fillRect(a.get(1), a.get(0), 1, 1);
 		}
-		
 
 	}
 
 	// getters and setters
-	
 
 	public BufferedImage getImage() {
 		return backgroundImage;
@@ -183,49 +181,83 @@ public class Barrier extends JPanel {
 	public int getAttackedWidth() {
 		return attackedWidth;
 	}
-	
+
 	public boolean isHit(Projectile pro) {
-		if(pro.getRow()+pro.getHeight()>=row && pro.getCol()+(pro.getWidth()/2)>=col && pro.getCol()+(pro.getWidth()/2)<= col+width) {
+		if (pro.getRow() + pro.getHeight() >= row && pro.getCol() + (pro.getWidth() / 2) >= col
+				&& pro.getCol() + (pro.getWidth() / 2) <= col + width) {
 			hit(pro);
 			return true;
 		}
 		return false;
 	}
-	
-	public void hit(Projectile pro) {
-		int hitCol = pro.getCol() + pro.getWidth()/2;
-		int maxRow = row;
-		//for(int i = row; i<row+height; i++) {
-			if(hitPixels.size() == 0) {
 
-				for(int r = row;r<=row+9; r++) {
-					for(int c=hitCol-2; c<hitCol+2;c++) {
-						ArrayList<Integer> temp = new ArrayList<>();
-						temp.add(r);
-						temp.add(c);
-						hitPixels.add(temp);
-					}
-				}
-				
-				
-			}
-			for (int r=0; r<hitPixels.size(); r++) {
-				if(hitPixels.get(r).get(1) == hitCol) {
-					if(hitPixels.get(r).get(0) > row) {
-						maxRow = hitPixels.get(r).get(0);
-					}
-				}
-			}
-			for(int r = maxRow;r<=maxRow+9; r++) {
-				for(int c=hitCol-2; c<hitCol+2;c++) {
+	public void hit(Projectile pro) {
+		int hitCol = pro.getCol() + pro.getWidth() / 2;
+		int maxRow = row;
+		// for(int i = row; i<row+height; i++) {
+		if (hitPixels.size() == 0) {
+
+			for (int r = row; r <= row + 9; r++) {
+				for (int c = hitCol - 2; c < hitCol + 2; c++) {
 					ArrayList<Integer> temp = new ArrayList<>();
 					temp.add(r);
 					temp.add(c);
 					hitPixels.add(temp);
 				}
 			}
-		//}
+
+		}
+		for (int r = 0; r < hitPixels.size(); r++) {
+			if (hitPixels.get(r).get(1) == hitCol) {
+				if (hitPixels.get(r).get(0) > row) {
+					maxRow = hitPixels.get(r).get(0);
+				}
+			}
+		}
+		for (int r = maxRow; r <= maxRow + 9; r++) {
+			for (int c = hitCol - 2; c < hitCol + 2; c++) {
+				ArrayList<Integer> temp = new ArrayList<>();
+				temp.add(r);
+				temp.add(c);
+				hitPixels.add(temp);
+			}
+		}
+		// }
 	}
-	
+
+	public void changeImage() {
+		BufferedImage image = backgroundImage;
+		if (image != null) {
+			BufferedImage colorImage = new BufferedImage(image.getWidth(), image.getHeight(),
+					BufferedImage.TYPE_INT_ARGB);
+			for (int r = 0; r < image.getHeight(); r++) {
+				for (int c = 0; c < image.getWidth(); c++) {
+					colorImage.setRGB(c, r, image.getRGB(c, r));
+				}
+			}
+			int attackedHeight = attackedWidth;
+			for (int row = attackedY - attackedHeight/2; row < attackedY + attackedHeight/2; row++) {
+				for (int col = attackedX; col < attackedX + attackedWidth; col++) {
+					if(col>=0 && col<colorImage.getWidth()
+							&& row>=0 && row <colorImage.getHeight()) 
+							{	
+						int r = 0;
+						int g = 0;
+						int b = 0;
+						int a = 0;
+						int rgba = (a << 24) | (r << 16) | (g << 8) | b;
+//						if(colorImage.getRGB(col, row) == rgba) {
+//							attackedY = attackedY + attackedWidth;
+//							changeImage();
+//						}
+						colorImage.setRGB(col, row, rgba);
+					}
+				}
+
+			}
+			backgroundImage = colorImage;
+			
+		}
+	}
 
 }

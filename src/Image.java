@@ -20,8 +20,8 @@ public class Image {
 	private static BufferedImage redProjectile;
 	private static BufferedImage purpleProjectile;
 	private static BufferedImage yellowProjectile;
-
 	private static BufferedImage spaceship;
+	private static BufferedImage transparentRect;
 
 	// PLEASE DON'T CHANGE ORDER OF ARRAYS!! IF YOU ADD ANYTHING, ADD IT TO THE END!!
 	private static BufferedImage[] images = { 
@@ -35,10 +35,12 @@ public class Image {
 			redProjectile, 
 			purpleProjectile, 
 			yellowProjectile, 
-			spaceship };
+			spaceship,
+			transparentRect
+			};
 	private static String[] imageNames = {
-			"SpaceBackground.png", 
-			"RockySpaceBarrier.png", 
+			"SkyBackground.png", 
+			"CloudBarrier.png", 
 			"EnemyBlue.png", 
 			"EnemyRed.png", 
 			"EnemyPurple.png", 
@@ -47,7 +49,8 @@ public class Image {
 			"ProjectileRed.png", 
 			"ProjectilePurple.png", 
 			"YellowRocket.png", 
-			"Spaceship.png"
+			"Spaceship.png",
+			"TransparentRect.png"
 	};
 
 	public static void loadImages() {
@@ -84,7 +87,7 @@ public class Image {
 	}
 
 	public static void setSpaceBarrier(BufferedImage spaceBarrier) {
-		Image.spaceBarrier = spaceBarrier;
+		images[1] = spaceBarrier;
 	}
 
 	public static BufferedImage getBlueEnemy() {
@@ -173,6 +176,14 @@ public class Image {
 
 	public static void setImageNames(String[] imageNames) {
 		Image.imageNames = imageNames;
+	}
+
+	public static BufferedImage getTransparentRect() {
+		return images[11];
+	}
+
+	public static void setTransparentRect(BufferedImage transparentRect) {
+		Image.transparentRect = transparentRect;
 	}
 		
 
