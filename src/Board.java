@@ -1,3 +1,4 @@
+
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Color;
@@ -39,11 +40,14 @@ public class Board extends JPanel {
 	static int margin = 150;
 	static BufferedImage background;
 	static boolean gameOver = false;
+//	static boolean startGame = false;
 	static int score = 0;
 	static int livesLeft;
 	static int timeElapsed = 0;
-	static int time = 20; // in milliseconds
+	static int constant = 1;
+	static int time = 20 * constant; // in milliseconds
 	static Timer timer = new Timer(time, null);
+	private static boolean pause = false;
 
 	/* Barriers */
 	static ArrayList<Barrier> barriers = new ArrayList<Barrier>();
@@ -53,31 +57,33 @@ public class Board extends JPanel {
 	static ArrayList<ArrayList<Enemy>> enemies = new ArrayList<ArrayList<Enemy>>();
 	static int enemyRow = 5;
 	static int enemyCol = 12;
-	static int eChange = 1;
 	private static int moveDownBy;
 	static ArrayList<Projectile> eProjectiles = new ArrayList();
-	static int epSpeed = 10;
+	static double eSpeed = 1 * constant;
+	static int epSpeed = 9 * constant;
+	private static double probabilityOfNotShooting = 0.98;
+	static int rowsInvalidated;
 
 	/* Flying enemies */
 	static int fRow = margin / 3;
 	static int fCol = margin;
-	static Enemy flyingEnemy = new Enemy(fRow, fCol, "FlyingEnemy.png");
-	static int fTime = 20 * 1000 / time; // every 10 seconds
-	static int fSpeed = 3;
+	static Enemy flyingEnemy;
+	static int fTime = 30 * 1000 / time /constant; // every 10 seconds
+	static int fSpeed = 3* constant;
 
 	/* Spaceship */
 	static int sRow = height - 100;
 	static int sCol = margin;
-	static int lives = 4;
+	static int lives = 3;
 	static Spaceship spaceship = new Spaceship(sRow, sCol, lives);// for the spaceship characteristics
 	static int moveLimit = 40;
 	static int movedBy = moveLimit;
 	static int direction = 0; // -1 is left, 1 is right
-	static boolean timing = true;
 	static boolean isAlive = true;
-	static int sChange = 5;
-	static int spSpeed = -25;
+	static int sSpeed = 5 * constant;
+	static int spSpeed = -25 * constant;
 	static ArrayList<Projectile> sProjectiles = new ArrayList(); // list of projectiles thrown by the spaceship
+	
 
 	public static void main(String[] args) {
 
@@ -90,10 +96,13 @@ public class Board extends JPanel {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(board);
 		board.setPreferredSize(new Dimension(width, height));
-		setBackground();
 		frame.pack();
 		frame.setVisible(true);
 		board.setUpKeyMappings();
+		
+		Image.loadImages();
+		background = Image.getBackground();
+		Enemy.makeEnemyLists();
 		startNewGame();
 		setupTimer();
 
@@ -104,6 +113,8 @@ public class Board extends JPanel {
 		createBarriers();
 		flyingEnemy.setInvalid(true);
 		flyingEnemy.setCol(margin);
+		
+		spaceship.setImage(Image.getSpaceship());
 		gameOver = false;
 		score = 0;
 		livesLeft = lives - 1;
@@ -132,6 +143,7 @@ public class Board extends JPanel {
 		this.getInputMap().put(KeyStroke.getKeyStroke("LEFT"), "left");
 		this.getInputMap().put(KeyStroke.getKeyStroke("RIGHT"), "right");
 		this.getInputMap().put(KeyStroke.getKeyStroke("SPACE"), "space");
+		this.getInputMap().put(KeyStroke.getKeyStroke("P"), "pause");
 
 		this.getActionMap().put("right", new AbstractAction() {
 
@@ -165,7 +177,7 @@ public class Board extends JPanel {
 				if (!gameOver) {
 
 					if (sProjectiles.size() == 0) {
-						Projectile projectile = new Projectile("Rocket", spSpeed);
+						Projectile projectile = new Projectile(Image.getYellowProjectile(), spSpeed);
 						int row = spaceship.getRow() - projectile.getHeight();
 						int col = spaceship.getCol() + spaceship.getWidth() / 2 - projectile.getWidth() / 2;
 						projectile.setLocation(row, col);
@@ -174,6 +186,19 @@ public class Board extends JPanel {
 				} else {
 					startNewGame();
 				}
+			}
+
+		});
+		this.getActionMap().put("pause", new AbstractAction() {
+
+			
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// ADD implementation of space key here
+
+				// System.out.println("Space Key Pressed");
+				pause = !pause;
 			}
 
 		});
@@ -186,6 +211,7 @@ public class Board extends JPanel {
 	 * Creates the enemies visually and adds rows of them to the enemies list.
 	 */
 	public static void createEnemies() {
+		rowsInvalidated = 0;
 		enemies = new ArrayList();
 		int colSpacing = (width - margin * 2) / (enemyCol + 1);
 		int rowSpacing = (int) ((height * 0.3) / (enemyRow));
@@ -193,20 +219,21 @@ public class Board extends JPanel {
 			ArrayList<Enemy> enemyRow = new ArrayList<Enemy>();
 			for (int c = 0; c < enemyCol; c++) {
 				if (r < 1) {
-					Enemy enemy = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, "EnemyPurple.png");
+					Enemy enemy = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, Enemy.getPurpleEnemy());
 					moveDownBy = enemy.getHeight() / 4;
 					enemyRow.add(enemy);
 				} else if (r < 3) {
-					Enemy enemy = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, "EnemyBlue.png");
+					Enemy enemy = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, Enemy.getBlueEnemy());
 					enemyRow.add(enemy);
 				} else {
-					Enemy enemy = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, "EnemyRed.png");
+					Enemy enemy = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, Enemy.getRedEnemy());
 					enemyRow.add(enemy);
 				}
 
 			}
 			enemies.add(enemyRow);
 		}
+		flyingEnemy = new Enemy(fRow, fCol, Enemy.getFlyingEnemy());
 
 	}
 
@@ -224,28 +251,23 @@ public class Board extends JPanel {
 			barrier.setHeight(widthOfBarrier / barrier.getImage().getWidth() * barrier.getImage().getHeight());
 			barriers.add(barrier);
 		}
-		// int barr1x = spaceship.getCol() - 25;
-		// int barr1y = spaceship.getRow() - 125;
-		// double gap = (width - barr1x * 2) / 3.5;
-		// Barrier barrier1 = new Barrier(barr1y, barr1x);
-		// barriers.add(barrier1);
-		// for (int i = 0; i < 3; i++) {
-		// Barrier bernard = new Barrier( barr1y, barr1x += gap,);
-		// barriers.add(bernard);
-		// }sss
 	}
+	
 
 	/*
-	 * Adds an action listener to the timer. This action is performed every 1
+	 * Adds an action listener to the timer. This action is performed every <time>
 	 * millisecond.
 	 */
 	private static void setupTimer() {
 		timer.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				tick();
-				board.repaint();
-				timeElapsed++;
+				if(!pause) {
+					tick();
+					board.repaint();
+					timeElapsed++;
+				}
+				
 			}
 
 		});
@@ -265,10 +287,12 @@ public class Board extends JPanel {
 		chooseRandomEnemyForProjectile();
 		moveEnemiesProjectiles();
 		repaintAllEnemies();
+		isNewRowInvalidated();
 		isGameOver();
 		// isAlive = spaceship.alive();
 
 	}
+
 
 	/*
 	 * This either shows the flying enemy (every <fTime>) or moves it or removes it
@@ -293,8 +317,8 @@ public class Board extends JPanel {
 	}
 
 	/*
-	 * Checks if enemies are near the edge of the panel and based on that shifts the
-	 * enemy left or right
+	 * Checks if enemies are near the edge of the panel and based on that shifts
+	 * them left or right
 	 */
 	public static void moveEnemies() {
 		int lastCol = -1;
@@ -314,15 +338,15 @@ public class Board extends JPanel {
 			}
 		}
 		int w = enemies.get(0).get(enemyCol - 1).getImage().getWidth() / 9;
-		int total = lastCol + eChange + w;
-		if (Math.signum(eChange) > 0) { // moving right
+		int total = (int) (lastCol + eSpeed + w);
+		if (Math.signum(eSpeed) > 0) { // moving right
 			if (total > width) {
-				eChange = -1 * eChange;
+				eSpeed = -1 * eSpeed;
 				moveEnemiesDown();
 			}
-		} else if (Math.signum(eChange) < 0) {
-			if (firstCol - eChange < 0) {
-				eChange = -1 * eChange;
+		} else if (Math.signum(eSpeed) < 0) {
+			if (firstCol - eSpeed < 0) {
+				eSpeed = -1 * eSpeed;
 				moveEnemiesDown();
 
 			}
@@ -330,7 +354,7 @@ public class Board extends JPanel {
 		for (int r = 0; r < enemies.size(); r++) {
 			for (int c = 0; c < enemies.get(r).size(); c++) {
 				Enemy enemy = enemies.get(r).get(c);
-				enemy.setCol(enemy.getCol() + eChange);
+				enemy.setCol((int) (enemy.getCol() + eSpeed));
 			}
 
 		}
@@ -355,12 +379,12 @@ public class Board extends JPanel {
 	 */
 	private static void moveSpaceship() {
 		if (movedBy < moveLimit) {
-			if (direction == 1 & spaceship.getCol() + sChange + spaceship.getWidth() <= width) {
-				spaceship.setCol(spaceship.getCol() + sChange);
-				movedBy += sChange;
-			} else if (direction == -1 && spaceship.getCol() - sChange >= 0) {
-				spaceship.setCol(spaceship.getCol() - sChange);
-				movedBy += sChange;
+			if (direction == 1 & spaceship.getCol() + sSpeed + spaceship.getWidth() <= width) {
+				spaceship.setCol(spaceship.getCol() + sSpeed);
+				movedBy += sSpeed;
+			} else if (direction == -1 && spaceship.getCol() - sSpeed >= 0) {
+				spaceship.setCol(spaceship.getCol() - sSpeed);
+				movedBy += sSpeed;
 			}
 		}
 
@@ -386,7 +410,7 @@ public class Board extends JPanel {
 							Enemy enemy = enemies.get(r).get(c);
 							if (isColliding(enemy, projectile)) {
 								enemy.setInvalid(true);
-								updateScore(enemy);
+								score += enemy.getScore();
 								sProjectiles.remove(projectile);
 
 							}
@@ -397,7 +421,7 @@ public class Board extends JPanel {
 					if (isColliding(flyingEnemy, projectile)) {
 						flyingEnemy.setInvalid(true);
 						sProjectiles.remove(projectile);
-						updateScore(flyingEnemy);
+						score += flyingEnemy.getScore();
 
 					}
 					for (int b = 0; b < barriers.size(); b++) {
@@ -408,22 +432,6 @@ public class Board extends JPanel {
 				}
 			}
 		}
-	}
-
-	private static void updateScore(Enemy enemy) {
-		if (enemy.getImageName().equals("EnemyRed.png")) {
-			score += 50;
-		}
-		if (enemy.getImageName().equals("EnemyBlue.png")) {
-			score += 100;
-		}
-		if (enemy.getImageName().equals("EnemyPurple.png")) {
-			score += 150;
-		}
-		if (enemy.getImageName().equals("FlyingEnemy.png")) {
-			score += 300;
-		}
-
 	}
 
 	private static boolean isColliding(Object obj, Projectile projectile) {
@@ -441,16 +449,28 @@ public class Board extends JPanel {
 		if (obj instanceof Spaceship) {
 			if (projectile.getRow() >= spaceship.getRow()
 					&& projectile.getRow() <= spaceship.getRow() + spaceship.getHeight()
-					&& projectile.getCol() >= spaceship.getCol()
+					&& projectile.getCol() + projectile.getWidth()>= spaceship.getCol()
 					&& projectile.getCol() <= spaceship.getCol() + spaceship.getWidth()) {
 				return true;
 			}
 		}
 		if (obj instanceof Barrier) {
 			Barrier barrier = (Barrier) obj;
-			if (projectile.getRow() >= barrier.getRow() && projectile.getRow() <= barrier.getRow() + barrier.getHeight()
-					&& projectile.getCol() >= barrier.getCol()
-					&& projectile.getCol() <= barrier.getCol() + barrier.getWidth()) {
+//			if (projectile.getRow() >= barrier.getRow() && projectile.getRow() <= barrier.getRow() + barrier.getHeight()
+//					&& projectile.getCol() + projectile.getWidth() >= barrier.getCol()
+//					&& projectile.getCol() <= barrier.getCol() + barrier.getWidth()) {
+//				// This is just rough code for damage.
+//				// barrier.setAttacked(true);
+//				// int colRelativeToBarrier = projectile.getCol() - barrier.getCol();
+//				// barrier.setAttackedX(colRelativeToBarrier);
+//				// int rowRelativeToBarrier = projectile.getRow() - barrier.getRow();
+//				// barrier.setAttackedY(rowRelativeToBarrier);
+//				// barrier.setAttackedWidth(projectile.getWidth());
+//				return true;
+//			}
+			
+			if(projectile.getRow()+projectile.getHeight()>=barrier.getRow() && projectile.getRow()+projectile.getHeight()<=barrier.getRow()+barrier.getHeight() && projectile.getCol()+(projectile.getWidth()/2)>=barrier.getCol() && projectile.getCol()+(projectile.getWidth()/2)<= barrier.getCol()+barrier.getWidth()) {
+//				barrier.hit(projectile);
 				return true;
 			}
 		}
@@ -475,10 +495,12 @@ public class Board extends JPanel {
 		if (enemiesForProjectile.size() != 0) {
 			int random = (int) (enemiesForProjectile.size() * Math.random());
 			Enemy enemy = enemiesForProjectile.get(random);
-			Projectile projectile = new Projectile("Rocket", epSpeed);
+			Projectile projectile = new Projectile(enemy.getProjectile(), epSpeed);
+			// System.out.println(enemy.getProjectileName());
 			projectile.setCol(enemy.getCol() + enemy.getWidth() / 2 - projectile.getWidth() / 2);
 			projectile.setRow(enemy.getRow() + enemy.getHeight());
-			if (eProjectiles.size() == 0) {
+			double randomAdd = Math.random() * 500;
+			if (eProjectiles.size() == 0 && randomAdd > 500 * probabilityOfNotShooting) {
 				eProjectiles.add(projectile);
 			}
 		}
@@ -503,7 +525,7 @@ public class Board extends JPanel {
 			if (isColliding(spaceship, projectile)) {
 				spaceship.hit(projectile.getDamage());
 				spaceship.removeLife();
-				livesLeft = spaceship.getLives();
+				livesLeft = spaceship.getLives() - 1;
 				eProjectiles.remove(projectile);
 
 			}
@@ -534,6 +556,27 @@ public class Board extends JPanel {
 		}
 	}
 
+	private static void isNewRowInvalidated() {
+		int invalidRows = 0;
+		for(int r = 0; r<enemies.size(); r++) {
+			boolean invalid = true;
+			for(int c = 0; c< enemies.get(r).size(); c++) {
+				if(!enemies.get(r).get(c).isInvalid()) {
+					invalid = false;
+				}
+			}
+			if(invalid) {
+				invalidRows++;
+			}
+		}
+		if(invalidRows > rowsInvalidated) {
+			rowsInvalidated ++;
+//			eSpeed += 1;
+			probabilityOfNotShooting -=0.02;
+//			System.out.println("New row of enemies has been killed!");
+		}
+		
+	}
 	public static void isGameOver() {
 		boolean belowSpaceship = false;
 		for (int r = 0; r < enemies.size(); r++) {
@@ -555,12 +598,20 @@ public class Board extends JPanel {
 	public void paintComponent(Graphics g) {
 
 		g.drawImage(background, 0, 0, width, height, null);
-		if (!gameOver) {
+		if (!gameOver && timeElapsed != 0) {
 			// Paint Barriers
 			for (Barrier br : barriers) {
-				br.setWidth((int) (br.getImage().getWidth() / 3.5));
+				br.setWidth((int) (br.getImage().getWidth() / 4.5));
 				br.setHeight((int) (br.getImage().getHeight() / 4.5));
 				br.paintComponent(g);
+
+				// This is just rough code for damage.
+				// if(br.isAttacked()) {
+				// g.setColor(Color.WHITE);
+				// g.fillRect(br.getAttackedX(), br.getAttackedY(), br.getAttackedWidth(), 50);
+				// br.setAttacked(false);
+				// System.out.println("Barrier has been attacked!");
+				// }
 
 			}
 
@@ -595,45 +646,38 @@ public class Board extends JPanel {
 			if (eProjectiles.size() > 0) {
 				for (int i = 0; i < eProjectiles.size(); i++) {
 					Projectile projectile = eProjectiles.get(i);
+
 					projectile.paintComponent(g);
 
 				}
 			}
 
 			// Paint Flying Enemy
-			if (!flyingEnemy.isInvalid() && timeElapsed != 0) {
-				// System.out.println(timeElapsed + ", Flying Enemy");
+			if (timeElapsed != 0 && !flyingEnemy.isInvalid()) {
 				flyingEnemy.setWidth(flyingEnemy.getImage().getWidth() / 7);
 				flyingEnemy.setHeight(flyingEnemy.getImage().getHeight() / 7);
 				flyingEnemy.paintComponent(g);
 			}
 			// Lives Left in left corner
+			Font font = new Font("Courier", Font.PLAIN, 22);
 			g.setColor(Color.WHITE);
-			g.setFont(new Font("TimesRoman", Font.PLAIN, 25));
+			g.setFont(font);
 			g.drawString("Lives Left: " + livesLeft, margin / 3, margin / 3);
 
 			// Score in right corner
-			g.setColor(Color.WHITE);
-			g.setFont(new Font("TimesRoman", Font.PLAIN, 25));
 			String s = "Score: " + score;
 			g.drawString(s, width - margin / 3 - 15 * s.length(), margin / 3);
+			
+			//Time elapsed in the middle
+			String t = "Time Elapsed: " + (timeElapsed)/time/2;
+			g.drawString(t, width/2 - t.length() * 15/2, margin / 3);
+			
 		}
 
-		// Write Score
-		// if (!isAlive) {
-		// g.setColor(new Color(255, 255, 255));
-		// g.drawString("YOU ARE DEAD", frame.getWidth() / 2 - 20, margin);
-		// }
-		// if (spaceship.isDead()) {
-		// g.setColor(new Color(255, 255, 255));
-		// // g.drawString("Spaceship is dead", 10, 10);
-		// System.out.println("spaceship is dead");
-		// }
 		else if (gameOver) { // if game is over
-			// System.out.println(gameOver);
 			String buttonText = "<html>" + "<body" + "'>" + "<center><h1>Game Over</h1>"
 					+ "<h2>Press SPACE to start a new game or click HERE</h2>" + "<h4> Score: " + score + "</h4>"
-					+ "<h4> Time: " + timeElapsed / time / 2 + " seconds. </h4></center>";
+					+ "<h4> Time: " + (timeElapsed)/time/2 + " seconds. </h4></center>";
 			Button gameOverButton = new Button();
 			gameOverButton.setLabel(buttonText);
 			board.add(gameOverButton);
@@ -656,6 +700,7 @@ public class Board extends JPanel {
 	/*
 	 * Sets the background of the panel
 	 */
+
 	private static void setBackground() {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		InputStream input = classLoader.getResourceAsStream("SpaceBackground.png");
@@ -670,5 +715,7 @@ public class Board extends JPanel {
 		background = img;
 
 	}
+	
+	
 
 }

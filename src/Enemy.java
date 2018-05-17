@@ -18,44 +18,54 @@ public class Enemy extends JPanel {
 	private ArrayList<ArrayList<Integer>> pixelsCovered = new ArrayList<ArrayList<Integer>>();
 	private String imageName;
 	private boolean invalid = false;
+	private int score;
+	private String projectileName;
+	private BufferedImage projectile;
 
-	public Enemy(int row, int col, String imageName) {
+	// Spaceship Theme: Score, imageName, projectileName
+	private static ArrayList<Object> redEnemy = new ArrayList<>();
+	private static ArrayList<Object> blueEnemy = new ArrayList<>();
+	private static ArrayList<Object> purpleEnemy = new ArrayList<>();
+	private static ArrayList<Object> flyingEnemy = new ArrayList<>();
+
+	// private static String[] redEnemy = { "50", "EnemyRed.png",
+	// "ProjectileRed.png" };
+	// private static String[] blueEnemy = { "100", "EnemyBlue.png",
+	// "ProjectileBlue.png" };
+	// private static String[] purpleEnemy = { "150", "EnemyPurple.png",
+	// "ProjectilePurple.png" };
+	// private static String[] flyingEnemy = { "500", "FlyingEnemy.png", null };
+
+	public Enemy(int row, int col, ArrayList<Object> enemyList) {
 		this.row = row;
 		this.col = col;
-		this.imageName = imageName;
-		setImage(this.imageName);
+		this.score = (int) enemyList.get(0);
+		this.image = (BufferedImage) enemyList.get(1);
+
+		if (enemyList.get(2) != null)
+			this.projectile = (BufferedImage) enemyList.get(2);
 	}
 
-	public void setImage(String imageName) {
+	public static void makeEnemyLists() {
+		redEnemy.add(50);
+		redEnemy.add(Image.getRedEnemy());
+		redEnemy.add(Image.getRedProjectile());
 
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		InputStream input = classLoader.getResourceAsStream(imageName);
-		BufferedImage img = null;
+		blueEnemy.add(100);
+		blueEnemy.add(Image.getBlueEnemy());
+		blueEnemy.add(Image.getBlueProjectile());
 
-		try {
-			img = ImageIO.read(input);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		purpleEnemy.add(150);
+		purpleEnemy.add(Image.getPurpleEnemy());
+		purpleEnemy.add(Image.getPurpleProjectile());
 
-		// BufferedImage transparentBackground = new BufferedImage(img.getWidth(),
-		// img.getHeight(), BufferedImage.TYPE_INT_ARGB);
-		// for (int row = 0; row < img.getWidth(); row++) {
-		// for (int col = 0; col < img.getHeight(); col++) {
-		// int pixel = img.getRGB(row,col);
-		// if (!((pixel>>24) == 0x00)) {
-		// transparentBackground.setRGB(row, col, pixel);
-		// ArrayList<Integer> loc = new ArrayList<Integer>();
-		// loc.add(row);
-		// loc.add(col);
-		// pixelsCovered.add(loc);
-		//
-		// }
-		// }
-		// }
-		image = img;
+		flyingEnemy.add(50);
+		flyingEnemy.add(Image.getFlyingEnemy());
+		flyingEnemy.add(null);
 
 	}
+
+	
 
 	@Override
 	public void paintComponent(Graphics g) {
@@ -125,6 +135,66 @@ public class Enemy extends JPanel {
 
 	public void setInvalid(boolean invalid) {
 		this.invalid = invalid;
+	}
+
+	public static ArrayList<Object> getRedEnemy() {
+		return redEnemy;
+	}
+
+	public static void setRedEnemy(ArrayList<Object> redEnemy) {
+		Enemy.redEnemy = redEnemy;
+	}
+
+	public static ArrayList<Object> getBlueEnemy() {
+		return blueEnemy;
+	}
+
+	public static void setBlueEnemy(ArrayList<Object> blueEnemy) {
+		Enemy.blueEnemy = blueEnemy;
+	}
+
+	public static ArrayList<Object> getPurpleEnemy() {
+		return purpleEnemy;
+	}
+
+	public static void setPurpleEnemy(ArrayList<Object> purpleEnemy) {
+		Enemy.purpleEnemy = purpleEnemy;
+	}
+
+	public static ArrayList<Object> getFlyingEnemy() {
+		return flyingEnemy;
+	}
+
+	public static void setFlyingEnemy(ArrayList<Object> flyingEnemy) {
+		Enemy.flyingEnemy = flyingEnemy;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
+	}
+
+	public String getProjectileName() {
+		return projectileName;
+	}
+
+	public void setProjectileName(String projectileName) {
+		this.projectileName = projectileName;
+	}
+
+	public void setImage(BufferedImage image) {
+		this.image = image;
+	}
+
+	public BufferedImage getProjectile() {
+		return projectile;
+	}
+
+	public void setProjectile(BufferedImage projectile) {
+		this.projectile = projectile;
 	}
 
 }
