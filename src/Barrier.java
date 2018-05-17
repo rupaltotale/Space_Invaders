@@ -23,7 +23,9 @@ public class Barrier extends JPanel {
 	Color colBackground;
 	BufferedImage backgroundImage;
 	String imageName = "GreenBarier.png";
-
+	
+	
+	
 	public Barrier(int row, int col) {
 		this.col = col;
 
@@ -52,8 +54,13 @@ public class Barrier extends JPanel {
 		this.attackedY = y;
 
 		this.colBackground = col;
+		
+		
+		
 
 	}
+	
+	
 
 	@Override
 
