@@ -23,10 +23,12 @@ public class Projectile extends JPanel {
 	private BufferedImage image;
 	private boolean spaceship;
 	private String imageName;
+	private boolean spaceshipP;
 
-	public Projectile(BufferedImage projectile, int speed) {
+	public Projectile(BufferedImage projectile, int speed, boolean spaceshipP) {
 
 		this.image = projectile;
+		this.spaceshipP = spaceshipP;
 		setSpeed(speed);
 		setSize();
 		setDamage();
@@ -160,6 +162,14 @@ public class Projectile extends JPanel {
 
 	public void setImageName(String imageName) {
 		this.imageName = imageName;
+	}
+
+	public boolean isSpaceshipP() {
+		return spaceshipP;
+	}
+
+	public void setSpaceshipP(boolean spaceshipP) {
+		this.spaceshipP = spaceshipP;
 	}
 
 }

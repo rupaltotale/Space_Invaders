@@ -35,11 +35,13 @@ public class Board extends JPanel {
 	static Board board = new Board(); // JPanel
 
 	/* Game settings */
+	private static String dashboardTextColor = "#232323";// "#F8F1D7";
 	static int width = 1200; // panel width
 	static int height = 800; // panel height
 	static int margin = 150;
 	static BufferedImage background;
 	static boolean gameOver = false;
+	static String theme = "space";
 	// static boolean startGame = false;
 	static int score = 0;
 	static int livesLeft;
@@ -62,7 +64,7 @@ public class Board extends JPanel {
 	static ArrayList<Projectile> eProjectiles = new ArrayList();
 	static double eSpeed = 1 * constant;
 	static int epSpeed = 9 * constant;
-	private static double probabilityOfNotShooting = 0.88;
+	private static double probabilityOfNotShooting = 0.98;
 	static int rowsInvalidated;
 
 	/* Flying enemies */
@@ -85,7 +87,7 @@ public class Board extends JPanel {
 	static int spSpeed = -25 * constant;
 	static ArrayList<Projectile> sProjectiles = new ArrayList(); // list of projectiles thrown by the spaceship
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -101,8 +103,9 @@ public class Board extends JPanel {
 		board.setUpKeyMappings();
 
 		Image.loadImages();
+		Images.loadImages();
 
-		background = Image.getBackground();
+		background = Images.getSpaceBackground();
 		Enemy.makeEnemyLists();
 		startNewGame();
 		setupTimer();
@@ -115,7 +118,7 @@ public class Board extends JPanel {
 		flyingEnemy.setInvalid(true);
 		flyingEnemy.setCol(margin);
 
-		spaceship.setImage(Image.getSpaceship());
+		spaceship.setImage(Images.getSpaceship());
 		gameOver = false;
 		score = 0;
 		livesLeft = lives - 1;
@@ -133,7 +136,9 @@ public class Board extends JPanel {
 				eProjectiles.remove(i);
 			}
 		}
+		setTheme("sea");
 		board.removeAll();
+		
 	}
 
 	/*
@@ -178,7 +183,7 @@ public class Board extends JPanel {
 				if (!gameOver) {
 
 					if (sProjectiles.size() == 0) {
-						Projectile projectile = new Projectile(Image.getYellowProjectile(), spSpeed);
+						Projectile projectile = new Projectile(Images.getSpaceshipProjectile(), spSpeed, true);
 						int row = spaceship.getRow() - projectile.getHeight();
 						int col = spaceship.getCol() + spaceship.getWidth() / 2 - projectile.getWidth() / 2;
 						projectile.setLocation(row, col);
@@ -204,6 +209,32 @@ public class Board extends JPanel {
 
 		this.requestFocusInWindow();
 
+	}
+
+	public static void setTheme(String changeToTheme) {
+		theme = changeToTheme;
+		if (theme.equals("space")) {
+			background = Images.getSpaceBackground();
+			for(int i = 0; i< barriers.size(); i++) {
+				barriers.get(i).setImage(Images.getSpaceBarrier());
+			}
+			dashboardTextColor = "#F8F1D7";
+			
+		}
+		if(theme.equals("sky")) {
+			background = Images.getSkyBackground();
+			for(int i = 0; i< barriers.size(); i++) {
+				barriers.get(i).setImage(Images.getSkyBarrier());
+			}
+			dashboardTextColor = "#232323";
+		}
+		if(theme.equals("sea")) {
+			background = Images.getSeaBackground();
+			for(int i = 0; i< barriers.size(); i++) {
+				barriers.get(i).setImage(Images.getSeaBarrier());
+			}
+			dashboardTextColor = "#232323";
+		}
 	}
 
 	/*
@@ -246,6 +277,7 @@ public class Board extends JPanel {
 		for (int i = 1; i < numberOfBarriers * 2; i += 2) {
 			int col = widthOfBarrier * i;
 			Barrier barrier = new Barrier(row, col);
+			barrier.setImage(Images.getSpaceBarrier());
 			barrier.setWidth(widthOfBarrier);
 			barrier.setHeight(widthOfBarrier / barrier.getImage().getWidth() * barrier.getImage().getHeight());
 			barriers.add(barrier);
@@ -339,12 +371,12 @@ public class Board extends JPanel {
 		if (Math.signum(eSpeed) > 0) { // moving right
 			if (total > width) {
 				eSpeed = -1 * eSpeed;
-//				moveEnemiesDown();
+				moveEnemiesDown();
 			}
 		} else if (Math.signum(eSpeed) < 0) {
 			if (firstCol - eSpeed < 0) {
 				eSpeed = -1 * eSpeed;
-//				moveEnemiesDown();
+				moveEnemiesDown();
 
 			}
 		}
@@ -455,36 +487,57 @@ public class Board extends JPanel {
 		}
 		if (obj instanceof Barrier) {
 			Barrier barrier = (Barrier) obj;
-			int pRow = projectile.getRow() +projectile.getHeight();
-			int pCol = projectile.getCol() + projectile.getWidth() / 2;
+			if (projectile.isSpaceshipP()) {
+				int pRow = projectile.getRow();
+				int pCol = projectile.getCol() + projectile.getWidth() / 2;
+				if (pRow >= barrier.getRow() && pRow <= barrier.getRow() + barrier.getHeight()
+						&& pCol >= barrier.getCol() && pCol < barrier.getCol() + barrier.getWidth()) {
 
-			if (pRow >= barrier.getRow() && pRow <= barrier.getRow() + barrier.getHeight() && pCol >= barrier.getCol()
-					&& pCol <= barrier.getCol() + barrier.getWidth()) {
-
-				int r = (pRow - barrier.getRow());
-				System.out.println(r);
-				int c = (pCol - barrier.getCol());
-				int rgba = (0 << 24) | (0 << 16) | (0 << 8) | 0;
-				// if (c < 0) {
-				// c = (pCol + projectile.getWidth() - barrier.getCol()) * 4;
-				// }
-				boolean transparent = barrier.getImage().getRGB(c, r) == rgba;
-				if (!transparent) {
+					int r = (pRow - barrier.getRow());
 					System.out.println(r);
-					barrier.setAttacked(true);
-					barrier.setAttackedX(c);
-					barrier.setAttackedY(r);
-					barrier.setAttackedWidth((int) (projectile.getWidth()/1.5));
-					barrier.changeImage();
-					barrier.setAttacked(false);
-					return true;
-				} 
+					int c = (pCol - barrier.getCol());
+					int rgba = (0 << 24) | (0 << 16) | (0 << 8) | 0;
+					boolean transparent = barrier.getImage().getRGB(c, r) == rgba;
+					if (!transparent) {
+						barrier.setAttacked(true);
+						barrier.setAttackedX(c);
+						barrier.setAttackedY(r);
+						barrier.setAttackedWidth((int) (projectile.getWidth() / 1.5));
+						barrier.changeImage(true);
+						barrier.setAttacked(false);
+						return true;
+					}
 
-				// if ((transparent)) {
-				// return false;
-				// }
+				}
 
+			} else {
+				int pRow = projectile.getRow() + projectile.getHeight();
+				int pCol = projectile.getCol() + projectile.getWidth() / 2;
+
+				if (pRow >= barrier.getRow() && pRow <= barrier.getRow() + barrier.getHeight()
+						&& pCol >= barrier.getCol() && pCol < barrier.getCol() + barrier.getWidth()) {
+
+					int r = (pRow - barrier.getRow());
+					System.out.println(r);
+					int c = (pCol - barrier.getCol());
+					int rgba = (0 << 24) | (0 << 16) | (0 << 8) | 0;
+					// if (c < 0) {
+					// c = (pCol + projectile.getWidth() - barrier.getCol()) * 4;
+					// }
+					boolean transparent = barrier.getImage().getRGB(c, r) == rgba;
+					if (!transparent) {
+						barrier.setAttacked(true);
+						barrier.setAttackedX(c);
+						barrier.setAttackedY(r);
+						barrier.setAttackedWidth((int) (projectile.getWidth() / 1.5));
+						barrier.changeImage(false);
+						barrier.setAttacked(false);
+						return true;
+					}
+
+				}
 			}
+
 		}
 		return false;
 	}
@@ -507,7 +560,7 @@ public class Board extends JPanel {
 		if (enemiesForProjectile.size() != 0) {
 			int random = (int) (enemiesForProjectile.size() * Math.random());
 			Enemy enemy = enemiesForProjectile.get(random);
-			Projectile projectile = new Projectile(enemy.getProjectile(), epSpeed);
+			Projectile projectile = new Projectile(enemy.getProjectile(), epSpeed, false);
 			// System.out.println(enemy.getProjectileName());
 			projectile.setCol(enemy.getCol() + enemy.getWidth() / 2 - projectile.getWidth() / 2);
 			projectile.setRow(enemy.getRow() + enemy.getHeight());
@@ -682,7 +735,7 @@ public class Board extends JPanel {
 			}
 			// Lives Left in left corner
 			Font font = new Font("Courier", Font.PLAIN, 22);
-			g.setColor(Color.decode("#F8F1D7"));
+			g.setColor(Color.decode(dashboardTextColor));
 			g.setFont(font);
 			g.drawString("Lives Left: " + livesLeft, margin / 3, margin / 3);
 
