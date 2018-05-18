@@ -25,19 +25,23 @@ public class Barrier extends JPanel {
 	private int attackedWidth;
 	private ArrayList<ArrayList<Integer>> hitPixels = new ArrayList<ArrayList<Integer>>();
 
+
 	Color colBackground;
 	BufferedImage backgroundImage;
 	String imageName = "GreenBarier.png";
 	
 	
 	
-
-
+	BufferedImage image;
 	public Barrier(int row, int col) {
 
 		this.row = row;
 		this.col = col;
-		backgroundImage = Image.getSpaceBarrier();
+//		image = Images.getSpaceBarrier();
+	}
+
+	public void setImage(BufferedImage image) {
+		this.image = image;
 	}
 
 	public int[] getAttackedLocation() {
@@ -58,32 +62,23 @@ public class Barrier extends JPanel {
 
 		this.attackedY = y;
 
-		this.colBackground = col;
-		
-		
-		
-
 	}
-	
-	
 
 	@Override
 
 	public void paintComponent(Graphics g) {
-
-		g.drawImage(backgroundImage, col, row, width, height, this);
+		g.drawImage(image, col, row, width, height, this);
 		for (ArrayList<Integer> a : hitPixels) {
 			g.setColor(new Color(0, 0, 0));
 			g.drawRect(a.get(1), a.get(0), 1, 1);
 			g.fillRect(a.get(1), a.get(0), 1, 1);
 		}
-
 	}
 
 	// getters and setters
 
 	public BufferedImage getImage() {
-		return backgroundImage;
+		return image;
 	}
 
 	public int getAttackedX() {
@@ -118,37 +113,11 @@ public class Barrier extends JPanel {
 		this.row = row;
 	}
 
-	public Color getColBackground() {
-		return colBackground;
-	}
-
-	public void setColBackground(Color colBackground) {
-		this.colBackground = colBackground;
-	}
-
-	public String getImageName() {
-		return imageName;
-	}
-
-	public void setImageName(String imageName) {
-		this.imageName = imageName;
-	}
-
 	public void setHealth(int health) {
 		this.health = health;
 	}
 
-	public int getHealth() {
-
-		return health;
-
-	}
-
-	public void setHealth() {
-
-		this.health = health;
-
-	}
+	
 
 	public void setWidth(int width) {
 
@@ -169,9 +138,7 @@ public class Barrier extends JPanel {
 	}
 
 	public int getHeight() {
-
 		return height;
-
 	}
 
 	public boolean isAttacked() {
@@ -183,7 +150,6 @@ public class Barrier extends JPanel {
 	}
 
 	public void setAttackedWidth(int width) {
-
 		this.attackedWidth = width;
 	}
 
@@ -234,8 +200,8 @@ public class Barrier extends JPanel {
 		// }
 	}
 
-	public void changeImage() {
-		BufferedImage image = backgroundImage;
+	public void changeImage(boolean spaceshipP) {
+		BufferedImage image = this.image;
 		if (image != null) {
 			BufferedImage colorImage = new BufferedImage(image.getWidth(), image.getHeight(),
 					BufferedImage.TYPE_INT_ARGB);
@@ -244,29 +210,45 @@ public class Barrier extends JPanel {
 					colorImage.setRGB(c, r, image.getRGB(c, r));
 				}
 			}
-			int attackedHeight = attackedWidth;
-			for (int row = attackedY - attackedHeight/2; row < attackedY + attackedHeight/2; row++) {
-				for (int col = attackedX; col < attackedX + attackedWidth; col++) {
-					if(col>=0 && col<colorImage.getWidth()
-							&& row>=0 && row <colorImage.getHeight()) 
-							{	
-						int r = 0;
-						int g = 0;
-						int b = 0;
-						int a = 0;
-						int rgba = (a << 24) | (r << 16) | (g << 8) | b;
-//						if(colorImage.getRGB(col, row) == rgba) {
-//							attackedY = attackedY + attackedWidth;
-//							changeImage();
-//						}
-						colorImage.setRGB(col, row, rgba);
+			if (!spaceshipP) {
+				int attackedHeight = attackedWidth;
+				for (int row = attackedY - attackedHeight / 2; row < attackedY + attackedHeight / 2; row++) {
+					for (int col = attackedX; col < attackedX + attackedWidth; col++) {
+						if (col >= 0 && col < colorImage.getWidth() && row >= 0 && row <= colorImage.getHeight()) {
+							int r = 0;
+							int g = 0;
+							int b = 0;
+							int a = 0;
+							int rgba = (a << 24) | (r << 16) | (g << 8) | b;
+							// if(colorImage.getRGB(col, row) == rgba) {
+							// attackedY = attackedY + attackedWidth;
+							// changeImage();
+							// }
+							colorImage.setRGB(col, row, rgba);
+						}
 					}
-				}
 
+				}
+			} else {
+				int attackedHeight = attackedWidth;
+				for (int row = attackedY + attackedHeight / 2; row > attackedY - attackedHeight / 2; row--) {
+					for (int col = attackedX; col < attackedX + attackedWidth; col++) {
+						if (col >= 0 && col < colorImage.getWidth() && row >= 0 && row < colorImage.getHeight()) {
+							int r = 0;
+							int g = 0;
+							int b = 0;
+							int a = 0;
+							int rgba = (a << 24) | (r << 16) | (g << 8) | b;
+							colorImage.setRGB(col, row, rgba);
+						}
+					}
+
+				}
 			}
-			backgroundImage = colorImage;
-			
+			this.image = colorImage;
+
 		}
+
 	}
 
 }

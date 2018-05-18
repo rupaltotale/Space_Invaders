@@ -21,7 +21,10 @@ public class Image {
 	private static BufferedImage purpleProjectile;
 	private static BufferedImage yellowProjectile;
 	private static BufferedImage spaceship;
-	private static BufferedImage transparentRect;
+
+	private static BufferedImage redEnemyRotatedRight;
+
+	private static BufferedImage enemyRedRotatedLeft;
 
 	// PLEASE DON'T CHANGE ORDER OF ARRAYS!! IF YOU ADD ANYTHING, ADD IT TO THE END!!
 	private static BufferedImage[] images = { 
@@ -36,11 +39,11 @@ public class Image {
 			purpleProjectile, 
 			yellowProjectile, 
 			spaceship,
-			transparentRect
+			
 			};
 	private static String[] imageNames = {
-			"SkyBackground.png", 
-			"CloudBarrier.png", 
+			"SeaBackground.png", 
+			"SeaBarrier.png", 
 			"EnemyBlue.png", 
 			"EnemyRed.png", 
 			"EnemyPurple.png", 
@@ -50,7 +53,7 @@ public class Image {
 			"ProjectilePurple.png", 
 			"YellowRocket.png", 
 			"Spaceship.png",
-			"TransparentRect.png"
+			
 	};
 
 	public static void loadImages() {
@@ -71,6 +74,7 @@ public class Image {
 			
 		}
 	}
+	
 
 	public static BufferedImage getBackground() {
 		
@@ -178,12 +182,21 @@ public class Image {
 		Image.imageNames = imageNames;
 	}
 
-	public static BufferedImage getTransparentRect() {
+
+	public static BufferedImage getRedEnemyRotatedRight() {
 		return images[11];
 	}
 
-	public static void setTransparentRect(BufferedImage transparentRect) {
-		Image.transparentRect = transparentRect;
+	public static void setRedEnemyRotatedRight(BufferedImage redEnemyRotatedRight) {
+		Image.redEnemyRotatedRight = redEnemyRotatedRight;
+	}
+
+	public static BufferedImage getEnemyRedRotatedLeft() {
+		return images[12];
+	}
+
+	public static void setEnemyRedRotatedLeft(BufferedImage enemyRedRotatedLeft) {
+		Image.enemyRedRotatedLeft = enemyRedRotatedLeft;
 	}
 		
 

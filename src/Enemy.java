@@ -12,8 +12,6 @@ public class Enemy extends JPanel {
 	private BufferedImage image;
 	private int width = 100;
 	private int height = 100;
-	private ArrayList<ArrayList<Integer>> pixelsCovered = new ArrayList<ArrayList<Integer>>();
-	private String imageName;
 	private boolean invalid = false;
 	private int score;
 	private String projectileName;
@@ -27,13 +25,7 @@ public class Enemy extends JPanel {
 	private static ArrayList<Object> purpleEnemy = new ArrayList<>();
 	private static ArrayList<Object> flyingEnemy = new ArrayList<>();
 
-	// private static String[] redEnemy = { "50", "EnemyRed.png",
-	// "ProjectileRed.png" };
-	// private static String[] blueEnemy = { "100", "EnemyBlue.png",
-	// "ProjectileBlue.png" };
-	// private static String[] purpleEnemy = { "150", "EnemyPurple.png",
-	// "ProjectilePurple.png" };
-	// private static String[] flyingEnemy = { "500", "FlyingEnemy.png", null };
+	
 
 	public Enemy(int row, int col, ArrayList<Object> enemyList) {
 		this.row = row;
@@ -47,24 +39,25 @@ public class Enemy extends JPanel {
 
 	public static void makeEnemyLists() {
 		redEnemy.add(50);
-		redEnemy.add(Image.getRedEnemy());
-		redEnemy.add(Image.getRedProjectile());
+		redEnemy.add(Images.getRedEnemy());
+		redEnemy.add(Images.getRedProjectile());
+		redEnemy.add("RED"); //TYPE
 
 		blueEnemy.add(100);
-		blueEnemy.add(Image.getBlueEnemy());
-		blueEnemy.add(Image.getBlueProjectile());
+		blueEnemy.add(Images.getBlueEnemy());
+		blueEnemy.add(Images.getBlueProjectile());
+		redEnemy.add("RED"); //TYPE
 
 		purpleEnemy.add(150);
-		purpleEnemy.add(Image.getPurpleEnemy());
-		purpleEnemy.add(Image.getPurpleProjectile());
+		purpleEnemy.add(Images.getPurpleEnemy());
+		purpleEnemy.add(Images.getPurpleProjectile());
+		redEnemy.add("RED"); //TYPE
 
 		flyingEnemy.add(50);
-		flyingEnemy.add(Image.getFlyingEnemy());
+		flyingEnemy.add(Images.getFlyingEnemy());
 		flyingEnemy.add(null);
 		
 	}
-
-	
 
 	@Override
 	public void paintComponent(Graphics g) {
@@ -74,13 +67,6 @@ public class Enemy extends JPanel {
 	}
 
 	// getters and setters
-	public String getImageName() {
-		return imageName;
-	}
-
-	public void setImageName(String imageName) {
-		this.imageName = imageName;
-	}
 
 	public int getRow() {
 		return row;
@@ -114,14 +100,6 @@ public class Enemy extends JPanel {
 
 	public void setHeight(int height) {
 		this.height = height;
-	}
-
-	public ArrayList<ArrayList<Integer>> getPixelsCovered() {
-		return pixelsCovered;
-	}
-
-	public void setPixelsCovered(ArrayList<ArrayList<Integer>> pixelsCovered) {
-		this.pixelsCovered = pixelsCovered;
 	}
 
 	public BufferedImage getImage() {
