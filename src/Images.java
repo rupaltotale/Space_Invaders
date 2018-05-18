@@ -36,6 +36,14 @@ public class Images {
 
 	private static BufferedImage redEnemyRotatedRight;/* ADD */
 	private static BufferedImage redEnemyRotatedLeft;/* ADD */
+	
+	private static BufferedImage homePage;
+	private static BufferedImage title;
+	
+	private static BufferedImage playGameButton;
+	private static BufferedImage purpleBirdEnemy;
+	private static BufferedImage greenEnemy;
+	private static BufferedImage orangeEnemy;
 
 //	static ArrayList<BufferedImage> images = new ArrayList<>();
 //	static ArrayList<BufferedImage> images2 = new ArrayList<>();
@@ -73,6 +81,15 @@ public class Images {
 		inputStream = new FileInputStream("src/Images/EnemyRed.png");
 		redEnemy = ImageIO.read(inputStream);
 
+		inputStream = new FileInputStream("src/Images/EnemyOrange.png");
+		orangeEnemy = ImageIO.read(inputStream);
+
+		inputStream = new FileInputStream("src/Images/EnemyGreen.png");
+		greenEnemy = ImageIO.read(inputStream);
+
+		inputStream = new FileInputStream("src/Images/EnemyPurpleBird.png");
+		purpleBirdEnemy = ImageIO.read(inputStream);
+
 		inputStream = new FileInputStream("src/Images/FlyingEnemy.png");
 		flyingEnemy = ImageIO.read(inputStream);
 
@@ -90,6 +107,15 @@ public class Images {
 
 		inputStream = new FileInputStream("src/Images/SpaceshipProjectile.png");
 		spaceshipProjectile = ImageIO.read(inputStream);
+		
+		inputStream = new FileInputStream("src/Images/GalacticInvaders.png");
+		homePage = ImageIO.read(inputStream);
+		
+		inputStream = new FileInputStream("src/Images/GalacticInvadersTitle.png");
+		title = ImageIO.read(inputStream);
+		
+		inputStream = new FileInputStream("src/Images/PlayGameButton.png");
+		playGameButton = ImageIO.read(inputStream);
 		
 
 	}
@@ -228,6 +254,54 @@ public class Images {
 
 	public static void setRedEnemyRotatedLeft(BufferedImage redEnemyRotatedLeft) {
 		Images.redEnemyRotatedLeft = redEnemyRotatedLeft;
+	}
+
+	public static BufferedImage getHomePage() {
+		return homePage;
+	}
+
+	public static void setHomePage(BufferedImage homePage) {
+		Images.homePage = homePage;
+	}
+
+	public static BufferedImage getTitle() {
+		return title;
+	}
+
+	public static void setTitle(BufferedImage title) {
+		Images.title = title;
+	}
+
+	public static BufferedImage getPlayGameButton() {
+		return playGameButton;
+	}
+
+	public static void setPlayGameButton(BufferedImage playGameButton) {
+		Images.playGameButton = playGameButton;
+	}
+
+	public static BufferedImage getPurpleBirdEnemy() {
+		return purpleBirdEnemy;
+	}
+
+	public static void setPurpleBirdEnemy(BufferedImage purpleBirdEnemy) {
+		Images.purpleBirdEnemy = purpleBirdEnemy;
+	}
+
+	public static BufferedImage getGreenEnemy() {
+		return greenEnemy;
+	}
+
+	public static void setGreenEnemy(BufferedImage greenEnemy) {
+		Images.greenEnemy = greenEnemy;
+	}
+
+	public static BufferedImage getOrangeEnemy() {
+		return orangeEnemy;
+	}
+
+	public static void setOrangeEnemy(BufferedImage orangeEnemy) {
+		Images.orangeEnemy = orangeEnemy;
 	}
 
 	

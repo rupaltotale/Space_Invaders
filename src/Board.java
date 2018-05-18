@@ -95,20 +95,19 @@ public class Board extends JPanel {
 			e.printStackTrace();
 		}
 
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.add(board);
-		board.setPreferredSize(new Dimension(width, height));
-		frame.pack();
-		frame.setVisible(true);
-		board.setUpKeyMappings();
-
-		Image.loadImages();
 		Images.loadImages();
 
 		background = Images.getSpaceBackground();
 		Enemy.makeEnemyLists();
 		startNewGame();
 		setupTimer();
+
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.add(board);
+		board.setPreferredSize(new Dimension(width, height));
+		frame.pack();
+		frame.setVisible(true);
+		board.setUpKeyMappings();
 
 	}
 
@@ -136,10 +135,12 @@ public class Board extends JPanel {
 				eProjectiles.remove(i);
 			}
 		}
-		setTheme("sea");
+		setTheme("space");
 		board.removeAll();
-		
+
 	}
+
+	private int component;
 
 	/*
 	 * Defines functionalities of different keys: Right, Left, Space
@@ -215,22 +216,50 @@ public class Board extends JPanel {
 		theme = changeToTheme;
 		if (theme.equals("space")) {
 			background = Images.getSpaceBackground();
-			for(int i = 0; i< barriers.size(); i++) {
+			for (int i = 0; i < barriers.size(); i++) {
 				barriers.get(i).setImage(Images.getSpaceBarrier());
 			}
+			for (int r = 0; r < enemies.size(); r++) {
+				for (int c = 0; c < enemies.get(r).size(); c++) {
+					Enemy enemy = enemies.get(r).get(c);
+					if (enemy.getScore() == 150) {
+						enemy.setImage(Images.getPurpleEnemy());
+					}
+					if (enemy.getScore() == 100) {
+						enemy.setImage(Images.getBlueEnemy());
+					}
+					if (enemy.getScore() == 50) {
+						enemy.setImage(Images.getRedEnemy());
+					}
+				}
+			}
 			dashboardTextColor = "#F8F1D7";
-			
+
 		}
-		if(theme.equals("sky")) {
+		if (theme.equals("sky")) {
 			background = Images.getSkyBackground();
-			for(int i = 0; i< barriers.size(); i++) {
+			for (int i = 0; i < barriers.size(); i++) {
 				barriers.get(i).setImage(Images.getSkyBarrier());
+			}
+			for (int r = 0; r < enemies.size(); r++) {
+				for (int c = 0; c < enemies.get(r).size(); c++) {
+					Enemy enemy = enemies.get(r).get(c);
+					if (enemy.getScore() == 150) {
+						enemy.setImage(Images.getPurpleBirdEnemy());
+					}
+					if (enemy.getScore() == 100) {
+						enemy.setImage(Images.getGreenEnemy());
+					}
+					if (enemy.getScore() == 50) {
+						enemy.setImage(Images.getOrangeEnemy());
+					}
+				}
 			}
 			dashboardTextColor = "#232323";
 		}
-		if(theme.equals("sea")) {
+		if (theme.equals("sea")) {
 			background = Images.getSeaBackground();
-			for(int i = 0; i< barriers.size(); i++) {
+			for (int i = 0; i < barriers.size(); i++) {
 				barriers.get(i).setImage(Images.getSeaBarrier());
 			}
 			dashboardTextColor = "#232323";
@@ -666,109 +695,126 @@ public class Board extends JPanel {
 
 		g.drawImage(background, 0, 0, width, height, null);
 
-		if (showHomePage && board.getComponentCount() == 0) {
-			showHomePage = false;
-			/*
-			 * ADD IMPLEMENTATION OF SHOW HOME PAGE
-			 */
-
-		}
+		showHomePage();
 		if (!gameOver && !showHomePage && timeElapsed != 0) {
-			// Paint Barriers
-			for (Barrier br : barriers) {
-				br.setWidth((int) (br.getImage().getWidth()));
-				br.setHeight((int) (br.getImage().getHeight()));
-				br.paintComponent(g);
 
-				// This is just rough code for damage.
-				// if(br.isAttacked()) {
-				// g.setColor(Color.WHITE);
-				// g.fillRect(br.getAttackedX(), br.getAttackedY(), br.getAttackedWidth(), 50);
-				// br.setAttacked(false);
-				// System.out.println("Barrier has been attacked!");
-				// }
-
-			}
-
-			// Paint Enemies
-			for (int r = 0; r < enemies.size(); r++) {
-				for (int c = 0; c < enemies.get(r).size(); c++) {
-					Enemy enemy = enemies.get(r).get(c);
-					if (!enemy.isInvalid()) {
-						enemy.setWidth(enemy.getImage().getWidth() / 8);
-						enemy.setHeight(enemy.getImage().getHeight() / 8);
-						enemy.paintComponent(g);
-					}
-
-				}
-			}
-			// Paint Spaceship
-			spaceship.setWidth(spaceship.getImage().getWidth() / 9);
-			spaceship.setHeight(spaceship.getImage().getHeight() / 9);
-			spaceship.paintComponent(g);
-
-			// Shoot sProjectiles
-
-			if (sProjectiles.size() > 0) {
-				for (int i = 0; i < sProjectiles.size(); i++) {
-					Projectile projectile = sProjectiles.get(i);
-					projectile.paintComponent(g);
-
-				}
-			}
-
-			// Shoot eProjectiles
-			if (eProjectiles.size() > 0) {
-				for (int i = 0; i < eProjectiles.size(); i++) {
-					Projectile projectile = eProjectiles.get(i);
-
-					projectile.paintComponent(g);
-
-				}
-			}
-
-			// Paint Flying Enemy
-			if (timeElapsed != 0 && !flyingEnemy.isInvalid()) {
-				flyingEnemy.setWidth(flyingEnemy.getImage().getWidth() / 7);
-				flyingEnemy.setHeight(flyingEnemy.getImage().getHeight() / 7);
-				flyingEnemy.paintComponent(g);
-			}
-			// Lives Left in left corner
-			Font font = new Font("Courier", Font.PLAIN, 22);
-			g.setColor(Color.decode(dashboardTextColor));
-			g.setFont(font);
-			g.drawString("Lives Left: " + livesLeft, margin / 3, margin / 3);
-
-			// Score in right corner
-			String s = "Score: " + score;
-			g.drawString(s, width - margin / 3 - 15 * s.length(), margin / 3);
-
-			// Time elapsed in the middle
-			String t = "Time Elapsed: " + (timeElapsed) / time / 2;
-			g.drawString(t, width / 2 - t.length() * 15 / 2, margin / 3);
+			paintBarriers(g);
+			paintEnemies(g);
+			paintSpaceship(g);
+			paintProjectiles(g);
+			paintFlyingEnemy(g);
+			paintDashBoard(g);
 
 		}
 
-		else if (gameOver) { // if game is over
-			String buttonText = "<html>" + "<body" + "'>" + "<center><h1>Game Over</h1>"
-					+ "<h2>Press SPACE to start a new game or click HERE</h2>" + "<h4> Score: " + score + "</h4>"
-					+ "<h4> Time: " + (timeElapsed) / time / 2 + " seconds. </h4></center>";
-			Button gameOverButton = new Button();
-			gameOverButton.setLabel(buttonText);
-			board.add(gameOverButton);
-			gameOverButton.setBounds(width / 4, height / 4, width / 2, height / 2);
-			gameOverButton.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					System.out.println("Starting new game");
-					startNewGame();
-
-				}
-
-			});
+		else if (gameOver) {
+			paintGameOverPanel(g);
 
 		}
+
+	}
+
+	private void paintGameOverPanel(Graphics g) {
+		String buttonText = "<html>" + "<body" + "'>" + "<center><h1>Game Over</h1>"
+				+ "<h2>Press SPACE to start a new game or click HERE</h2>" + "<h4> Score: " + score + "</h4>"
+				+ "<h4> Time: " + (timeElapsed) / time / 2 + " seconds. </h4></center>";
+		Button gameOverButton = new Button();
+		gameOverButton.setLabel(buttonText);
+		board.add(gameOverButton);
+		gameOverButton.setBounds(width / 4, height / 4, width / 2, height / 2);
+		gameOverButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Starting new game");
+				startNewGame();
+
+			}
+
+		});
+
+	}
+
+	private void paintDashBoard(Graphics g) {
+		// Lives Left in left corner
+		Font font = new Font("Courier", Font.PLAIN, 22);
+		g.setColor(Color.decode(dashboardTextColor));
+		g.setFont(font);
+		g.drawString("Lives Left: " + livesLeft, margin / 3, margin / 3);
+
+		// Score in right corner
+		String s = "Score: " + score;
+		g.drawString(s, width - margin / 3 - 15 * s.length(), margin / 3);
+
+		// Time elapsed in the middle
+		String t = "Time Elapsed: " + (timeElapsed) / time / 2;
+		g.drawString(t, width / 2 - t.length() * 15 / 2, margin / 3);
+
+	}
+
+	private void paintFlyingEnemy(Graphics g) {
+		if (timeElapsed != 0 && !flyingEnemy.isInvalid()) {
+			flyingEnemy.setWidth(flyingEnemy.getImage().getWidth() / 7);
+			flyingEnemy.setHeight(flyingEnemy.getImage().getHeight() / 7);
+			flyingEnemy.paintComponent(g);
+		}
+
+	}
+
+	private void paintProjectiles(Graphics g) {
+		if (sProjectiles.size() > 0) {
+			for (int i = 0; i < sProjectiles.size(); i++) {
+				Projectile projectile = sProjectiles.get(i);
+				projectile.paintComponent(g);
+
+			}
+		}
+
+		// Shoot eProjectiles
+		if (eProjectiles.size() > 0) {
+			for (int i = 0; i < eProjectiles.size(); i++) {
+				Projectile projectile = eProjectiles.get(i);
+
+				projectile.paintComponent(g);
+
+			}
+		}
+
+	}
+
+	private void paintSpaceship(Graphics g) {
+		spaceship.setWidth(spaceship.getImage().getWidth() / 9);
+		spaceship.setHeight(spaceship.getImage().getHeight() / 9);
+		spaceship.paintComponent(g);
+	}
+
+	private void paintEnemies(Graphics g) {
+		for (int r = 0; r < enemies.size(); r++) {
+			for (int c = 0; c < enemies.get(r).size(); c++) {
+				Enemy enemy = enemies.get(r).get(c);
+				if (!enemy.isInvalid()) {
+					enemy.setWidth(enemy.getImage().getWidth() / 8);
+					enemy.setHeight(enemy.getImage().getHeight() / 8);
+					enemy.paintComponent(g);
+				}
+
+			}
+		}
+
+	}
+
+	private void paintBarriers(Graphics g) {
+		for (Barrier br : barriers) {
+			br.setWidth((int) (br.getImage().getWidth()));
+			br.setHeight((int) (br.getImage().getHeight()));
+			br.paintComponent(g);
+
+		}
+	}
+
+	private void showHomePage() {
+		showHomePage = false;
+		timeElapsed = 0;
 
 	}
 
