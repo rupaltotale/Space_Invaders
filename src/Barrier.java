@@ -27,15 +27,12 @@ public class Barrier extends JPanel {
 
 	Color colBackground;
 	BufferedImage backgroundImage;
-<<<<<<< HEAD
 	String imageName = "GreenBarier.png";
 	
 	
 	
-=======
-	String imageName = "RectangularBarriers.png";
 
->>>>>>> 5dabdefac1400c86a749596ff415e0e6fe71ec1a
+
 	public Barrier(int row, int col) {
 
 		this.row = row;

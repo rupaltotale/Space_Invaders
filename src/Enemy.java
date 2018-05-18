@@ -1,15 +1,12 @@
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 public class Enemy extends JPanel {
-
 	private int row;
 	private int col;
 	private BufferedImage image;
@@ -22,6 +19,8 @@ public class Enemy extends JPanel {
 	private String projectileName;
 	private BufferedImage projectile;
 
+	
+	
 	// Spaceship Theme: Score, imageName, projectileName
 	private static ArrayList<Object> redEnemy = new ArrayList<>();
 	private static ArrayList<Object> blueEnemy = new ArrayList<>();
@@ -62,7 +61,7 @@ public class Enemy extends JPanel {
 		flyingEnemy.add(50);
 		flyingEnemy.add(Image.getFlyingEnemy());
 		flyingEnemy.add(null);
-
+		
 	}
 
 	

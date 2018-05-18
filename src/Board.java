@@ -265,7 +265,6 @@ public class Board extends JPanel {
 					board.repaint();
 					timeElapsed++;
 				}
-
 			}
 
 		});
@@ -313,6 +312,16 @@ public class Board extends JPanel {
 
 	}
 
+	public static void rotEnemies() {
+		for (int r = 0; r < enemies.size(); r++) {
+			for (int c =0; c<enemyCol; c++) {
+				if (!enemies.get(r).get(c).isInvalid()) {
+					enemies.get(r).get(c).getImage().rotate(Math.toRadians(10), w / 2, h / 2);
+				}
+			}
+		}
+	}
+	
 	/*
 	 * Checks if enemies are near the edge of the panel and based on that shifts
 	 * them left or right
