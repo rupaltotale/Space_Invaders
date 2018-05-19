@@ -31,11 +31,31 @@ public class Barrier extends JPanel {
 
 		this.row = row;
 		this.col = col;
-//		image = Images.getSpaceBarrier();
+		// image = Images.getSpaceBarrier();
 	}
 
-	public void setImage(BufferedImage image) {
-		this.image = image;
+	public void setImage(BufferedImage image, boolean modifyImage) {
+		if(modifyImage) {
+			if (image != null && this.image != null) {
+				BufferedImage colorImage = new BufferedImage(image.getWidth(), image.getHeight(),
+						BufferedImage.TYPE_INT_ARGB);
+				for (int r = 0; r < image.getHeight(); r++) {
+					for (int c = 0; c < image.getWidth(); c++) {
+						int rgba = (0 << 24) | (0 << 16) | (0 << 8) | 0;
+						if(Images.inBounds(image, r, c) && Images.inBounds(this.image, r, c)) {
+							if (this.image.getRGB(c, r) != rgba && image.getRGB(c, r) != rgba) {
+								colorImage.setRGB(c, r, image.getRGB(c, r));
+							}
+						}
+
+					}
+				}
+				this.image = colorImage;
+			}
+		}
+		else {
+			this.image = image;
+		}
 	}
 
 	public int[] getAttackedLocation() {
@@ -110,8 +130,6 @@ public class Barrier extends JPanel {
 	public void setHealth(int health) {
 		this.health = health;
 	}
-
-	
 
 	public void setWidth(int width) {
 

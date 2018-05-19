@@ -36,19 +36,21 @@ public class Images {
 
 	private static BufferedImage redEnemyRotatedRight;/* ADD */
 	private static BufferedImage redEnemyRotatedLeft;/* ADD */
-	
+
 	private static BufferedImage homePage;
 	private static BufferedImage title;
-	
+
 	private static BufferedImage playGameButton;
 	private static BufferedImage purpleBirdEnemy;
 	private static BufferedImage greenEnemy;
 	private static BufferedImage orangeEnemy;
+	private static BufferedImage enemies;
+	private static BufferedImage instructions;
+	private static BufferedImage homePageBackground;
 
-//	static ArrayList<BufferedImage> images = new ArrayList<>();
-//	static ArrayList<BufferedImage> images2 = new ArrayList<>();
-//	static ArrayList<String> imagesName = new ArrayList<>();
-
+	// static ArrayList<BufferedImage> images = new ArrayList<>();
+	// static ArrayList<BufferedImage> images2 = new ArrayList<>();
+	// static ArrayList<String> imagesName = new ArrayList<>();
 
 	public static void loadImages() throws IOException {
 
@@ -56,19 +58,19 @@ public class Images {
 
 		inputStream = new FileInputStream("src/Images/SpaceBackground.png");
 		spaceBackground = ImageIO.read(inputStream);
-		
+
 		inputStream = new FileInputStream("src/Images/SkyBackground.png");
 		skyBackground = ImageIO.read(inputStream);
-		
+
 		inputStream = new FileInputStream("src/Images/SeaBackground.png");
 		seaBackground = ImageIO.read(inputStream);
 
 		inputStream = new FileInputStream("src/Images/SpaceBarrier.png");
 		spaceBarrier = ImageIO.read(inputStream);
-		
+
 		inputStream = new FileInputStream("src/Images/SkyBarrier.png");
 		skyBarrier = ImageIO.read(inputStream);
-		
+
 		inputStream = new FileInputStream("src/Images/SeaBarrier.png");
 		seaBarrier = ImageIO.read(inputStream);
 
@@ -107,17 +109,32 @@ public class Images {
 
 		inputStream = new FileInputStream("src/Images/SpaceshipProjectile.png");
 		spaceshipProjectile = ImageIO.read(inputStream);
-		
+
 		inputStream = new FileInputStream("src/Images/GalacticInvaders.png");
 		homePage = ImageIO.read(inputStream);
-		
+
 		inputStream = new FileInputStream("src/Images/GalacticInvadersTitle.png");
 		title = ImageIO.read(inputStream);
-		
+
 		inputStream = new FileInputStream("src/Images/PlayGameButton.png");
 		playGameButton = ImageIO.read(inputStream);
-		
 
+		inputStream = new FileInputStream("src/Images/Enemies.png");
+		enemies = ImageIO.read(inputStream);
+		
+		inputStream = new FileInputStream("src/Images/Instructions.png");
+		instructions = ImageIO.read(inputStream);
+		
+		inputStream = new FileInputStream("src/Images/HomePageBackground.png");
+		homePageBackground = ImageIO.read(inputStream);
+
+	}
+
+	public static boolean inBounds(BufferedImage image, int r, int c) {
+		if (r >= 0 && r < image.getHeight() && c >= 0 && c < image.getWidth()) {
+			return true;
+		}
+		return false;
 	}
 
 	public static BufferedImage getSpaceBackground() {
@@ -304,6 +321,27 @@ public class Images {
 		Images.orangeEnemy = orangeEnemy;
 	}
 
-	
+	public static BufferedImage getEnemies() {
+		return enemies;
+	}
 
+	public static void setEnemies(BufferedImage enemies) {
+		Images.enemies = enemies;
+	}
+
+	public static BufferedImage getInstructions() {
+		return instructions;
+	}
+
+	public static void setInstructions(BufferedImage instructions) {
+		Images.instructions = instructions;
+	}
+
+	public static BufferedImage getHomePageBackground() {
+		return homePageBackground;
+	}
+
+	public static void setHomePageBackground(BufferedImage homePageBackground) {
+		Images.homePageBackground = homePageBackground;
+	}
 }

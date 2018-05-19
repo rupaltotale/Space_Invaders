@@ -3,24 +3,23 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
-import javax.sound.sampled.Clip;
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 import javax.swing.UIManager;
-import sun.audio.*;
 
 /**
  * 
@@ -28,7 +27,7 @@ import sun.audio.*;
  *
  */
 
-public class Board extends JPanel {
+public class Board extends JPanel implements MouseListener {
 
 	/* Frame and board */
 	static JFrame frame = new JFrame("Space Invaders");
@@ -42,7 +41,6 @@ public class Board extends JPanel {
 	static BufferedImage background;
 	static boolean gameOver = false;
 	static String theme = "space";
-	// static boolean startGame = false;
 	static int score = 0;
 	static int livesLeft;
 	static int timeElapsed = 0;
@@ -108,6 +106,8 @@ public class Board extends JPanel {
 		frame.pack();
 		frame.setVisible(true);
 		board.setUpKeyMappings();
+		Board mml = new Board();
+		board.addMouseListener(mml);
 
 	}
 
@@ -135,12 +135,12 @@ public class Board extends JPanel {
 				eProjectiles.remove(i);
 			}
 		}
-		setTheme("space");
+		setTheme(theme);
 		board.removeAll();
 
 	}
 
-	private int component;
+	private static ArrayList<Integer> playGameRect = new ArrayList<>();
 
 	/*
 	 * Defines functionalities of different keys: Right, Left, Space
@@ -217,7 +217,7 @@ public class Board extends JPanel {
 		if (theme.equals("space")) {
 			background = Images.getSpaceBackground();
 			for (int i = 0; i < barriers.size(); i++) {
-				barriers.get(i).setImage(Images.getSpaceBarrier());
+				barriers.get(i).setImage(Images.getSpaceBarrier(), true);
 			}
 			for (int r = 0; r < enemies.size(); r++) {
 				for (int c = 0; c < enemies.get(r).size(); c++) {
@@ -237,9 +237,10 @@ public class Board extends JPanel {
 
 		}
 		if (theme.equals("sky")) {
+			System.out.println("Changing to sky");
 			background = Images.getSkyBackground();
 			for (int i = 0; i < barriers.size(); i++) {
-				barriers.get(i).setImage(Images.getSkyBarrier());
+				barriers.get(i).setImage(Images.getSkyBarrier(), true);
 			}
 			for (int r = 0; r < enemies.size(); r++) {
 				for (int c = 0; c < enemies.get(r).size(); c++) {
@@ -260,7 +261,7 @@ public class Board extends JPanel {
 		if (theme.equals("sea")) {
 			background = Images.getSeaBackground();
 			for (int i = 0; i < barriers.size(); i++) {
-				barriers.get(i).setImage(Images.getSeaBarrier());
+				barriers.get(i).setImage(Images.getSeaBarrier(), true);
 			}
 			dashboardTextColor = "#232323";
 		}
@@ -301,12 +302,12 @@ public class Board extends JPanel {
 		// clicked new game
 		barriers = new ArrayList();
 		int columns = numberOfBarriers * 2 + 1;
-		int row = spaceship.getRow() - 100;
+		int row = spaceship.getRow() - 150;
 		int widthOfBarrier = width / columns;
 		for (int i = 1; i < numberOfBarriers * 2; i += 2) {
 			int col = widthOfBarrier * i;
 			Barrier barrier = new Barrier(row, col);
-			barrier.setImage(Images.getSpaceBarrier());
+			barrier.setImage(Images.getSpaceBarrier(), false);
 			barrier.setWidth(widthOfBarrier);
 			barrier.setHeight(widthOfBarrier / barrier.getImage().getWidth() * barrier.getImage().getHeight());
 			barriers.add(barrier);
@@ -646,9 +647,24 @@ public class Board extends JPanel {
 			}
 		}
 		if (allKilled) {
+
 			enemies = new ArrayList<ArrayList<Enemy>>();
 			createEnemies();
+			nextTheme();
+
 		}
+	}
+
+	private static void nextTheme() {
+		if (theme.equals("space")) {
+			setTheme("sky");
+		} else if (theme.equals("sky")) {
+
+			setTheme("sea");
+		} else if (theme.equals("sea")) {
+			setTheme("space");
+		}
+
 	}
 
 	private static void isNewRowInvalidated() {
@@ -695,8 +711,8 @@ public class Board extends JPanel {
 
 		g.drawImage(background, 0, 0, width, height, null);
 
-		showHomePage();
-		if (!gameOver && !showHomePage && timeElapsed != 0) {
+		showHomePage(g);
+		if (!gameOver && timeElapsed != 0 && !showHomePage) {
 
 			paintBarriers(g);
 			paintEnemies(g);
@@ -812,14 +828,72 @@ public class Board extends JPanel {
 		}
 	}
 
-	private void showHomePage() {
-		showHomePage = false;
-		timeElapsed = 0;
+	private void showHomePage(Graphics g) {
+
+		if (showHomePage) {
+
+			timer.stop();
+			System.out.println("Setting home page");
+			g.drawImage(Images.getHomePageBackground(), 0, 0, width, height, null);
+
+			BufferedImage title = Images.getTitle();
+			g.drawImage(title, width / 2 - title.getWidth() / 2, (int) (margin / 2), title.getWidth(),
+					title.getHeight(), null);
+			BufferedImage playGameImage = Images.getPlayGameButton();
+			g.drawImage(playGameImage, width / 2 - playGameImage.getWidth() / 2, (int) (height - 2.25 * margin),
+					playGameImage.getWidth(), playGameImage.getHeight(), null);
+			playGameRect.add(width / 2 - playGameImage.getWidth() / 2); // minX
+			playGameRect.add(playGameRect.get(0) + playGameImage.getWidth()); // maxX
+			playGameRect.add((int) (height - 2.25 * margin)); // minY
+			playGameRect.add(playGameRect.get(2) + playGameImage.getHeight()); // maxY
+
+		}
 
 	}
 
-	/*
-	 * Sets the background of the panel
-	 */
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if (showHomePage) {
+			int mX = e.getX();
+			int mY = e.getY();
+			System.out.println("X: " + mX + ", Y:" + mY);
+			checkIfPlayGame(mX, mY);
+		}
+
+	}
+
+	private void checkIfPlayGame(int x, int y) {
+		System.out.println("PlayGameRect:" + playGameRect);
+		if (x >= playGameRect.get(0) && x <= playGameRect.get(1) && y >= playGameRect.get(2)
+				&& y <= playGameRect.get(3)) {
+			showHomePage = false;
+			timer.start();
+		}
+	}
+
+	// Ignore this!
+	@Override
+	public void mousePressed(MouseEvent e) {
+	
+
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+	
+
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+
+	}
+
+	
 
 }
