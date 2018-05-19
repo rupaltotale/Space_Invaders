@@ -3,7 +3,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -13,8 +12,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
@@ -159,7 +156,6 @@ public class Board extends JPanel implements MouseListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// ADD implementation of right key here
-				// System.out.println("Right Key Pressed");
 				direction = 1;
 				movedBy = 0;
 			}
@@ -182,7 +178,6 @@ public class Board extends JPanel implements MouseListener {
 			public void actionPerformed(ActionEvent e) {
 				// ADD implementation of space key here
 
-				// System.out.println("Space Key Pressed");
 				if (!gameOver) {
 
 					if (sProjectiles.size() == 0) {
@@ -202,7 +197,6 @@ public class Board extends JPanel implements MouseListener {
 			public void actionPerformed(ActionEvent e) {
 				// ADD implementation of space key here
 
-				// System.out.println("Space Key Pressed");
 				pause = !pause;
 			}
 
@@ -250,7 +244,6 @@ public class Board extends JPanel implements MouseListener {
 
 		}
 		if (currentTheme.equals("sky")) {
-			System.out.println("Changing to sky");
 			background = Images.getSkyBackground();
 			for (int i = 0; i < barriers.size(); i++) {
 				barriers.get(i).setImage(Images.getSkyBarrier(), true);
@@ -435,7 +428,6 @@ public class Board extends JPanel implements MouseListener {
 						Enemy enemy = enemies.get(r).get(c);
 						if (enemy.getImage().equals(Images.getGreenFishR())) {
 							// || enemy.getImage().equals(Images.getPinkFishR())) {
-							// System.out.println("Flipping");
 							enemy.setImage(Images.getGreenFishL());
 							// }
 						} else if (enemy.getImage().equals(Images.getPinkFishR())) {
@@ -523,7 +515,7 @@ public class Board extends JPanel implements MouseListener {
 							Enemy enemy = enemies.get(r).get(c);
 							if (isColliding(enemy, projectile)) {
 								enemy.setInvalid(true);
-								Audio.makeKillingSoundForEnemy();
+								Audio.makeSoftKillingSoundForEnemy();
 								score += enemy.getScore();
 								sProjectiles.remove(projectile);
 
@@ -536,8 +528,7 @@ public class Board extends JPanel implements MouseListener {
 						flyingEnemy.setInvalid(true);
 						sProjectiles.remove(projectile);
 						score += flyingEnemy.getScore();
-						Audio.makeKillingSoundForEnemy();
-
+						Audio.makeHardKillingSoundForEnemy();
 					}
 					for (int b = 0; b < barriers.size(); b++) {
 						if (isColliding(barriers.get(b), projectile)) {
@@ -571,10 +562,9 @@ public class Board extends JPanel implements MouseListener {
 		}
 		if (obj instanceof Barrier) {
 			Barrier barrier = (Barrier) obj;
-			int speed;
 			if (!projectile.isSpaceshipP()) { // add it!
-				for (int row = projectile.getRow(); row < projectile.getRow() + projectile.getHeight()
-						+ eSpeed; row++) {
+				for (int row = projectile.getRow(); row < projectile.getRow() + projectile.getHeight() + eSpeed
+						+ 1; row++) {
 					for (int col = projectile.getCol(); col < projectile.getCol() + projectile.getWidth(); col++) {
 
 						if (row >= barrier.getRow() && row < barrier.getRow() + barrier.getHeight()
@@ -601,7 +591,8 @@ public class Board extends JPanel implements MouseListener {
 				}
 			} else {
 
-				for (int row = projectile.getRow() + projectile.getHeight() + sSpeed-1; row >= projectile.getRow(); row--) {
+				for (int row = projectile.getRow() + projectile.getHeight() + sSpeed + 1; row >= projectile
+						.getRow(); row--) {
 					for (int col = projectile.getCol(); col < projectile.getCol() + projectile.getWidth(); col++) {
 
 						if (row >= barrier.getRow() && row < barrier.getRow() + barrier.getHeight()
@@ -650,7 +641,6 @@ public class Board extends JPanel implements MouseListener {
 			int random = (int) (enemiesForProjectile.size() * Math.random());
 			Enemy enemy = enemiesForProjectile.get(random);
 			Projectile projectile = new Projectile(enemy.getProjectile(), epSpeed, false);
-			// System.out.println(enemy.getProjectileName());
 			projectile.setCol(enemy.getCol() + enemy.getWidth() / 2 - projectile.getWidth() / 2);
 			projectile.setRow(enemy.getRow() + enemy.getHeight());
 			double randomAdd = Math.random() * 500;
@@ -669,9 +659,6 @@ public class Board extends JPanel implements MouseListener {
 				// checks for collision between barrier and eProjectile
 				for (int b = 0; b < barriers.size(); b++) {
 					if (isColliding(barriers.get(b), projectile)) {
-						System.out.println("Barrier Y: " + barriers.get(b).getRow());
-						int sum = projectile.getRow() + projectile.getHeight();
-						System.out.println("Projectile Bottom: " + sum);
 						eProjectiles.remove(projectile);
 					}
 				}
@@ -747,7 +734,6 @@ public class Board extends JPanel implements MouseListener {
 			rowsInvalidated++;
 			// eSpeed += 1;
 			probabilityOfNotShooting -= 0.02;
-			// System.out.println("New row of enemies has been killed!");
 		}
 
 	}
@@ -805,7 +791,6 @@ public class Board extends JPanel implements MouseListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Starting new game");
 				startNewGame();
 
 			}
@@ -874,6 +859,8 @@ public class Board extends JPanel implements MouseListener {
 				if (!enemy.isInvalid()) {
 					enemy.setWidth(enemy.getImage().getWidth() / 8);
 					enemy.setHeight(enemy.getImage().getHeight() / 8);
+//					BufferedImage image = Images.rotate(enemy.getImage(), 1);
+//					enemy.setImage(image);
 					enemy.paintComponent(g);
 				}
 
@@ -919,14 +906,12 @@ public class Board extends JPanel implements MouseListener {
 		if (showHomePage) {
 			int mX = e.getX();
 			int mY = e.getY();
-			System.out.println("X: " + mX + ", Y:" + mY);
 			checkIfPlayGame(mX, mY);
 		}
 
 	}
 
 	private void checkIfPlayGame(int x, int y) {
-		System.out.println("PlayGameRect:" + playGameRect);
 		if (x >= playGameRect.get(0) && x <= playGameRect.get(1) && y >= playGameRect.get(2)
 				&& y <= playGameRect.get(3)) {
 			showHomePage = false;

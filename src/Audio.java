@@ -8,8 +8,9 @@ import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 
 public class Audio {
-	static File killEnemyFile = new File("src/Audio/SoftKillSound.wav");
-	static File killSpaceshipFile = new File("src/Audio/KillSpaceship.wav");
+	static File hardKillSound = new File("src/Audio/HardKillSound.wav");
+	static File whooshFile = new File("src/Audio/Whoosh.wav");
+	static File softKillSound = new File("src/Audio/SoftKillSound.wav");
 	static InputStream inputStream;
 
 	public static void makeSound(File file) {
@@ -28,11 +29,16 @@ public class Audio {
 		AudioPlayer.player.start(sound);
 	}
 	
-	public static void makeKillingSoundForEnemy() {
-		makeSound(killEnemyFile);
+	public static void makeHardKillingSoundForEnemy() {
+		makeSound(hardKillSound);
 	}
+	
 	public static void makeKillingSoundForSpaceship() {
-		makeSound(killSpaceshipFile);
+		makeSound(whooshFile);
+	}
+
+	public static void makeSoftKillingSoundForEnemy() {
+		makeSound(softKillSound);		
 	}
 	
 
