@@ -224,9 +224,9 @@ public class Barrier extends JPanel {
 			}
 			if (!spaceshipP) {
 				int attackedHeight = attackedWidth;
-				for (int row = attackedY - attackedHeight / 2; row < attackedY + attackedHeight / 2; row++) {
+				for (int row = attackedY; row < attackedY + attackedHeight; row++) {
 					for (int col = attackedX; col < attackedX + attackedWidth; col++) {
-						if (col >= 0 && col < colorImage.getWidth() && row >= 0 && row <= colorImage.getHeight()) {
+						if (Images.inBounds(colorImage, row, col)) {
 							int r = 0;
 							int g = 0;
 							int b = 0;
@@ -243,9 +243,9 @@ public class Barrier extends JPanel {
 				}
 			} else {
 				int attackedHeight = attackedWidth;
-				for (int row = attackedY + attackedHeight / 2; row > attackedY - attackedHeight / 2; row--) {
+				for (int row = attackedY; row > attackedY - attackedHeight; row--) {
 					for (int col = attackedX; col < attackedX + attackedWidth; col++) {
-						if (col >= 0 && col < colorImage.getWidth() && row >= 0 && row < colorImage.getHeight()) {
+						if (Images.inBounds(colorImage, row, col)) {
 							int r = 0;
 							int g = 0;
 							int b = 0;

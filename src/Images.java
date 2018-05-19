@@ -47,6 +47,11 @@ public class Images {
 	private static BufferedImage enemies;
 	private static BufferedImage instructions;
 	private static BufferedImage homePageBackground;
+	private static BufferedImage greenFishR;
+	private static BufferedImage pinkFishR;
+	private static BufferedImage yellowFish;
+	private static BufferedImage greenFishL;
+	private static BufferedImage pinkFishL;
 
 	// static ArrayList<BufferedImage> images = new ArrayList<>();
 	// static ArrayList<BufferedImage> images2 = new ArrayList<>();
@@ -121,12 +126,23 @@ public class Images {
 
 		inputStream = new FileInputStream("src/Images/Enemies.png");
 		enemies = ImageIO.read(inputStream);
-		
+
 		inputStream = new FileInputStream("src/Images/Instructions.png");
 		instructions = ImageIO.read(inputStream);
-		
+
 		inputStream = new FileInputStream("src/Images/HomePageBackground.png");
 		homePageBackground = ImageIO.read(inputStream);
+
+		inputStream = new FileInputStream("src/Images/EnemyGreenFish.png");
+		greenFishR = ImageIO.read(inputStream);
+		greenFishL = flipHorizontally(greenFishR);
+
+		inputStream = new FileInputStream("src/Images/EnemyPinkFish.png");
+		pinkFishR = ImageIO.read(inputStream);
+		pinkFishL = flipHorizontally(pinkFishR);
+
+		inputStream = new FileInputStream("src/Images/EnemyYellowFish.png");
+		yellowFish = ImageIO.read(inputStream);
 
 	}
 
@@ -135,6 +151,22 @@ public class Images {
 			return true;
 		}
 		return false;
+	}
+
+	public static BufferedImage flipHorizontally(BufferedImage image) {
+		// BufferedImage image = this.image;
+		if (image != null) {
+			BufferedImage colorImage = new BufferedImage(image.getWidth(), image.getHeight(),
+					BufferedImage.TYPE_INT_ARGB);
+			for (int r = 0; r < image.getHeight(); r++) {
+				for (int c = 1; c < image.getWidth(); c++) {
+					colorImage.setRGB(image.getWidth()-c, r, image.getRGB(c, r));
+				}
+				
+			}
+			return colorImage;
+		}
+		return null;
 	}
 
 	public static BufferedImage getSpaceBackground() {
@@ -344,4 +376,47 @@ public class Images {
 	public static void setHomePageBackground(BufferedImage homePageBackground) {
 		Images.homePageBackground = homePageBackground;
 	}
+
+	
+
+	public static BufferedImage getYellowFish() {
+		return yellowFish;
+	}
+
+	public static void setYellowFish(BufferedImage yellowFish) {
+		Images.yellowFish = yellowFish;
+	}
+
+	public static BufferedImage getGreenFishR() {
+		return greenFishR;
+	}
+
+	public static void setGreenFishR(BufferedImage greenFishR) {
+		Images.greenFishR = greenFishR;
+	}
+
+	public static BufferedImage getPinkFishR() {
+		return pinkFishR;
+	}
+
+	public static void setPinkFishR(BufferedImage pinkFishR) {
+		Images.pinkFishR = pinkFishR;
+	}
+
+	public static BufferedImage getGreenFishL() {
+		return greenFishL;
+	}
+
+	public static void setGreenFishL(BufferedImage greenFishL) {
+		Images.greenFishL = greenFishL;
+	}
+
+	public static BufferedImage getPinkFishL() {
+		return pinkFishL;
+	}
+
+	public static void setPinkFishL(BufferedImage pinkFishL) {
+		Images.pinkFishL = pinkFishL;
+	}
+
 }

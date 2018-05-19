@@ -40,7 +40,8 @@ public class Board extends JPanel implements MouseListener {
 	static int margin = 150;
 	static BufferedImage background;
 	static boolean gameOver = false;
-	static String theme = "space";
+	static String initialTheme = "space";
+	static String currentTheme = initialTheme;
 	static int score = 0;
 	static int livesLeft;
 	static int timeElapsed = 0;
@@ -135,7 +136,7 @@ public class Board extends JPanel implements MouseListener {
 				eProjectiles.remove(i);
 			}
 		}
-		setTheme(theme);
+		setTheme(initialTheme);
 		board.removeAll();
 
 	}
@@ -149,8 +150,9 @@ public class Board extends JPanel implements MouseListener {
 
 		this.getInputMap().put(KeyStroke.getKeyStroke("LEFT"), "left");
 		this.getInputMap().put(KeyStroke.getKeyStroke("RIGHT"), "right");
-		this.getInputMap().put(KeyStroke.getKeyStroke("SPACE"), "space");
+		this.getInputMap().put(KeyStroke.getKeyStroke("SPACE"), "shoot");
 		this.getInputMap().put(KeyStroke.getKeyStroke("P"), "pause");
+		this.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "newGame");
 
 		this.getActionMap().put("right", new AbstractAction() {
 
@@ -174,7 +176,7 @@ public class Board extends JPanel implements MouseListener {
 			}
 		});
 
-		this.getActionMap().put("space", new AbstractAction() {
+		this.getActionMap().put("shoot", new AbstractAction() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -190,8 +192,6 @@ public class Board extends JPanel implements MouseListener {
 						projectile.setLocation(row, col);
 						sProjectiles.add(projectile);
 					}
-				} else {
-					startNewGame();
 				}
 			}
 
@@ -207,14 +207,27 @@ public class Board extends JPanel implements MouseListener {
 			}
 
 		});
+		this.getActionMap().put("newGame", new AbstractAction() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (gameOver) {
+					startNewGame();
+				} else if (showHomePage) {
+					showHomePage = false;
+					timer.start();
+				}
+			}
+
+		});
 
 		this.requestFocusInWindow();
 
 	}
 
 	public static void setTheme(String changeToTheme) {
-		theme = changeToTheme;
-		if (theme.equals("space")) {
+		currentTheme = changeToTheme;
+		if (currentTheme.equals("space")) {
 			background = Images.getSpaceBackground();
 			for (int i = 0; i < barriers.size(); i++) {
 				barriers.get(i).setImage(Images.getSpaceBarrier(), true);
@@ -236,7 +249,7 @@ public class Board extends JPanel implements MouseListener {
 			dashboardTextColor = "#F8F1D7";
 
 		}
-		if (theme.equals("sky")) {
+		if (currentTheme.equals("sky")) {
 			System.out.println("Changing to sky");
 			background = Images.getSkyBackground();
 			for (int i = 0; i < barriers.size(); i++) {
@@ -258,10 +271,24 @@ public class Board extends JPanel implements MouseListener {
 			}
 			dashboardTextColor = "#232323";
 		}
-		if (theme.equals("sea")) {
+		if (currentTheme.equals("sea")) {
 			background = Images.getSeaBackground();
 			for (int i = 0; i < barriers.size(); i++) {
 				barriers.get(i).setImage(Images.getSeaBarrier(), true);
+			}
+			for (int r = 0; r < enemies.size(); r++) {
+				for (int c = 0; c < enemies.get(r).size(); c++) {
+					Enemy enemy = enemies.get(r).get(c);
+					if (enemy.getScore() == 150) {
+						enemy.setImage(Images.getGreenFishR());
+					}
+					if (enemy.getScore() == 100) {
+						enemy.setImage(Images.getPinkFishR());
+					}
+					if (enemy.getScore() == 50) {
+						enemy.setImage(Images.getYellowFish());
+					}
+				}
 			}
 			dashboardTextColor = "#232323";
 		}
@@ -400,13 +427,40 @@ public class Board extends JPanel implements MouseListener {
 		int total = (int) (lastCol + eSpeed + w);
 		if (Math.signum(eSpeed) > 0) { // moving right
 			if (total > width) {
-				eSpeed = -1 * eSpeed;
+				eSpeed = -1 * eSpeed; // change to left
 				moveEnemiesDown();
+				// flip fish direction
+				for (int r = 0; r < enemies.size(); r++) {
+					for (int c = 0; c < enemies.get(r).size(); c++) {
+						Enemy enemy = enemies.get(r).get(c);
+						if (enemy.getImage().equals(Images.getGreenFishR())) {
+							// || enemy.getImage().equals(Images.getPinkFishR())) {
+							// System.out.println("Flipping");
+							enemy.setImage(Images.getGreenFishL());
+							// }
+						} else if (enemy.getImage().equals(Images.getPinkFishR())) {
+							enemy.setImage(Images.getPinkFishL());
+						}
+					}
+				}
 			}
 		} else if (Math.signum(eSpeed) < 0) {
 			if (firstCol - eSpeed < 0) {
 				eSpeed = -1 * eSpeed;
 				moveEnemiesDown();
+				// flip fish direction
+				for (int r = 0; r < enemies.size(); r++) {
+					for (int c = 0; c < enemies.get(r).size(); c++) {
+						Enemy enemy = enemies.get(r).get(c);
+						if (enemy.getImage().equals(Images.getGreenFishL())) {
+
+							enemy.setImage(Images.getGreenFishR());
+
+						} else if (enemy.getImage().equals(Images.getPinkFishL())) {
+							enemy.setImage(Images.getPinkFishR());
+						}
+					}
+				}
 
 			}
 		}
@@ -517,57 +571,62 @@ public class Board extends JPanel implements MouseListener {
 		}
 		if (obj instanceof Barrier) {
 			Barrier barrier = (Barrier) obj;
-			if (projectile.isSpaceshipP()) {
-				int pRow = projectile.getRow();
-				int pCol = projectile.getCol() + projectile.getWidth() / 2;
-				if (pRow >= barrier.getRow() && pRow <= barrier.getRow() + barrier.getHeight()
-						&& pCol >= barrier.getCol() && pCol < barrier.getCol() + barrier.getWidth()) {
+			int speed;
+			if (!projectile.isSpaceshipP()) { // add it!
+				for (int row = projectile.getRow(); row < projectile.getRow() + projectile.getHeight()
+						+ eSpeed; row++) {
+					for (int col = projectile.getCol(); col < projectile.getCol() + projectile.getWidth(); col++) {
 
-					int r = (pRow - barrier.getRow());
-					System.out.println(r);
-					int c = (pCol - barrier.getCol());
-					int rgba = (0 << 24) | (0 << 16) | (0 << 8) | 0;
-					boolean transparent = barrier.getImage().getRGB(c, r) == rgba;
-					if (!transparent) {
-						barrier.setAttacked(true);
-						barrier.setAttackedX(c);
-						barrier.setAttackedY(r);
-						barrier.setAttackedWidth((int) (projectile.getWidth() / 1.5));
-						barrier.changeImage(true);
-						barrier.setAttacked(false);
-						return true;
+						if (row >= barrier.getRow() && row < barrier.getRow() + barrier.getHeight()
+								&& col >= barrier.getCol() && col < barrier.getCol() + barrier.getWidth()) {
+
+							int r = (row - barrier.getRow());
+							int c = (col - barrier.getCol());
+							int rgba = (0 << 24) | (0 << 16) | (0 << 8) | 0;
+							boolean transparent = barrier.getImage().getRGB(c, r) == rgba;
+							if (!transparent) {
+								barrier.setAttacked(true);
+								barrier.setAttackedX(c);
+								barrier.setAttackedY(r);
+								barrier.setAttackedWidth((int) (projectile.getWidth() / 1.5));
+								barrier.changeImage(projectile.isSpaceshipP());
+								barrier.setAttacked(false);
+								return true;
+							}
+
+						}
+
 					}
 
 				}
-
 			} else {
-				int pRow = projectile.getRow() + projectile.getHeight();
-				int pCol = projectile.getCol() + projectile.getWidth() / 2;
 
-				if (pRow >= barrier.getRow() && pRow <= barrier.getRow() + barrier.getHeight()
-						&& pCol >= barrier.getCol() && pCol < barrier.getCol() + barrier.getWidth()) {
+				for (int row = projectile.getRow() + projectile.getHeight() + sSpeed-1; row >= projectile.getRow(); row--) {
+					for (int col = projectile.getCol(); col < projectile.getCol() + projectile.getWidth(); col++) {
 
-					int r = (pRow - barrier.getRow());
-					System.out.println(r);
-					int c = (pCol - barrier.getCol());
-					int rgba = (0 << 24) | (0 << 16) | (0 << 8) | 0;
-					// if (c < 0) {
-					// c = (pCol + projectile.getWidth() - barrier.getCol()) * 4;
-					// }
-					boolean transparent = barrier.getImage().getRGB(c, r) == rgba;
-					if (!transparent) {
-						barrier.setAttacked(true);
-						barrier.setAttackedX(c);
-						barrier.setAttackedY(r);
-						barrier.setAttackedWidth((int) (projectile.getWidth() / 1.5));
-						barrier.changeImage(false);
-						barrier.setAttacked(false);
-						return true;
+						if (row >= barrier.getRow() && row < barrier.getRow() + barrier.getHeight()
+								&& col >= barrier.getCol() && col < barrier.getCol() + barrier.getWidth()) {
+
+							int r = (row - barrier.getRow());
+							int c = (col - barrier.getCol());
+							int rgba = (0 << 24) | (0 << 16) | (0 << 8) | 0;
+							boolean transparent = barrier.getImage().getRGB(c, r) == rgba;
+							if (!transparent) {
+								barrier.setAttacked(true);
+								barrier.setAttackedX(c);
+								barrier.setAttackedY(r);
+								barrier.setAttackedWidth((int) (projectile.getWidth() / 1.5));
+								barrier.changeImage(projectile.isSpaceshipP());
+								barrier.setAttacked(false);
+								return true;
+							}
+
+						}
+
 					}
 
 				}
 			}
-
 		}
 		return false;
 	}
@@ -607,6 +666,17 @@ public class Board extends JPanel implements MouseListener {
 		if (eProjectiles.size() > 0) {
 			for (int i = 0; i < eProjectiles.size(); i++) {
 				Projectile projectile = eProjectiles.get(i);
+				// checks for collision between barrier and eProjectile
+				for (int b = 0; b < barriers.size(); b++) {
+					if (isColliding(barriers.get(b), projectile)) {
+						System.out.println("Barrier Y: " + barriers.get(b).getRow());
+						int sum = projectile.getRow() + projectile.getHeight();
+						System.out.println("Projectile Bottom: " + sum);
+						eProjectiles.remove(projectile);
+					}
+				}
+
+				// moves
 				if (projectile.getRow() > height) {
 					eProjectiles.remove(projectile);
 				} else {
@@ -624,13 +694,6 @@ public class Board extends JPanel implements MouseListener {
 				livesLeft = spaceship.getLives() - 1;
 				eProjectiles.remove(projectile);
 
-			}
-
-			// checks for collision between barrier and eProjectile
-			for (int b = 0; b < barriers.size(); b++) {
-				if (isColliding(barriers.get(b), projectile)) {
-					eProjectiles.remove(projectile);
-				}
 			}
 
 		}
@@ -656,12 +719,12 @@ public class Board extends JPanel implements MouseListener {
 	}
 
 	private static void nextTheme() {
-		if (theme.equals("space")) {
+		if (currentTheme.equals("space")) {
 			setTheme("sky");
-		} else if (theme.equals("sky")) {
+		} else if (currentTheme.equals("sky")) {
 
 			setTheme("sea");
-		} else if (theme.equals("sea")) {
+		} else if (currentTheme.equals("sea")) {
 			setTheme("space");
 		}
 
@@ -732,7 +795,7 @@ public class Board extends JPanel implements MouseListener {
 
 	private void paintGameOverPanel(Graphics g) {
 		String buttonText = "<html>" + "<body" + "'>" + "<center><h1>Game Over</h1>"
-				+ "<h2>Press SPACE to start a new game or click HERE</h2>" + "<h4> Score: " + score + "</h4>"
+				+ "<h2>Press ENTER to start a new game or click HERE</h2>" + "<h4> Score: " + score + "</h4>"
 				+ "<h4> Time: " + (timeElapsed) / time / 2 + " seconds. </h4></center>";
 		Button gameOverButton = new Button();
 		gameOverButton.setLabel(buttonText);
@@ -874,13 +937,11 @@ public class Board extends JPanel implements MouseListener {
 	// Ignore this!
 	@Override
 	public void mousePressed(MouseEvent e) {
-	
 
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-	
 
 	}
 
@@ -893,7 +954,5 @@ public class Board extends JPanel implements MouseListener {
 	public void mouseExited(MouseEvent e) {
 
 	}
-
-	
 
 }
