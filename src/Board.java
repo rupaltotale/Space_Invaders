@@ -3,10 +3,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,6 +49,7 @@ public class Board extends JPanel implements MouseListener {
 	static Timer timer = new Timer(time, null);
 	private static boolean pause = false;
 	private static boolean showHomePage = true;
+	private static ArrayList<Integer> playGameRect = new ArrayList<>();
 
 	/* Barriers */
 	static ArrayList<Barrier> barriers = new ArrayList<Barrier>();
@@ -62,6 +65,8 @@ public class Board extends JPanel implements MouseListener {
 	static int epSpeed = 9 * constant;
 	private static double probabilityOfNotShooting = 0.98;
 	static int rowsInvalidated;
+	private static double angle = 0;
+	private static double angleIncrement = 0.03;
 
 	/* Flying enemies */
 	static int fRow = margin / 3;
@@ -73,7 +78,7 @@ public class Board extends JPanel implements MouseListener {
 	/* Spaceship */
 	static int sRow = height - 100;
 	static int sCol = margin;
-	static int lives = 3;
+	static int lives = 30;
 	static Spaceship spaceship = new Spaceship(sRow, sCol, lives);// for the spaceship characteristics
 	static int moveLimit = 40;
 	static int movedBy = moveLimit;
@@ -137,8 +142,6 @@ public class Board extends JPanel implements MouseListener {
 		board.removeAll();
 
 	}
-
-	private static ArrayList<Integer> playGameRect = new ArrayList<>();
 
 	/*
 	 * Defines functionalities of different keys: Right, Left, Space
@@ -294,7 +297,7 @@ public class Board extends JPanel implements MouseListener {
 		rowsInvalidated = 0;
 		enemies = new ArrayList();
 		int colSpacing = (width - margin * 2) / (enemyCol + 1);
-		int rowSpacing = (int) ((height * 0.3) / (enemyRow));
+		int rowSpacing = (int) ((height * 0.4) / (enemyRow));
 		for (int r = 0; r < enemyRow; r++) {
 			ArrayList<Enemy> enemyRow = new ArrayList<Enemy>();
 			for (int c = 0; c < enemyCol; c++) {
@@ -402,16 +405,21 @@ public class Board extends JPanel implements MouseListener {
 	public static void moveEnemies() {
 		int lastCol = -1;
 		int firstCol = -1;
+		int maxValidCol = 0;
+		int minValidCol = 0;
 		for (int c = 0; c < enemyCol; c++) {
 			for (int r = 0; r < enemies.size(); r++) {
 				if (!enemies.get(r).get(c).isInvalid()) {
+					maxValidCol = c;
 					lastCol = enemies.get(r).get(c).getCol();
 				}
 			}
 		}
+
 		for (int c = enemyCol - 1; c >= 0; c--) {
 			for (int r = 0; r < enemies.size(); r++) {
 				if (!enemies.get(r).get(c).isInvalid()) {
+					minValidCol = c;
 					firstCol = enemies.get(r).get(c).getCol();
 				}
 			}
@@ -420,6 +428,7 @@ public class Board extends JPanel implements MouseListener {
 		int total = (int) (lastCol + eSpeed + w);
 		if (Math.signum(eSpeed) > 0) { // moving right
 			if (total > width) {
+				angleIncrement = angleIncrement + (enemyCol - maxValidCol - 1) * 0.015;
 				eSpeed = -1 * eSpeed; // change to left
 				moveEnemiesDown();
 				// flip fish direction
@@ -438,6 +447,7 @@ public class Board extends JPanel implements MouseListener {
 			}
 		} else if (Math.signum(eSpeed) < 0) {
 			if (firstCol - eSpeed < 0) {
+				angleIncrement = angleIncrement + (minValidCol) * 0.015;
 				eSpeed = -1 * eSpeed;
 				moveEnemiesDown();
 				// flip fish direction
@@ -518,6 +528,7 @@ public class Board extends JPanel implements MouseListener {
 								Audio.makeSoftKillingSoundForEnemy();
 								score += enemy.getScore();
 								sProjectiles.remove(projectile);
+								break;
 
 							}
 						}
@@ -701,6 +712,7 @@ public class Board extends JPanel implements MouseListener {
 			enemies = new ArrayList<ArrayList<Enemy>>();
 			createEnemies();
 			nextTheme();
+			angleIncrement = 0.03;
 
 		}
 	}
@@ -857,11 +869,27 @@ public class Board extends JPanel implements MouseListener {
 			for (int c = 0; c < enemies.get(r).size(); c++) {
 				Enemy enemy = enemies.get(r).get(c);
 				if (!enemy.isInvalid()) {
-					enemy.setWidth(enemy.getImage().getWidth() / 8);
-					enemy.setHeight(enemy.getImage().getHeight() / 8);
-//					BufferedImage image = Images.rotate(enemy.getImage(), 1);
-//					enemy.setImage(image);
-					enemy.paintComponent(g);
+					if (!(enemy.getImage().equals(Images.getGreenFishL()))
+							&& !(enemy.getImage().equals(Images.getGreenFishR()))
+							&& !(enemy.getImage().equals(Images.getPinkFishL()))
+							&& !(enemy.getImage().equals(Images.getPinkFishR()))) {
+						AffineTransform at = AffineTransform.getTranslateInstance(enemy.getCol(), enemy.getRow());
+						// at.translate(enemy.getCol(), enemy.getRow());
+						at.scale(.12, 0.12);
+						at.rotate(Math.toRadians(angle), enemy.getImage().getWidth() / 2,
+								enemy.getImage().getHeight() / 2);
+						angle += angleIncrement;
+						Graphics2D g2d = (Graphics2D) g;
+
+						g2d.drawImage(enemy.getImage(), at, null);
+					}
+					else {
+						 enemy.setWidth(enemy.getImage().getWidth() / 8);
+						 enemy.setHeight(enemy.getImage().getHeight() / 8);
+						 enemy.paintComponent(g);
+					}
+
+					//
 				}
 
 			}

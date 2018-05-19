@@ -247,6 +247,7 @@ public class Images {
 	public static BufferedImage getRedEnemy() {
 		return redEnemy;
 	}
+	
 
 	public static void setRedEnemy(BufferedImage redEnemy) {
 		Images.redEnemy = redEnemy;
