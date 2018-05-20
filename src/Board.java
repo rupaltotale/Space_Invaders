@@ -78,7 +78,7 @@ public class Board extends JPanel implements MouseListener {
 	/* Spaceship */
 	static int sRow = height - 100;
 	static int sCol = margin;
-	static int lives = 30;
+	static int lives = 4;
 	static Spaceship spaceship = new Spaceship(sRow, sCol, lives);// for the spaceship characteristics
 	static int moveLimit = 40;
 	static int movedBy = moveLimit;
