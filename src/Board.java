@@ -278,7 +278,7 @@ public class Board extends JPanel {
 
 	}
 
-	setTheme("sea");
+	setTheme("space");
 
 	board.removeAll();
 

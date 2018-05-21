@@ -40,6 +40,9 @@ public class Projectile extends JPanel {
 
 	}
 
+	
+	
+	
 	// should we make them all the same size?
 	public void setSize() {
 
