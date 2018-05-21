@@ -1,20 +1,11 @@
 import java.awt.Color;
-
 import java.awt.Graphics;
-
 import java.awt.image.BufferedImage;
-
-import java.io.IOException;
-
-import java.io.InputStream;
 import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
 
 import javax.swing.JPanel;
 
 public class Barrier extends JPanel {
-	private int health; // the number of pixels it beings with
 	private int attackedX;
 	private int attackedY;
 	private int col;
@@ -23,7 +14,6 @@ public class Barrier extends JPanel {
 	private int height;
 	private boolean isAttacked = false;
 	private int attackedWidth;
-	private ArrayList<ArrayList<Integer>> hitPixels = new ArrayList<ArrayList<Integer>>();
 
 	BufferedImage image;
 
@@ -58,35 +48,14 @@ public class Barrier extends JPanel {
 		}
 	}
 
-	public int[] getAttackedLocation() {
 
-		int[] loc = new int[2];
 
-		loc[0] = attackedX;
-
-		loc[1] = attackedY;
-
-		return loc;
-
-	}
-
-	public void damage(int x, int y, Color col) {
-
-		this.attackedX = x;
-
-		this.attackedY = y;
-
-	}
-
+	
 	@Override
 
 	public void paintComponent(Graphics g) {
 		g.drawImage(image, col, row, width, height, this);
-		for (ArrayList<Integer> a : hitPixels) {
-			g.setColor(new Color(0, 0, 0));
-			g.drawRect(a.get(1), a.get(0), 1, 1);
-			g.fillRect(a.get(1), a.get(0), 1, 1);
-		}
+		
 	}
 
 	// getters and setters
@@ -127,9 +96,6 @@ public class Barrier extends JPanel {
 		this.row = row;
 	}
 
-	public void setHealth(int health) {
-		this.health = health;
-	}
 
 	public void setWidth(int width) {
 
@@ -169,52 +135,11 @@ public class Barrier extends JPanel {
 		return attackedWidth;
 	}
 
-	public boolean isHit(Projectile pro) {
-		if (pro.getRow() + pro.getHeight() >= row && pro.getCol() + (pro.getWidth() / 2) >= col
-				&& pro.getCol() + (pro.getWidth() / 2) <= col + width) {
-			hit(pro);
-			return true;
-		}
-		return false;
-	}
-
-	public void hit(Projectile pro) {
-		int hitCol = pro.getCol() + pro.getWidth() / 2;
-		int maxRow = row;
-		// for(int i = row; i<row+height; i++) {
-		if (hitPixels.size() == 0) {
-
-			for (int r = row; r <= row + 9; r++) {
-				for (int c = hitCol - 2; c < hitCol + 2; c++) {
-					ArrayList<Integer> temp = new ArrayList<>();
-					temp.add(r);
-					temp.add(c);
-					hitPixels.add(temp);
-				}
-			}
-
-		}
-		for (int r = 0; r < hitPixels.size(); r++) {
-			if (hitPixels.get(r).get(1) == hitCol) {
-				if (hitPixels.get(r).get(0) > row) {
-					maxRow = hitPixels.get(r).get(0);
-				}
-			}
-		}
-		for (int r = maxRow; r <= maxRow + 9; r++) {
-			for (int c = hitCol - 2; c < hitCol + 2; c++) {
-				ArrayList<Integer> temp = new ArrayList<>();
-				temp.add(r);
-				temp.add(c);
-				hitPixels.add(temp);
-			}
-		}
-		// }
-	}
+	
 
 	public void changeImage(boolean spaceshipP) {
 		BufferedImage image = this.image;
-		if (image != null) {
+		if (image != null) {             
 			BufferedImage colorImage = new BufferedImage(image.getWidth(), image.getHeight(),
 					BufferedImage.TYPE_INT_ARGB);
 			for (int r = 0; r < image.getHeight(); r++) {

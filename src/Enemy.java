@@ -1,11 +1,7 @@
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 public class Enemy extends JPanel {
@@ -17,16 +13,17 @@ public class Enemy extends JPanel {
 	private int height = 100;
 	private boolean invalid = false;
 	private int score;
-	private String projectileName;
+	// private String projectileName;
 	private BufferedImage projectile;
+
+	private String superPower;
+	private BufferedImage superPowerImage;
 
 	// Spaceship Theme: Score, imageName, projectileName
 	private static ArrayList<Object> redEnemy = new ArrayList<>();
 	private static ArrayList<Object> blueEnemy = new ArrayList<>();
 	private static ArrayList<Object> purpleEnemy = new ArrayList<>();
 	private static ArrayList<Object> flyingEnemy = new ArrayList<>();
-
-	
 
 	public Enemy(int row, int col, ArrayList<Object> enemyList) {
 		this.row = row;
@@ -38,25 +35,32 @@ public class Enemy extends JPanel {
 			this.projectile = (BufferedImage) enemyList.get(2);
 	}
 
+	public Enemy(int row, int col, String superPower) {
+		this.row = row;
+		this.col = col;
+		this.superPower = superPower;
+
+	}
+
 	public static void makeEnemyLists() {
 		redEnemy.add(50);
 		redEnemy.add(Images.getRedEnemy());
 		redEnemy.add(Images.getRedProjectile());
-		redEnemy.add("RED"); //TYPE
+		redEnemy.add("RED"); // TYPE
 
 		blueEnemy.add(100);
 		blueEnemy.add(Images.getBlueEnemy());
 		blueEnemy.add(Images.getBlueProjectile());
-		redEnemy.add("RED"); //TYPE
+		redEnemy.add("RED"); // TYPE
 
 		purpleEnemy.add(150);
 		purpleEnemy.add(Images.getPurpleEnemy());
 		purpleEnemy.add(Images.getPurpleProjectile());
-		redEnemy.add("RED"); //TYPE
+		redEnemy.add("RED"); // TYPE
 
 		flyingEnemy.add(300);
 		flyingEnemy.add(Images.getFlyingEnemy());
-		flyingEnemy.add(null); 
+		flyingEnemy.add(null);
 
 	}
 
@@ -155,14 +159,6 @@ public class Enemy extends JPanel {
 		this.score = score;
 	}
 
-	public String getProjectileName() {
-		return projectileName;
-	}
-
-	public void setProjectileName(String projectileName) {
-		this.projectileName = projectileName;
-	}
-
 	public void setImage(BufferedImage image) {
 		this.image = image;
 	}
@@ -173,6 +169,22 @@ public class Enemy extends JPanel {
 
 	public void setProjectile(BufferedImage projectile) {
 		this.projectile = projectile;
+	}
+
+	public String getSuperPower() {
+		return superPower;
+	}
+
+	public void setSuperPower(String superPower) {
+		this.superPower = superPower;
+	}
+
+	public BufferedImage getSuperPowerImage() {
+		return superPowerImage;
+	}
+
+	public void setSuperPowerImage(BufferedImage superPowerImage) {
+		this.superPowerImage = superPowerImage;
 	}
 
 }
