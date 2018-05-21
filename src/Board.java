@@ -50,6 +50,11 @@ public class Board extends JPanel implements MouseListener {
 	private static boolean pause = false;
 	private static boolean showHomePage = true;
 	private static ArrayList<Integer> playGameRect = new ArrayList<>();
+	private static boolean smaller = false;
+	private static int timeSmaller = 0;
+	static int sizeReductor =1;
+	private static boolean pauseEnemies = false;
+	private static int timePaused = 0;
 
 	/* Barriers */
 	static ArrayList<Barrier> barriers = new ArrayList<Barrier>();
@@ -153,6 +158,31 @@ public class Board extends JPanel implements MouseListener {
 		this.getInputMap().put(KeyStroke.getKeyStroke("SPACE"), "shoot");
 		this.getInputMap().put(KeyStroke.getKeyStroke("P"), "pause");
 		this.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "newGame");
+		this.getInputMap().put(KeyStroke.getKeyStroke("S"), "smaller");
+		this.getInputMap().put(KeyStroke.getKeyStroke("E"),"pauseEnemies");
+		
+		this.getActionMap().put("pauseEnemies", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				pauseEnemies = true;
+				score-=30;
+				if(score<0) {
+					score=0;
+				}
+			}
+		});
+		
+		this.getActionMap().put("smaller", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+			smaller();
+			smaller = true;
+			score-=20;
+			if(score<0) {
+				score=0;
+			}
+			}
+		});
 
 		this.getActionMap().put("right", new AbstractAction() {
 
@@ -362,7 +392,9 @@ public class Board extends JPanel implements MouseListener {
 	 * This function is executed every <time> millisecond.
 	 */
 	protected static void tick() {
+		if(!pauseEnemies) {
 		moveEnemies();
+		}
 		moveSpaceship();
 		shootSpaceshipProjectile();
 		moveFlyingEnemy();
@@ -371,6 +403,13 @@ public class Board extends JPanel implements MouseListener {
 		moveEnemiesProjectiles();
 		repaintAllEnemies();
 		isNewRowInvalidated();
+		if (smaller) {
+			superpowers("smaller");
+		}
+		if (!smaller && pauseEnemies) {
+			superpowers("pauseEnemies");
+		}
+
 		isGameOver();
 		// isAlive = spaceship.alive();
 
@@ -859,8 +898,8 @@ public class Board extends JPanel implements MouseListener {
 	}
 
 	private void paintSpaceship(Graphics g) {
-		spaceship.setWidth(spaceship.getImage().getWidth() / 9);
-		spaceship.setHeight(spaceship.getImage().getHeight() / 9);
+		spaceship.setWidth((spaceship.getImage().getWidth() / 9)/sizeReductor);
+		spaceship.setHeight((spaceship.getImage().getHeight() / 9)/sizeReductor);
 		spaceship.paintComponent(g);
 	}
 
@@ -966,6 +1005,34 @@ public class Board extends JPanel implements MouseListener {
 	@Override
 	public void mouseExited(MouseEvent e) {
 
+	}
+	
+	public static void smaller() {
+		sizeReductor++;
+		
+	}
+
+
+	public static void undoSmaller() {
+		sizeReductor =1;
+		
+	}
+	
+	public static void superpowers(String type) {
+		if (type.equals("smaller")) {
+			timeSmaller++;
+			if (timeSmaller == 300) {
+				undoSmaller();
+				smaller = false;
+				timeSmaller =0;
+			}
+		} else if (type.equals("pauseEnemies")){
+			timePaused++;
+			if (timePaused == 300) {
+				pauseEnemies = false;
+				timePaused =0;
+			}
+		}
 	}
 
 }
