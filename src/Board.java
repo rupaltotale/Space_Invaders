@@ -7,12 +7,17 @@ import java.awt.Dimension;
 import java.awt.Font;
 
 import java.awt.Graphics;
+<<<<<<< HEAD
 
 import java.awt.Transparency;
 
+=======
+import java.awt.Graphics2D;
+>>>>>>> 802a7b63675bef1279fa8fe8e180ac417739bc80
 import java.awt.event.ActionEvent;
 
 import java.awt.event.ActionListener;
+<<<<<<< HEAD
 
 import java.awt.image.BufferedImage;
 
@@ -32,6 +37,15 @@ import java.util.ArrayList;
 
 import javax.sound.sampled.Clip;
 
+=======
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.ArrayList;
+
+>>>>>>> 802a7b63675bef1279fa8fe8e180ac417739bc80
 import javax.swing.AbstractAction;
 
 import javax.swing.JFrame;
@@ -43,8 +57,11 @@ import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
 import javax.swing.UIManager;
+<<<<<<< HEAD
 
 import sun.audio.*;
+=======
+>>>>>>> 802a7b63675bef1279fa8fe8e180ac417739bc80
 
 
 
@@ -58,9 +75,13 @@ import sun.audio.*;
 
  */
 
+<<<<<<< HEAD
 
 
 public class Board extends JPanel {
+=======
+public class Board extends JPanel implements MouseListener {
+>>>>>>> 802a7b63675bef1279fa8fe8e180ac417739bc80
 
 
 
@@ -85,11 +106,16 @@ public class Board extends JPanel {
 	static BufferedImage background;
 
 	static boolean gameOver = false;
+<<<<<<< HEAD
 
 	static String theme = "space";
 
 	// static boolean startGame = false;
 
+=======
+	static String initialTheme = "space";
+	static String currentTheme = initialTheme;
+>>>>>>> 802a7b63675bef1279fa8fe8e180ac417739bc80
 	static int score = 0;
 
 	static int livesLeft;
@@ -105,6 +131,7 @@ public class Board extends JPanel {
 	private static boolean pause = false;
 
 	private static boolean showHomePage = true;
+	private static ArrayList<Integer> playGameRect = new ArrayList<>();
 
 
 
@@ -135,6 +162,8 @@ public class Board extends JPanel {
 	private static double probabilityOfNotShooting = 0.98;
 
 	static int rowsInvalidated;
+	private static double angle = 0;
+	private static double angleIncrement = 0.03;
 
 
 
@@ -157,9 +186,13 @@ public class Board extends JPanel {
 	static int sRow = height - 100;
 
 	static int sCol = margin;
+<<<<<<< HEAD
 
 	static int lives = 3;
 
+=======
+	static int lives = 4;
+>>>>>>> 802a7b63675bef1279fa8fe8e180ac417739bc80
 	static Spaceship spaceship = new Spaceship(sRow, sCol, lives);// for the spaceship characteristics
 
 	static int moveLimit = 40;
@@ -225,40 +258,140 @@ public class Board extends JPanel {
 	setupTimer();
 
 
+<<<<<<< HEAD
+=======
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.add(board);
+		board.setPreferredSize(new Dimension(width, height));
+		frame.pack();
+		frame.setVisible(true);
+		board.setUpKeyMappings();
+		Board mml = new Board();
+		board.addMouseListener(mml);
+>>>>>>> 802a7b63675bef1279fa8fe8e180ac417739bc80
 
 	}
 
 
 
 	public static void startNewGame() {
+<<<<<<< HEAD
 
 	createEnemies();
 
 	createBarriers();
+=======
+		createEnemies();
+		createBarriers();
+		flyingEnemy.setInvalid(true);
+		flyingEnemy.setCol(margin);
+
+		spaceship.setImage(Images.getSpaceship());
+		gameOver = false;
+		score = 0;
+		livesLeft = lives - 1;
+		timeElapsed = 0;
+		// setupTimer();
+		timer.start();
+		spaceship.setLives(lives);
+		if (sProjectiles.size() > 0) {
+			for (int i = 0; i < sProjectiles.size(); i++) {
+				sProjectiles.remove(i);
+			}
+		}
+		if (eProjectiles.size() > 0) {
+			for (int i = 0; i < eProjectiles.size(); i++) {
+				eProjectiles.remove(i);
+			}
+		}
+		setTheme(initialTheme);
+		board.removeAll();
+
+	}
+
+	/*
+	 * Defines functionalities of different keys: Right, Left, Space
+	 */
+	private void setUpKeyMappings() {
+
+		this.getInputMap().put(KeyStroke.getKeyStroke("LEFT"), "left");
+		this.getInputMap().put(KeyStroke.getKeyStroke("RIGHT"), "right");
+		this.getInputMap().put(KeyStroke.getKeyStroke("SPACE"), "shoot");
+		this.getInputMap().put(KeyStroke.getKeyStroke("P"), "pause");
+		this.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "newGame");
+>>>>>>> 802a7b63675bef1279fa8fe8e180ac417739bc80
 
 	flyingEnemy.setInvalid(true);
 
+<<<<<<< HEAD
 	flyingEnemy.setCol(margin);
+=======
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// ADD implementation of right key here
+				direction = 1;
+				movedBy = 0;
+			}
+		});
+>>>>>>> 802a7b63675bef1279fa8fe8e180ac417739bc80
 
 
 
 	spaceship.setImage(Images.getSpaceship());
 
+<<<<<<< HEAD
 	gameOver = false;
+=======
+		this.getActionMap().put("shoot", new AbstractAction() {
+>>>>>>> 802a7b63675bef1279fa8fe8e180ac417739bc80
 
 	score = 0;
 
+<<<<<<< HEAD
 	livesLeft = lives - 1;
 
 	timeElapsed = 0;
+=======
+				if (!gameOver) {
+
+					if (sProjectiles.size() == 0) {
+						Projectile projectile = new Projectile(Images.getSpaceshipProjectile(), spSpeed, true);
+						int row = spaceship.getRow() - projectile.getHeight();
+						int col = spaceship.getCol() + spaceship.getWidth() / 2 - projectile.getWidth() / 2;
+						projectile.setLocation(row, col);
+						sProjectiles.add(projectile);
+					}
+				}
+			}
+>>>>>>> 802a7b63675bef1279fa8fe8e180ac417739bc80
 
 	// setupTimer();
 
 	timer.start();
 
+<<<<<<< HEAD
 	spaceship.setLives(lives);
 
 	if (sProjectiles.size() > 0) {
+=======
+				pause = !pause;
+			}
+
+		});
+		this.getActionMap().put("newGame", new AbstractAction() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (gameOver) {
+					startNewGame();
+				} else if (showHomePage) {
+					showHomePage = false;
+					timer.start();
+				}
+			}
+
+		});
+>>>>>>> 802a7b63675bef1279fa8fe8e180ac417739bc80
 
 	for (int i = 0; i < sProjectiles.size(); i++) {
 
@@ -266,6 +399,7 @@ public class Board extends JPanel {
 
 	}
 
+<<<<<<< HEAD
 	}
 
 	if (eProjectiles.size() > 0) {
@@ -276,6 +410,121 @@ public class Board extends JPanel {
 
 	}
 
+=======
+	public static void setTheme(String changeToTheme) {
+		currentTheme = changeToTheme;
+		if (currentTheme.equals("space")) {
+			background = Images.getSpaceBackground();
+			for (int i = 0; i < barriers.size(); i++) {
+				barriers.get(i).setImage(Images.getSpaceBarrier(), true);
+			}
+			for (int r = 0; r < enemies.size(); r++) {
+				for (int c = 0; c < enemies.get(r).size(); c++) {
+					Enemy enemy = enemies.get(r).get(c);
+					if (enemy.getScore() == 150) {
+						enemy.setImage(Images.getPurpleEnemy());
+					}
+					if (enemy.getScore() == 100) {
+						enemy.setImage(Images.getBlueEnemy());
+					}
+					if (enemy.getScore() == 50) {
+						enemy.setImage(Images.getRedEnemy());
+					}
+				}
+			}
+			dashboardTextColor = "#F8F1D7";
+
+		}
+		if (currentTheme.equals("sky")) {
+			background = Images.getSkyBackground();
+			for (int i = 0; i < barriers.size(); i++) {
+				barriers.get(i).setImage(Images.getSkyBarrier(), true);
+			}
+			for (int r = 0; r < enemies.size(); r++) {
+				for (int c = 0; c < enemies.get(r).size(); c++) {
+					Enemy enemy = enemies.get(r).get(c);
+					if (enemy.getScore() == 150) {
+						enemy.setImage(Images.getPurpleBirdEnemy());
+					}
+					if (enemy.getScore() == 100) {
+						enemy.setImage(Images.getGreenEnemy());
+					}
+					if (enemy.getScore() == 50) {
+						enemy.setImage(Images.getOrangeEnemy());
+					}
+				}
+			}
+			dashboardTextColor = "#232323";
+		}
+		if (currentTheme.equals("sea")) {
+			background = Images.getSeaBackground();
+			for (int i = 0; i < barriers.size(); i++) {
+				barriers.get(i).setImage(Images.getSeaBarrier(), true);
+			}
+			for (int r = 0; r < enemies.size(); r++) {
+				for (int c = 0; c < enemies.get(r).size(); c++) {
+					Enemy enemy = enemies.get(r).get(c);
+					if (enemy.getScore() == 150) {
+						enemy.setImage(Images.getGreenFishR());
+					}
+					if (enemy.getScore() == 100) {
+						enemy.setImage(Images.getPinkFishR());
+					}
+					if (enemy.getScore() == 50) {
+						enemy.setImage(Images.getYellowFish());
+					}
+				}
+			}
+			dashboardTextColor = "#232323";
+		}
+	}
+
+	/*
+	 * Creates the enemies visually and adds rows of them to the enemies list.
+	 */
+	public static void createEnemies() {
+		rowsInvalidated = 0;
+		enemies = new ArrayList();
+		int colSpacing = (width - margin * 2) / (enemyCol + 1);
+		int rowSpacing = (int) ((height * 0.4) / (enemyRow));
+		for (int r = 0; r < enemyRow; r++) {
+			ArrayList<Enemy> enemyRow = new ArrayList<Enemy>();
+			for (int c = 0; c < enemyCol; c++) {
+				if (r < 1) {
+					Enemy enemy = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, Enemy.getPurpleEnemy());
+					moveDownBy = enemy.getHeight() / 4;
+					enemyRow.add(enemy);
+				} else if (r < 3) {
+					Enemy enemy = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, Enemy.getBlueEnemy());
+					enemyRow.add(enemy);
+				} else {
+					Enemy enemy = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, Enemy.getRedEnemy());
+					enemyRow.add(enemy);
+				}
+
+			}
+			enemies.add(enemyRow);
+		}
+		flyingEnemy = new Enemy(fRow, fCol, Enemy.getFlyingEnemy());
+
+	}
+
+	public static void createBarriers() {
+		// I changed the code a bit because the barriers became very spaced out when I
+		// clicked new game
+		barriers = new ArrayList();
+		int columns = numberOfBarriers * 2 + 1;
+		int row = spaceship.getRow() - 150;
+		int widthOfBarrier = width / columns;
+		for (int i = 1; i < numberOfBarriers * 2; i += 2) {
+			int col = widthOfBarrier * i;
+			Barrier barrier = new Barrier(row, col);
+			barrier.setImage(Images.getSpaceBarrier(), false);
+			barrier.setWidth(widthOfBarrier);
+			barrier.setHeight(widthOfBarrier / barrier.getImage().getWidth() * barrier.getImage().getHeight());
+			barriers.add(barrier);
+		}
+>>>>>>> 802a7b63675bef1279fa8fe8e180ac417739bc80
 	}
 
 	setTheme("space");
@@ -296,6 +545,84 @@ public class Board extends JPanel {
 
 	
 
+<<<<<<< HEAD
+=======
+	/*
+	 * Checks if enemies are near the edge of the panel and based on that shifts
+	 * them left or right
+	 */
+	public static void moveEnemies() {
+		int lastCol = -1;
+		int firstCol = -1;
+		int maxValidCol = 0;
+		int minValidCol = 0;
+		for (int c = 0; c < enemyCol; c++) {
+			for (int r = 0; r < enemies.size(); r++) {
+				if (!enemies.get(r).get(c).isInvalid()) {
+					maxValidCol = c;
+					lastCol = enemies.get(r).get(c).getCol();
+				}
+			}
+		}
+
+		for (int c = enemyCol - 1; c >= 0; c--) {
+			for (int r = 0; r < enemies.size(); r++) {
+				if (!enemies.get(r).get(c).isInvalid()) {
+					minValidCol = c;
+					firstCol = enemies.get(r).get(c).getCol();
+				}
+			}
+		}
+		int w = enemies.get(0).get(enemyCol - 1).getImage().getWidth() / 9;
+		int total = (int) (lastCol + eSpeed + w);
+		if (Math.signum(eSpeed) > 0) { // moving right
+			if (total > width) {
+				angleIncrement = angleIncrement + (enemyCol - maxValidCol - 1) * 0.015;
+				eSpeed = -1 * eSpeed; // change to left
+				moveEnemiesDown();
+				// flip fish direction
+				for (int r = 0; r < enemies.size(); r++) {
+					for (int c = 0; c < enemies.get(r).size(); c++) {
+						Enemy enemy = enemies.get(r).get(c);
+						if (enemy.getImage().equals(Images.getGreenFishR())) {
+							// || enemy.getImage().equals(Images.getPinkFishR())) {
+							enemy.setImage(Images.getGreenFishL());
+							// }
+						} else if (enemy.getImage().equals(Images.getPinkFishR())) {
+							enemy.setImage(Images.getPinkFishL());
+						}
+					}
+				}
+			}
+		} else if (Math.signum(eSpeed) < 0) {
+			if (firstCol - eSpeed < 0) {
+				angleIncrement = angleIncrement + (minValidCol) * 0.015;
+				eSpeed = -1 * eSpeed;
+				moveEnemiesDown();
+				// flip fish direction
+				for (int r = 0; r < enemies.size(); r++) {
+					for (int c = 0; c < enemies.get(r).size(); c++) {
+						Enemy enemy = enemies.get(r).get(c);
+						if (enemy.getImage().equals(Images.getGreenFishL())) {
+
+							enemy.setImage(Images.getGreenFishR());
+
+						} else if (enemy.getImage().equals(Images.getPinkFishL())) {
+							enemy.setImage(Images.getPinkFishR());
+						}
+					}
+				}
+
+			}
+		}
+		for (int r = 0; r < enemies.size(); r++) {
+			for (int c = 0; c < enemies.get(r).size(); c++) {
+				Enemy enemy = enemies.get(r).get(c);
+				enemy.setCol((int) (enemy.getCol() + eSpeed));
+			}
+
+		}
+>>>>>>> 802a7b63675bef1279fa8fe8e180ac417739bc80
 	}
 
 
@@ -305,6 +632,7 @@ public class Board extends JPanel {
 	 * Defines functionalities of different keys: Right, Left, Space
 
 	 */
+<<<<<<< HEAD
 
 	private void setUpKeyMappings() {
 
@@ -336,6 +664,130 @@ public class Board extends JPanel {
 
 	movedBy = 0;
 
+=======
+	private static void shootSpaceshipProjectile() {
+		if (sProjectiles.size() > 0) {
+			for (int i = 0; i < sProjectiles.size(); i++) {
+				Projectile projectile = sProjectiles.get(i);
+				if (projectile.getRow() < 0) { // above the panel
+					sProjectiles.remove(projectile);
+				} else {
+					projectile.move();
+
+					// checks if the projectile is colliding with any regular enemy
+
+					for (int r = 0; r < enemies.size(); r++) {
+						for (int c = 0; c < enemies.get(r).size(); c++) {
+							Enemy enemy = enemies.get(r).get(c);
+							if (isColliding(enemy, projectile)) {
+								enemy.setInvalid(true);
+								Audio.makeSoftKillingSoundForEnemy();
+								score += enemy.getScore();
+								sProjectiles.remove(projectile);
+								break;
+
+							}
+						}
+					}
+
+					// checks if projectile is colliding with a flying enemy
+					if (isColliding(flyingEnemy, projectile)) {
+						flyingEnemy.setInvalid(true);
+						sProjectiles.remove(projectile);
+						score += flyingEnemy.getScore();
+						Audio.makeHardKillingSoundForEnemy();
+					}
+					for (int b = 0; b < barriers.size(); b++) {
+						if (isColliding(barriers.get(b), projectile)) {
+							sProjectiles.remove(projectile);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private static boolean isColliding(Object obj, Projectile projectile) {
+		if (obj instanceof Enemy) {
+			Enemy enemy = (Enemy) obj;
+			if (projectile.getRow() >= enemy.getRow() && projectile.getRow() <= enemy.getRow() + enemy.getHeight()
+					&& projectile.getCol() >= enemy.getCol() && projectile.getCol() <= enemy.getCol() + enemy.getWidth()
+					// && nextEnemy.isInvalid()
+					&& !enemy.isInvalid()) {
+				return true;
+			}
+
+		}
+
+		if (obj instanceof Spaceship) {
+			if (projectile.getRow() >= spaceship.getRow()
+					&& projectile.getRow() <= spaceship.getRow() + spaceship.getHeight()
+					&& projectile.getCol() + projectile.getWidth() >= spaceship.getCol()
+					&& projectile.getCol() <= spaceship.getCol() + spaceship.getWidth()) {
+				return true;
+			}
+		}
+		if (obj instanceof Barrier) {
+			Barrier barrier = (Barrier) obj;
+			if (!projectile.isSpaceshipP()) { // add it!
+				for (int row = projectile.getRow(); row < projectile.getRow() + projectile.getHeight() + eSpeed
+						+ 1; row++) {
+					for (int col = projectile.getCol(); col < projectile.getCol() + projectile.getWidth(); col++) {
+
+						if (row >= barrier.getRow() && row < barrier.getRow() + barrier.getHeight()
+								&& col >= barrier.getCol() && col < barrier.getCol() + barrier.getWidth()) {
+
+							int r = (row - barrier.getRow());
+							int c = (col - barrier.getCol());
+							int rgba = (0 << 24) | (0 << 16) | (0 << 8) | 0;
+							boolean transparent = barrier.getImage().getRGB(c, r) == rgba;
+							if (!transparent) {
+								barrier.setAttacked(true);
+								barrier.setAttackedX(c);
+								barrier.setAttackedY(r);
+								barrier.setAttackedWidth((int) (projectile.getWidth() / 1.5));
+								barrier.changeImage(projectile.isSpaceshipP());
+								barrier.setAttacked(false);
+								return true;
+							}
+
+						}
+
+					}
+
+				}
+			} else {
+
+				for (int row = projectile.getRow() + projectile.getHeight() + sSpeed + 1; row >= projectile
+						.getRow(); row--) {
+					for (int col = projectile.getCol(); col < projectile.getCol() + projectile.getWidth(); col++) {
+
+						if (row >= barrier.getRow() && row < barrier.getRow() + barrier.getHeight()
+								&& col >= barrier.getCol() && col < barrier.getCol() + barrier.getWidth()) {
+
+							int r = (row - barrier.getRow());
+							int c = (col - barrier.getCol());
+							int rgba = (0 << 24) | (0 << 16) | (0 << 8) | 0;
+							boolean transparent = barrier.getImage().getRGB(c, r) == rgba;
+							if (!transparent) {
+								barrier.setAttacked(true);
+								barrier.setAttackedX(c);
+								barrier.setAttackedY(r);
+								barrier.setAttackedWidth((int) (projectile.getWidth() / 1.5));
+								barrier.changeImage(projectile.isSpaceshipP());
+								barrier.setAttacked(false);
+								return true;
+							}
+
+						}
+
+					}
+
+				}
+			}
+		}
+		return false;
+>>>>>>> 802a7b63675bef1279fa8fe8e180ac417739bc80
 	}
 
 	});
@@ -360,6 +812,7 @@ public class Board extends JPanel {
 
 	}
 
+<<<<<<< HEAD
 	});
 
 
@@ -404,6 +857,109 @@ public class Board extends JPanel {
 
 	}
 
+=======
+	public static void chooseRandomEnemyForProjectile() {
+		ArrayList<Enemy> enemiesForProjectile = findEnemiesForProjectile();
+		if (enemiesForProjectile.size() != 0) {
+			int random = (int) (enemiesForProjectile.size() * Math.random());
+			Enemy enemy = enemiesForProjectile.get(random);
+			Projectile projectile = new Projectile(enemy.getProjectile(), epSpeed, false);
+			projectile.setCol(enemy.getCol() + enemy.getWidth() / 2 - projectile.getWidth() / 2);
+			projectile.setRow(enemy.getRow() + enemy.getHeight());
+			double randomAdd = Math.random() * 500;
+			if (eProjectiles.size() == 0 && randomAdd > 500 * probabilityOfNotShooting) {
+				eProjectiles.add(projectile);
+			}
+		}
+	}
+
+	private static void moveEnemiesProjectiles() {
+		// Either moves projectile down or removes it from eProjectiles if it is greater
+		// than height
+		if (eProjectiles.size() > 0) {
+			for (int i = 0; i < eProjectiles.size(); i++) {
+				Projectile projectile = eProjectiles.get(i);
+				// checks for collision between barrier and eProjectile
+				for (int b = 0; b < barriers.size(); b++) {
+					if (isColliding(barriers.get(b), projectile)) {
+						eProjectiles.remove(projectile);
+					}
+				}
+
+				// moves
+				if (projectile.getRow() > height) {
+					eProjectiles.remove(projectile);
+				} else {
+					projectile.move();
+				}
+			}
+		}
+		// Checks for collision between spaceship and enemy's projectile
+		for (int p = 0; p < eProjectiles.size(); p++) {
+			Projectile projectile = eProjectiles.get(p);
+			if (isColliding(spaceship, projectile)) {
+				spaceship.hit(projectile.getDamage());
+				spaceship.removeLife();
+				Audio.makeKillingSoundForSpaceship();
+				livesLeft = spaceship.getLives() - 1;
+				eProjectiles.remove(projectile);
+
+			}
+
+		}
+
+	}
+
+	public static void repaintAllEnemies() {
+		boolean allKilled = true;
+		for (int r = 0; r < enemies.size(); r++) {
+			for (int c = 0; c < enemies.get(r).size(); c++) {
+				if (!enemies.get(r).get(c).isInvalid()) {
+					allKilled = false;
+				}
+			}
+		}
+		if (allKilled) {
+
+			enemies = new ArrayList<ArrayList<Enemy>>();
+			createEnemies();
+			nextTheme();
+			angleIncrement = 0.03;
+
+		}
+	}
+
+	private static void nextTheme() {
+		if (currentTheme.equals("space")) {
+			setTheme("sky");
+		} else if (currentTheme.equals("sky")) {
+
+			setTheme("sea");
+		} else if (currentTheme.equals("sea")) {
+			setTheme("space");
+		}
+
+	}
+
+	private static void isNewRowInvalidated() {
+		int invalidRows = 0;
+		for (int r = 0; r < enemies.size(); r++) {
+			boolean invalid = true;
+			for (int c = 0; c < enemies.get(r).size(); c++) {
+				if (!enemies.get(r).get(c).isInvalid()) {
+					invalid = false;
+				}
+			}
+			if (invalid) {
+				invalidRows++;
+			}
+		}
+		if (invalidRows > rowsInvalidated) {
+			rowsInvalidated++;
+			// eSpeed += 1;
+			probabilityOfNotShooting -= 0.02;
+		}
+>>>>>>> 802a7b63675bef1279fa8fe8e180ac417739bc80
 
 
 	});
@@ -416,7 +972,12 @@ public class Board extends JPanel {
 
 	public void actionPerformed(ActionEvent e) {
 
+<<<<<<< HEAD
 	// ADD implementation of space key here
+=======
+		showHomePage(g);
+		if (!gameOver && timeElapsed != 0 && !showHomePage) {
+>>>>>>> 802a7b63675bef1279fa8fe8e180ac417739bc80
 
 
 
@@ -426,7 +987,23 @@ public class Board extends JPanel {
 
 	}
 
+<<<<<<< HEAD
 
+=======
+	private void paintGameOverPanel(Graphics g) {
+		String buttonText = "<html>" + "<body" + "'>" + "<center><h1>Game Over</h1>"
+				+ "<h2>Press ENTER to start a new game or click HERE</h2>" + "<h4> Score: " + score + "</h4>"
+				+ "<h4> Time: " + (timeElapsed) / time / 2 + " seconds. </h4></center>";
+		Button gameOverButton = new Button();
+		gameOverButton.setLabel(buttonText);
+		board.add(gameOverButton);
+		gameOverButton.setBounds(width / 4, height / 4, width / 2, height / 2);
+		gameOverButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				startNewGame();
+>>>>>>> 802a7b63675bef1279fa8fe8e180ac417739bc80
 
 	});
 
@@ -460,6 +1037,7 @@ public class Board extends JPanel {
 
 	}
 
+<<<<<<< HEAD
 	if(theme.equals("sky")) {
 
 	background = Images.getSkyBackground();
@@ -469,6 +1047,35 @@ public class Board extends JPanel {
 	barriers.get(i).setImage(Images.getSkyBarrier());
 
 	}
+=======
+	private void paintEnemies(Graphics g) {
+		for (int r = 0; r < enemies.size(); r++) {
+			for (int c = 0; c < enemies.get(r).size(); c++) {
+				Enemy enemy = enemies.get(r).get(c);
+				if (!enemy.isInvalid()) {
+					if (!(enemy.getImage().equals(Images.getGreenFishL()))
+							&& !(enemy.getImage().equals(Images.getGreenFishR()))
+							&& !(enemy.getImage().equals(Images.getPinkFishL()))
+							&& !(enemy.getImage().equals(Images.getPinkFishR()))) {
+						AffineTransform at = AffineTransform.getTranslateInstance(enemy.getCol(), enemy.getRow());
+						// at.translate(enemy.getCol(), enemy.getRow());
+						at.scale(.12, 0.12);
+						at.rotate(Math.toRadians(angle), enemy.getImage().getWidth() / 2,
+								enemy.getImage().getHeight() / 2);
+						angle += angleIncrement;
+						Graphics2D g2d = (Graphics2D) g;
+
+						g2d.drawImage(enemy.getImage(), at, null);
+					}
+					else {
+						 enemy.setWidth(enemy.getImage().getWidth() / 8);
+						 enemy.setHeight(enemy.getImage().getHeight() / 8);
+						 enemy.paintComponent(g);
+					}
+
+					//
+				}
+>>>>>>> 802a7b63675bef1279fa8fe8e180ac417739bc80
 
 	dashboardTextColor = "#232323";
 
@@ -484,6 +1091,7 @@ public class Board extends JPanel {
 
 	}
 
+<<<<<<< HEAD
 	dashboardTextColor = "#232323";
 
 	}
@@ -1571,6 +2179,69 @@ public class Board extends JPanel {
 	 * Sets the background of the panel
 
 	 */
+=======
+	private void showHomePage(Graphics g) {
+
+		if (showHomePage) {
+
+			timer.stop();
+			System.out.println("Setting home page");
+			g.drawImage(Images.getHomePageBackground(), 0, 0, width, height, null);
+
+			BufferedImage title = Images.getTitle();
+			g.drawImage(title, width / 2 - title.getWidth() / 2, (int) (margin / 2), title.getWidth(),
+					title.getHeight(), null);
+			BufferedImage playGameImage = Images.getPlayGameButton();
+			g.drawImage(playGameImage, width / 2 - playGameImage.getWidth() / 2, (int) (height - 2.25 * margin),
+					playGameImage.getWidth(), playGameImage.getHeight(), null);
+			playGameRect.add(width / 2 - playGameImage.getWidth() / 2); // minX
+			playGameRect.add(playGameRect.get(0) + playGameImage.getWidth()); // maxX
+			playGameRect.add((int) (height - 2.25 * margin)); // minY
+			playGameRect.add(playGameRect.get(2) + playGameImage.getHeight()); // maxY
+
+		}
+
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if (showHomePage) {
+			int mX = e.getX();
+			int mY = e.getY();
+			checkIfPlayGame(mX, mY);
+		}
+
+	}
+
+	private void checkIfPlayGame(int x, int y) {
+		if (x >= playGameRect.get(0) && x <= playGameRect.get(1) && y >= playGameRect.get(2)
+				&& y <= playGameRect.get(3)) {
+			showHomePage = false;
+			timer.start();
+		}
+	}
+
+	// Ignore this!
+	@Override
+	public void mousePressed(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+
+	}
+>>>>>>> 802a7b63675bef1279fa8fe8e180ac417739bc80
 
 
 

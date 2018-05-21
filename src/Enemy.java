@@ -53,10 +53,15 @@ public class Enemy extends JPanel {
 		purpleEnemy.add(Images.getPurpleProjectile());
 		redEnemy.add("RED"); //TYPE
 
-		flyingEnemy.add(50);
+		flyingEnemy.add(300);
 		flyingEnemy.add(Images.getFlyingEnemy());
+<<<<<<< HEAD
 		flyingEnemy.add(null);
 		
+=======
+		flyingEnemy.add(null); 
+
+>>>>>>> 802a7b63675bef1279fa8fe8e180ac417739bc80
 	}
 
 	@Override

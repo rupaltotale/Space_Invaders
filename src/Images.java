@@ -1,15 +1,14 @@
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
-
-import sun.audio.AudioPlayer;
-import sun.audio.AudioStream;
 
 public class Images {
 
@@ -36,19 +35,26 @@ public class Images {
 
 	private static BufferedImage redEnemyRotatedRight;/* ADD */
 	private static BufferedImage redEnemyRotatedLeft;/* ADD */
-	
+
 	private static BufferedImage homePage;
 	private static BufferedImage title;
-	
+
 	private static BufferedImage playGameButton;
 	private static BufferedImage purpleBirdEnemy;
 	private static BufferedImage greenEnemy;
 	private static BufferedImage orangeEnemy;
+	private static BufferedImage enemies;
+	private static BufferedImage instructions;
+	private static BufferedImage homePageBackground;
+	private static BufferedImage greenFishR;
+	private static BufferedImage pinkFishR;
+	private static BufferedImage yellowFish;
+	private static BufferedImage greenFishL;
+	private static BufferedImage pinkFishL;
 
-//	static ArrayList<BufferedImage> images = new ArrayList<>();
-//	static ArrayList<BufferedImage> images2 = new ArrayList<>();
-//	static ArrayList<String> imagesName = new ArrayList<>();
-
+	// static ArrayList<BufferedImage> images = new ArrayList<>();
+	// static ArrayList<BufferedImage> images2 = new ArrayList<>();
+	// static ArrayList<String> imagesName = new ArrayList<>();
 
 	public static void loadImages() throws IOException {
 
@@ -56,19 +62,19 @@ public class Images {
 
 		inputStream = new FileInputStream("src/Images/SpaceBackground.png");
 		spaceBackground = ImageIO.read(inputStream);
-		
+
 		inputStream = new FileInputStream("src/Images/SkyBackground.png");
 		skyBackground = ImageIO.read(inputStream);
-		
+
 		inputStream = new FileInputStream("src/Images/SeaBackground.png");
 		seaBackground = ImageIO.read(inputStream);
 
 		inputStream = new FileInputStream("src/Images/SpaceBarrier.png");
 		spaceBarrier = ImageIO.read(inputStream);
-		
+
 		inputStream = new FileInputStream("src/Images/SkyBarrier.png");
 		skyBarrier = ImageIO.read(inputStream);
-		
+
 		inputStream = new FileInputStream("src/Images/SeaBarrier.png");
 		seaBarrier = ImageIO.read(inputStream);
 
@@ -107,19 +113,81 @@ public class Images {
 
 		inputStream = new FileInputStream("src/Images/SpaceshipProjectile.png");
 		spaceshipProjectile = ImageIO.read(inputStream);
-		
+
 		inputStream = new FileInputStream("src/Images/GalacticInvaders.png");
 		homePage = ImageIO.read(inputStream);
-		
+
 		inputStream = new FileInputStream("src/Images/GalacticInvadersTitle.png");
 		title = ImageIO.read(inputStream);
-		
+
 		inputStream = new FileInputStream("src/Images/PlayGameButton.png");
 		playGameButton = ImageIO.read(inputStream);
-		
+
+		inputStream = new FileInputStream("src/Images/Enemies.png");
+		enemies = ImageIO.read(inputStream);
+
+		inputStream = new FileInputStream("src/Images/Instructions.png");
+		instructions = ImageIO.read(inputStream);
+
+		inputStream = new FileInputStream("src/Images/HomePageBackground.png");
+		homePageBackground = ImageIO.read(inputStream);
+
+		inputStream = new FileInputStream("src/Images/EnemyGreenFish.png");
+		greenFishR = ImageIO.read(inputStream);
+		greenFishL = flipHorizontally(greenFishR);
+
+		inputStream = new FileInputStream("src/Images/EnemyPinkFish.png");
+		pinkFishR = ImageIO.read(inputStream);
+		pinkFishL = flipHorizontally(pinkFishR);
+
+		inputStream = new FileInputStream("src/Images/EnemyYellowFish.png");
+		yellowFish = ImageIO.read(inputStream);
 
 	}
 
+	public static boolean inBounds(BufferedImage image, int r, int c) {
+		if (r >= 0 && r < image.getHeight() && c >= 0 && c < image.getWidth()) {
+			return true;
+		}
+		return false;
+	}
+
+	public static BufferedImage flipHorizontally(BufferedImage image) {
+		// BufferedImage image = this.image;
+		if (image != null) {
+			BufferedImage colorImage = new BufferedImage(image.getWidth(), image.getHeight(),
+					BufferedImage.TYPE_INT_ARGB);
+			for (int r = 0; r < image.getHeight(); r++) {
+				for (int c = 1; c < image.getWidth(); c++) {
+					colorImage.setRGB(image.getWidth()-c, r, image.getRGB(c, r));
+				}
+				
+			}
+			return colorImage;
+		}
+		return null;
+	}
+
+	public static BufferedImage rotate(BufferedImage image, double angle) {
+	    double sin = Math.abs(Math.sin(angle)), cos = Math.abs(Math.cos(angle));
+	    int w = image.getWidth(), h = image.getHeight();
+	    int neww = (int)Math.floor(w*cos+h*sin), newh = (int) Math.floor(h * cos + w * sin);
+	    GraphicsConfiguration gc = getDefaultConfiguration();
+	    BufferedImage result = gc.createCompatibleImage(neww, newh, Transparency.TRANSLUCENT);
+	    Graphics2D g = result.createGraphics();
+	    g.translate((neww - w) / 2, (newh - h) / 2);
+	    g.rotate(angle, w / 2, h / 2);
+	    g.drawRenderedImage(image, null);
+	    g.dispose();
+	    return result;
+	}
+	
+	private static GraphicsConfiguration getDefaultConfiguration() {
+	    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+	    GraphicsDevice gd = ge.getDefaultScreenDevice();
+	    return gd.getDefaultConfiguration();
+	}
+	
 	public static BufferedImage getSpaceBackground() {
 		return spaceBackground;
 	}
@@ -179,6 +247,7 @@ public class Images {
 	public static BufferedImage getRedEnemy() {
 		return redEnemy;
 	}
+	
 
 	public static void setRedEnemy(BufferedImage redEnemy) {
 		Images.redEnemy = redEnemy;
@@ -304,6 +373,70 @@ public class Images {
 		Images.orangeEnemy = orangeEnemy;
 	}
 
+	public static BufferedImage getEnemies() {
+		return enemies;
+	}
+
+	public static void setEnemies(BufferedImage enemies) {
+		Images.enemies = enemies;
+	}
+
+	public static BufferedImage getInstructions() {
+		return instructions;
+	}
+
+	public static void setInstructions(BufferedImage instructions) {
+		Images.instructions = instructions;
+	}
+
+	public static BufferedImage getHomePageBackground() {
+		return homePageBackground;
+	}
+
+	public static void setHomePageBackground(BufferedImage homePageBackground) {
+		Images.homePageBackground = homePageBackground;
+	}
+
 	
+
+	public static BufferedImage getYellowFish() {
+		return yellowFish;
+	}
+
+	public static void setYellowFish(BufferedImage yellowFish) {
+		Images.yellowFish = yellowFish;
+	}
+
+	public static BufferedImage getGreenFishR() {
+		return greenFishR;
+	}
+
+	public static void setGreenFishR(BufferedImage greenFishR) {
+		Images.greenFishR = greenFishR;
+	}
+
+	public static BufferedImage getPinkFishR() {
+		return pinkFishR;
+	}
+
+	public static void setPinkFishR(BufferedImage pinkFishR) {
+		Images.pinkFishR = pinkFishR;
+	}
+
+	public static BufferedImage getGreenFishL() {
+		return greenFishL;
+	}
+
+	public static void setGreenFishL(BufferedImage greenFishL) {
+		Images.greenFishL = greenFishL;
+	}
+
+	public static BufferedImage getPinkFishL() {
+		return pinkFishL;
+	}
+
+	public static void setPinkFishL(BufferedImage pinkFishL) {
+		Images.pinkFishL = pinkFishL;
+	}
 
 }
