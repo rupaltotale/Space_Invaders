@@ -51,6 +51,11 @@ public class Images {
 	private static BufferedImage yellowFish;
 	private static BufferedImage greenFishL;
 	private static BufferedImage pinkFishL;
+	private static BufferedImage restoreBarriers;
+	private static BufferedImage heart;
+	private static BufferedImage smallerSpaceship;
+	private static BufferedImage dessertBackground;
+	private static BufferedImage freezeEnemies;
 
 	// static ArrayList<BufferedImage> images = new ArrayList<>();
 	// static ArrayList<BufferedImage> images2 = new ArrayList<>();
@@ -68,6 +73,9 @@ public class Images {
 
 		inputStream = new FileInputStream("src/Images/SeaBackground.png");
 		seaBackground = ImageIO.read(inputStream);
+
+		inputStream = new FileInputStream("src/Images/DesertBackground.png");
+		dessertBackground = ImageIO.read(inputStream);
 
 		inputStream = new FileInputStream("src/Images/SpaceBarrier.png");
 		spaceBarrier = ImageIO.read(inputStream);
@@ -143,6 +151,18 @@ public class Images {
 		inputStream = new FileInputStream("src/Images/EnemyYellowFish.png");
 		yellowFish = ImageIO.read(inputStream);
 
+		inputStream = new FileInputStream("src/Images/RestoreBarriers.png");
+		restoreBarriers = ImageIO.read(inputStream);
+
+		inputStream = new FileInputStream("src/Images/Heart.png");
+		heart = ImageIO.read(inputStream);
+
+		inputStream = new FileInputStream("src/Images/SmallerSpaceship.png");
+		smallerSpaceship = ImageIO.read(inputStream);
+		
+		inputStream = new FileInputStream("src/Images/freezeEnemies.png");
+		freezeEnemies = ImageIO.read(inputStream);
+
 	}
 
 	public static boolean inBounds(BufferedImage image, int r, int c) {
@@ -159,9 +179,9 @@ public class Images {
 					BufferedImage.TYPE_INT_ARGB);
 			for (int r = 0; r < image.getHeight(); r++) {
 				for (int c = 1; c < image.getWidth(); c++) {
-					colorImage.setRGB(image.getWidth()-c, r, image.getRGB(c, r));
+					colorImage.setRGB(image.getWidth() - c, r, image.getRGB(c, r));
 				}
-				
+
 			}
 			return colorImage;
 		}
@@ -169,25 +189,25 @@ public class Images {
 	}
 
 	public static BufferedImage rotate(BufferedImage image, double angle) {
-	    double sin = Math.abs(Math.sin(angle)), cos = Math.abs(Math.cos(angle));
-	    int w = image.getWidth(), h = image.getHeight();
-	    int neww = (int)Math.floor(w*cos+h*sin), newh = (int) Math.floor(h * cos + w * sin);
-	    GraphicsConfiguration gc = getDefaultConfiguration();
-	    BufferedImage result = gc.createCompatibleImage(neww, newh, Transparency.TRANSLUCENT);
-	    Graphics2D g = result.createGraphics();
-	    g.translate((neww - w) / 2, (newh - h) / 2);
-	    g.rotate(angle, w / 2, h / 2);
-	    g.drawRenderedImage(image, null);
-	    g.dispose();
-	    return result;
+		double sin = Math.abs(Math.sin(angle)), cos = Math.abs(Math.cos(angle));
+		int w = image.getWidth(), h = image.getHeight();
+		int neww = (int) Math.floor(w * cos + h * sin), newh = (int) Math.floor(h * cos + w * sin);
+		GraphicsConfiguration gc = getDefaultConfiguration();
+		BufferedImage result = gc.createCompatibleImage(neww, newh, Transparency.TRANSLUCENT);
+		Graphics2D g = result.createGraphics();
+		g.translate((neww - w) / 2, (newh - h) / 2);
+		g.rotate(angle, w / 2, h / 2);
+		g.drawRenderedImage(image, null);
+		g.dispose();
+		return result;
 	}
-	
+
 	private static GraphicsConfiguration getDefaultConfiguration() {
-	    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-	    GraphicsDevice gd = ge.getDefaultScreenDevice();
-	    return gd.getDefaultConfiguration();
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice gd = ge.getDefaultScreenDevice();
+		return gd.getDefaultConfiguration();
 	}
-	
+
 	public static BufferedImage getSpaceBackground() {
 		return spaceBackground;
 	}
@@ -247,7 +267,6 @@ public class Images {
 	public static BufferedImage getRedEnemy() {
 		return redEnemy;
 	}
-	
 
 	public static void setRedEnemy(BufferedImage redEnemy) {
 		Images.redEnemy = redEnemy;
@@ -397,8 +416,6 @@ public class Images {
 		Images.homePageBackground = homePageBackground;
 	}
 
-	
-
 	public static BufferedImage getYellowFish() {
 		return yellowFish;
 	}
@@ -437,6 +454,42 @@ public class Images {
 
 	public static void setPinkFishL(BufferedImage pinkFishL) {
 		Images.pinkFishL = pinkFishL;
+	}
+
+	public static BufferedImage getRestoreBarriers() {
+		return restoreBarriers;
+	}
+
+	public static void setRestoreBarriers(BufferedImage restoreBarriers) {
+		Images.restoreBarriers = restoreBarriers;
+	}
+
+	public static BufferedImage getHeart() {
+		return heart;
+	}
+
+	public static void setHeart(BufferedImage heart) {
+		Images.heart = heart;
+	}
+
+	public static BufferedImage getSmallerSpaceship() {
+		return smallerSpaceship;
+	}
+
+	public static void setSmallerSpaceship(BufferedImage smallerSpaceship) {
+		Images.smallerSpaceship = smallerSpaceship;
+	}
+
+	public static BufferedImage getDessertBackground() {
+		return dessertBackground;
+	}
+	
+	public static BufferedImage getFreezeEnemies() {
+		return freezeEnemies;
+	}
+
+	public static void setDessertBackground(BufferedImage dessertBackground) {
+		Images.dessertBackground = dessertBackground;
 	}
 
 }

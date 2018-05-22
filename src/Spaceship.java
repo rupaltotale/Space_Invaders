@@ -12,7 +12,7 @@ public class Spaceship extends JPanel{
 	int col;
 	int width;
 	int height;
-	int health;
+//	int health;
 	int lives;
 
 	public int getLives() {
@@ -29,7 +29,7 @@ public class Spaceship extends JPanel{
 	public Spaceship(int row, int col, int lives) {
 		this.row = row;
 		this.col = col;
-		health = 100;
+//		health = 100;
 		this.lives = lives;
 		
 	}
@@ -95,9 +95,9 @@ public class Spaceship extends JPanel{
 	public void removeLife() {
 		lives -= 1;
 	}
-	public void hit(int damage) {
-		health -= damage;
-	}
+//	public void hit(int damage) {
+//		health -= damage;
+//	}
 	
 	public boolean isDead() {
 		if(lives <= 0) {
@@ -105,13 +105,13 @@ public class Spaceship extends JPanel{
 		}
 		return false;
 	}
-	public boolean alive() {
-		if (health<=0) {
-			return false;
-		}
-		return true;
-	}
-	
+
+//	public boolean alive() {
+//		if (health<=0) {
+//			return false;
+//		}
+//		return true;
+//	}
 
 
 }
