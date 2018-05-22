@@ -295,6 +295,27 @@ public class Board extends JPanel implements MouseListener {
 			}
 			dashboardTextColor = "#232323";
 		}
+		if (currentTheme.equals("desert")) {
+			background = Images.getDessertBackground();
+			for (int i = 0; i < barriers.size(); i++) {
+				barriers.get(i).setImage(Images.getSeaBarrier(), modifyBarrier);
+			}
+			for (int r = 0; r < enemies.size(); r++) {
+				for (int c = 0; c < enemies.get(r).size(); c++) {
+					Enemy enemy = enemies.get(r).get(c);
+					if (enemy.getScore() == 150) {
+						enemy.setImage(Images.getGreenFishR());
+					}
+					if (enemy.getScore() == 100) {
+						enemy.setImage(Images.getPinkFishR());
+					}
+					if (enemy.getScore() == 50) {
+						enemy.setImage(Images.getYellowFish());
+					}
+				}
+			}
+			dashboardTextColor = "#232323";
+		}
 	}
 
 	/*
@@ -309,7 +330,7 @@ public class Board extends JPanel implements MouseListener {
 			ArrayList<Enemy> eRow = new ArrayList<Enemy>();
 			for (int c = 0; c < enemyCol; c++) {
 				int random = (int) (Math.random() * enemyRow * enemyCol) + 1;
-				if (random >= enemyRow * enemyCol) {
+				if (random + 10 >= enemyRow * enemyCol) {
 					String superpowerString = superpowers.get((int) (Math.random() * superpowers.size()));
 					Enemy superpower = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, superpowerString);
 					setSuperpowerImage(superpower);
@@ -382,6 +403,7 @@ public class Board extends JPanel implements MouseListener {
 		// addEnemiesProjectiles();
 		chooseRandomEnemyForProjectile();
 		moveEnemiesProjectiles();
+		checkTimeDependentSuperpowers();
 		repaintAllEnemies();
 		// isNewRowInvalidated(false);
 		isGameOver();
@@ -567,8 +589,9 @@ public class Board extends JPanel implements MouseListener {
 	private static void setupSuperpowers() {
 		superpowers.add("restoreBarriers");
 		superpowers.add("anotherLife");
-		// superpowers.add("invisibleBarriers");
-		superpowers.add("smallerSpaceship");
+		superpowers.add("smallerSpaceship"); // 10 seconds
+//		superpowers.add("invisibleProjectile"); // 10 seconds
+//		superpowers.add("impenetrableBarrier"); // impenetrable by enemies
 		// superpowers.add("noShootingProjectiles");
 		// superpowers.add("rocketProjectiles");
 		// superpowers.add("slowerEnemies");
@@ -577,14 +600,12 @@ public class Board extends JPanel implements MouseListener {
 	private static void setSuperpowerImage(Enemy superpower) {
 		if (superpower.getSuperPower().equals("restoreBarriers")) {
 			superpower.setImage(Images.getRestoreBarriers());
-		} 
-		else if (superpower.getSuperPower().equals("anotherLife")) {
+		} else if (superpower.getSuperPower().equals("anotherLife")) {
 			superpower.setImage(Images.getHeart());
-		}
-		else if (superpower.getSuperPower().equals("smallerSpaceship")) {
+		} else if (superpower.getSuperPower().equals("smallerSpaceship")) {
 			superpower.setImage(Images.getSmallerSpaceship());
 		}
-		
+
 	}
 
 	private static void checkForSuperpower(Enemy superpower) {
@@ -601,20 +622,21 @@ public class Board extends JPanel implements MouseListener {
 				livesLeft = spaceship.getLives() - 1;
 			}
 			if (superpower.getSuperPower().equals("smallerSpaceship")) {
-				smallerSpaceshipTime  = 0;
+				smallerSpaceshipTime = 0;
 				spaceshipSizeRatio = 15;
 			}
 		}
 
 	}
-	
+
 	public static void checkTimeDependentSuperpowers() {
 		// smaller spaceship
-		
+
 		smallerSpaceshipTime++;
-		if(smallerSpaceshipTime >= 10) {
+		if (smallerSpaceshipTime >= 10 * 1000/20) {
 			spaceshipSizeRatio = 9;
 		}
+		
 	}
 
 	private static boolean isColliding(Object obj, Projectile projectile) {
@@ -794,6 +816,9 @@ public class Board extends JPanel implements MouseListener {
 
 			setTheme("sea", true);
 		} else if (currentTheme.equals("sea")) {
+			setTheme("desert", true);
+		}
+		else if (currentTheme.equals("desert")) {
 			setTheme("space", true);
 		}
 
