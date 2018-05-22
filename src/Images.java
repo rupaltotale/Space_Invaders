@@ -51,6 +51,9 @@ public class Images {
 	private static BufferedImage yellowFish;
 	private static BufferedImage greenFishL;
 	private static BufferedImage pinkFishL;
+	private static BufferedImage restoreBarriers;
+	private static BufferedImage heart;
+	private static BufferedImage smallerSpaceship;
 
 	// static ArrayList<BufferedImage> images = new ArrayList<>();
 	// static ArrayList<BufferedImage> images2 = new ArrayList<>();
@@ -142,9 +145,19 @@ public class Images {
 
 		inputStream = new FileInputStream("src/Images/EnemyYellowFish.png");
 		yellowFish = ImageIO.read(inputStream);
+		
+		inputStream = new FileInputStream("src/Images/RestoreBarriers.png");
+		restoreBarriers = ImageIO.read(inputStream);
+		
+		inputStream = new FileInputStream("src/Images/Heart.png");
+		heart = ImageIO.read(inputStream);
+		
+		inputStream = new FileInputStream("src/Images/SmallerSpaceship.png");
+		smallerSpaceship = ImageIO.read(inputStream);
 
 	}
 
+	
 	public static boolean inBounds(BufferedImage image, int r, int c) {
 		if (r >= 0 && r < image.getHeight() && c >= 0 && c < image.getWidth()) {
 			return true;
@@ -437,6 +450,34 @@ public class Images {
 
 	public static void setPinkFishL(BufferedImage pinkFishL) {
 		Images.pinkFishL = pinkFishL;
+	}
+
+	public static BufferedImage getRestoreBarriers() {
+		return restoreBarriers;
+	}
+
+	public static void setRestoreBarriers(BufferedImage restoreBarriers) {
+		Images.restoreBarriers = restoreBarriers;
+	}
+
+
+	public static BufferedImage getHeart() {
+		return heart;
+	}
+
+
+	public static void setHeart(BufferedImage heart) {
+		Images.heart = heart;
+	}
+
+
+	public static BufferedImage getSmallerSpaceship() {
+		return smallerSpaceship;
+	}
+
+
+	public static void setSmallerSpaceship(BufferedImage smallerSpaceship) {
+		Images.smallerSpaceship = smallerSpaceship;
 	}
 
 }
