@@ -413,9 +413,12 @@ public class Board extends JPanel implements MouseListener {
 	 * This function is executed every <time> millisecond.
 	 */
 	protected static void tick() {
-		if(!pauseEnemies) {
+		if(!pauseEnemies 
+//				&& timeElapsed%2 ==0
+				) {
 		moveEnemies();
 		}
+	
 		moveSpaceship();
 		shootSpaceshipProjectile();
 		moveFlyingEnemy();
@@ -857,12 +860,19 @@ public class Board extends JPanel implements MouseListener {
 			}
 		}
 		if (allKilled) {
-
+			// things to do when advancing to new level
 			enemies = new ArrayList<ArrayList<Enemy>>();
 			hasSuperpower = false;
 			createEnemies();
 			nextTheme();
 			angleIncrement = 0.03;
+			if(eSpeed <0) {
+				eSpeed --;
+			}
+			else {
+				eSpeed++;
+			}
+			System.out.println(eSpeed);
 
 		}
 	}
@@ -968,7 +978,7 @@ public class Board extends JPanel implements MouseListener {
 		g.setColor(Color.decode("#000000"));
 		g.setFont(font);
 		g.drawString(""+score + "", (int) (width * 0.529164),  (int) (height * 0.57367));
-		g.drawString(""+timeElapsed + "s", (int) (width * 0.490667),  (int) (height * 0.67967));
+		g.drawString(""+(timeElapsed) / time / 2 + "s", (int) (width * 0.490667),  (int) (height * 0.67967));
 
 	}
 
