@@ -58,6 +58,7 @@ public class Images {
 	private static BufferedImage freezeEnemies;
 	private static BufferedImage invisibleBarrier;
 	private static BufferedImage gameOverWindow;
+	private static BufferedImage rocketProjectile;
 
 	// static ArrayList<BufferedImage> images = new ArrayList<>();
 	// static ArrayList<BufferedImage> images2 = new ArrayList<>();
@@ -170,6 +171,9 @@ public class Images {
 		
 		inputStream = new FileInputStream("src/Images/GameOverWindow.png");
 		gameOverWindow = ImageIO.read(inputStream);
+		
+		inputStream = new FileInputStream("src/Images/rocketProjectile.png");
+		rocketProjectile = ImageIO.read(inputStream);
 
 	}
 
@@ -518,6 +522,11 @@ public class Images {
 
 	public static void setInvisibleBarrier(BufferedImage invisibleBarrier) {
 		Images.invisibleBarrier = invisibleBarrier;
+	}
+
+	public static BufferedImage getRocketProjectile() {
+		
+		return rocketProjectile;
 	}
 
 }
