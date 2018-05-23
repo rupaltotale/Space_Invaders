@@ -55,6 +55,9 @@ public class Images {
 	private static BufferedImage heart;
 	private static BufferedImage smallerSpaceship;
 	private static BufferedImage dessertBackground;
+	private static BufferedImage freezeEnemies;
+	private static BufferedImage invisibleBarrier;
+	private static BufferedImage gameOverWindow;
 
 	// static ArrayList<BufferedImage> images = new ArrayList<>();
 	// static ArrayList<BufferedImage> images2 = new ArrayList<>();
@@ -158,6 +161,15 @@ public class Images {
 
 		inputStream = new FileInputStream("src/Images/SmallerSpaceship.png");
 		smallerSpaceship = ImageIO.read(inputStream);
+		
+		inputStream = new FileInputStream("src/Images/FreezeEnemies.png");
+		freezeEnemies = ImageIO.read(inputStream);
+		
+		inputStream = new FileInputStream("src/Images/InvisibleBarrier.png");
+		invisibleBarrier = ImageIO.read(inputStream);
+		
+		inputStream = new FileInputStream("src/Images/GameOverWindow.png");
+		gameOverWindow = ImageIO.read(inputStream);
 
 	}
 
@@ -479,9 +491,33 @@ public class Images {
 	public static BufferedImage getDessertBackground() {
 		return dessertBackground;
 	}
+	
+	public static BufferedImage getFreezeEnemies() {
+		return freezeEnemies;
+	}
 
+	public static BufferedImage getInvisibleBarrier() {
+		return invisibleBarrier;
+	}
+	
 	public static void setDessertBackground(BufferedImage dessertBackground) {
 		Images.dessertBackground = dessertBackground;
+	}
+
+	public static BufferedImage getGameOverWindow() {
+		return gameOverWindow;
+	}
+
+	public static void setGameOverWindow(BufferedImage gameOverWindow) {
+		Images.gameOverWindow = gameOverWindow;
+	}
+
+	public static void setFreezeEnemies(BufferedImage freezeEnemies) {
+		Images.freezeEnemies = freezeEnemies;
+	}
+
+	public static void setInvisibleBarrier(BufferedImage invisibleBarrier) {
+		Images.invisibleBarrier = invisibleBarrier;
 	}
 
 }
