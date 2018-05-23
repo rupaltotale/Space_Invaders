@@ -56,6 +56,7 @@ public class Images {
 	private static BufferedImage smallerSpaceship;
 	private static BufferedImage dessertBackground;
 	private static BufferedImage freezeEnemies;
+	private static BufferedImage invisibleBarrier;
 
 	// static ArrayList<BufferedImage> images = new ArrayList<>();
 	// static ArrayList<BufferedImage> images2 = new ArrayList<>();
@@ -162,6 +163,9 @@ public class Images {
 		
 		inputStream = new FileInputStream("src/Images/freezeEnemies.png");
 		freezeEnemies = ImageIO.read(inputStream);
+		
+		inputStream = new FileInputStream("src/Images/invisibleBarrier.png");
+		invisibleBarrier = ImageIO.read(inputStream);
 
 	}
 
@@ -488,6 +492,10 @@ public class Images {
 		return freezeEnemies;
 	}
 
+	public static BufferedImage getInvisibleBarrier() {
+		return invisibleBarrier;
+	}
+	
 	public static void setDessertBackground(BufferedImage dessertBackground) {
 		Images.dessertBackground = dessertBackground;
 	}
