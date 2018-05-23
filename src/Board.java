@@ -72,6 +72,7 @@ public class Board extends JPanel implements MouseListener {
 	 * Superpowers
 	 */
 	static ArrayList<String> superpowers = new ArrayList<String>();
+	static boolean hasSuperpower = false;
 
 	/* Flying enemies */
 	static int fRow = margin / 3;
@@ -330,11 +331,12 @@ public class Board extends JPanel implements MouseListener {
 			ArrayList<Enemy> eRow = new ArrayList<Enemy>();
 			for (int c = 0; c < enemyCol; c++) {
 				int random = (int) (Math.random() * enemyRow * enemyCol) + 1;
-				if (random + 10 >= enemyRow * enemyCol) {
+				if (random + 10 >= enemyRow * enemyCol && !hasSuperpower) {
 					String superpowerString = superpowers.get((int) (Math.random() * superpowers.size()));
 					Enemy superpower = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, superpowerString);
 					setSuperpowerImage(superpower);
 					eRow.add(superpower);
+					hasSuperpower= true;
 				} else if (r < 1) {
 					Enemy enemy = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, Enemy.getPurpleEnemy());
 					moveDownBy = enemy.getHeight() / 4;
