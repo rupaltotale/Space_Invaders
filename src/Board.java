@@ -52,6 +52,7 @@ public class Board extends JPanel implements MouseListener {
 	private static ArrayList<Integer> playGameRect = new ArrayList<>();
 	
 	
+	
 
 	/* Barriers */
 	static ArrayList<Barrier> barriers = new ArrayList<Barrier>();
@@ -78,6 +79,7 @@ public class Board extends JPanel implements MouseListener {
 	private static boolean pauseEnemies = false;
 	private static boolean invisibleBarrier = false;
 	private static int timePaused = 0;
+	private static boolean rocketProjectile = false;
 //	static int sizeReductor =1;
 
 	/* Flying enemies */
@@ -102,6 +104,7 @@ public class Board extends JPanel implements MouseListener {
 	static int spaceshipSizeRatio = 9;
 	private static int smallerSpaceshipTime = 1000;
 	private static int invisibleBarrierTime = 0;
+	private static int numRocketPro = 0;
 
 	public static void main(String[] args) throws IOException {
 
@@ -211,7 +214,16 @@ public class Board extends JPanel implements MouseListener {
 						int row = spaceship.getRow() - projectile.getHeight();
 						int col = spaceship.getCol() + spaceship.getWidth() / 2 - projectile.getWidth() / 2;
 						projectile.setLocation(row, col);
+						if (rocketProjectile && numRocketPro <=3) {
+							if (numRocketPro ==4) {
+								rocketProjectile = false;
+								numRocketPro = 0;
+							}
+							projectile.passThrough();
+							numRocketPro ++;
+						}
 						sProjectiles.add(projectile);
+						
 					}
 				}
 			}
@@ -586,7 +598,9 @@ public class Board extends JPanel implements MouseListener {
 								enemy.setInvalid(true);
 								Audio.makeSoftKillingSoundForEnemy();
 								score += enemy.getScore();
+								if(!projectile.canPassThrough()){
 								sProjectiles.remove(projectile);
+								}
 								break;
 
 							}
@@ -620,9 +634,10 @@ public class Board extends JPanel implements MouseListener {
 //		superpowers.add("invisibleProjectile"); // 10 seconds
 //		superpowers.add("impenetrableBarrier"); // impenetrable by enemies
 		// superpowers.add("noShootingProjectiles");
-		// superpowers.add("rocketProjectiles");
+		superpowers.add("rocketProjectile");
 		superpowers.add("freezeEnemies");
 		superpowers.add("invisibleBarrier");
+		
 		
 	}
 
@@ -637,6 +652,8 @@ public class Board extends JPanel implements MouseListener {
 			superpower.setImage(Images.getFreezeEnemies());
 		} else if (superpower.getSuperPower().equals("invisibleBarrier")) {
 			superpower.setImage(Images.getInvisibleBarrier());
+		} else if (superpower.getSuperPower().equals("rocketProjectile")) {
+			superpower.setImage(Images.getRocketProjectile());
 		}
 		
 
@@ -666,9 +683,16 @@ public class Board extends JPanel implements MouseListener {
 			if (superpower.getSuperPower().equals("invisibleBarrier")) {
 				invisibleBarrier = true;
 			}
+			if (superpower.getSuperPower().equals("rocketProjectile")) {
+				rocketProjectile = true;
+			}
 			
 		}
 
+	}
+	
+	public static void checkTimeIndependentSuperpowers() {
+		
 	}
 
 	public static void checkTimeDependentSuperpowers() {

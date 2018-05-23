@@ -24,6 +24,7 @@ public class Projectile extends JPanel {
 //	private boolean spaceship;
 	private String imageName;
 	private boolean spaceshipP;
+	private boolean passThrough = false;
 
 	public Projectile(BufferedImage projectile, int speed, boolean spaceshipP) {
 
@@ -170,6 +171,16 @@ public class Projectile extends JPanel {
 
 	public void setSpaceshipP(boolean spaceshipP) {
 		this.spaceshipP = spaceshipP;
+	}
+
+	public void passThrough() {
+		passThrough = true;
+		
+	}
+
+	public boolean canPassThrough() {
+		
+		return passThrough;
 	}
 
 }
