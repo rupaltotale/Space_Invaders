@@ -24,6 +24,7 @@ public class Projectile extends JPanel {
 //	private boolean spaceship;
 	private String imageName;
 	private boolean spaceshipP;
+	private boolean passThrough = false;
 
 	public Projectile(BufferedImage projectile, int speed, boolean spaceshipP) {
 
@@ -39,11 +40,13 @@ public class Projectile extends JPanel {
 		this.speed = speed;
 
 	}
-	
+
 	// should we make them all the same size?
 	public void setSize() {
+
 		height = image.getHeight() / 15;
 		width = image.getWidth() / 15;
+
 	}
 
 //	public void setDamage() {
@@ -81,6 +84,7 @@ public class Projectile extends JPanel {
 	public int getHeight() {
 		return height;
 	}
+
 	public void setHeight(int height) {
 		this.height = height;
 	}
@@ -167,6 +171,16 @@ public class Projectile extends JPanel {
 
 	public void setSpaceshipP(boolean spaceshipP) {
 		this.spaceshipP = spaceshipP;
+	}
+
+	public void passThrough() {
+		passThrough = true;
+		
+	}
+
+	public boolean canPassThrough() {
+		
+		return passThrough;
 	}
 
 }

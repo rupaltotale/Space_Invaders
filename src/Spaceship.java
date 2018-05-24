@@ -14,6 +14,7 @@ public class Spaceship extends JPanel{
 	int height;
 //	int health;
 	int lives;
+
 	public int getLives() {
 		return lives;
 	}
@@ -104,11 +105,13 @@ public class Spaceship extends JPanel{
 		}
 		return false;
 	}
+
 //	public boolean alive() {
 //		if (health<=0) {
 //			return false;
 //		}
 //		return true;
 //	}
+
 
 }

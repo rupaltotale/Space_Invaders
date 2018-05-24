@@ -15,14 +15,8 @@ public class Barrier extends JPanel {
 	private boolean isAttacked = false;
 	private int attackedWidth;
 
-
-	Color colBackground;
-	BufferedImage backgroundImage;
-	String imageName = "GreenBarier.png";
-	
-	
-	
 	BufferedImage image;
+
 	public Barrier(int row, int col) {
 
 		this.row = row;
