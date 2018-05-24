@@ -59,6 +59,10 @@ public class Images {
 	private static BufferedImage invisibleBarrier;
 	private static BufferedImage gameOverWindow;
 	private static BufferedImage rocketProjectile;
+	private static BufferedImage info;
+	private static BufferedImage play;
+	private static BufferedImage pause;
+	private static BufferedImage dessertBarrier;
 
 	// static ArrayList<BufferedImage> images = new ArrayList<>();
 	// static ArrayList<BufferedImage> images2 = new ArrayList<>();
@@ -88,6 +92,9 @@ public class Images {
 
 		inputStream = new FileInputStream("src/Images/SeaBarrier.png");
 		seaBarrier = ImageIO.read(inputStream);
+		
+		inputStream = new FileInputStream("src/Images/DesertBarrier.png");
+		dessertBarrier = ImageIO.read(inputStream);
 
 		inputStream = new FileInputStream("src/Images/EnemyPurple.png");
 		purpleEnemy = ImageIO.read(inputStream);
@@ -174,7 +181,15 @@ public class Images {
 		
 		inputStream = new FileInputStream("src/Images/RocketProjectile.png");
 		rocketProjectile = ImageIO.read(inputStream);
+		
+		inputStream = new FileInputStream("src/Images/Info.png");
+		info = ImageIO.read(inputStream);
 
+		inputStream = new FileInputStream("src/Images/Play.png");
+		play = ImageIO.read(inputStream);
+		
+		inputStream = new FileInputStream("src/Images/Pause.png");
+		pause = ImageIO.read(inputStream);
 	}
 
 	public static boolean inBounds(BufferedImage image, int r, int c) {
@@ -527,6 +542,42 @@ public class Images {
 	public static BufferedImage getRocketProjectile() {
 		
 		return rocketProjectile;
+	}
+
+	public static BufferedImage getInfo() {
+		return info;
+	}
+
+	public static void setInfo(BufferedImage info) {
+		Images.info = info;
+	}
+
+	public static void setRocketProjectile(BufferedImage rocketProjectile) {
+		Images.rocketProjectile = rocketProjectile;
+	}
+
+	public static BufferedImage getPlay() {
+		return play;
+	}
+
+	public static void setPlay(BufferedImage play) {
+		Images.play = play;
+	}
+
+	public static BufferedImage getPause() {
+		return pause;
+	}
+
+	public static void setPause(BufferedImage pause) {
+		Images.pause = pause;
+	}
+
+	public static BufferedImage getDessertBarrier() {
+		return dessertBarrier;
+	}
+
+	public static void setDessertBarrier(BufferedImage dessertBarrier) {
+		Images.dessertBarrier = dessertBarrier;
 	}
 
 }
