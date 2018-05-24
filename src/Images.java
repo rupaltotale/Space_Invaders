@@ -172,7 +172,7 @@ public class Images {
 		inputStream = new FileInputStream("src/Images/GameOverWindow.png");
 		gameOverWindow = ImageIO.read(inputStream);
 		
-		inputStream = new FileInputStream("src/Images/rocketProjectile.png");
+		inputStream = new FileInputStream("src/Images/RocketProjectile.png");
 		rocketProjectile = ImageIO.read(inputStream);
 
 	}
