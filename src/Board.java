@@ -470,7 +470,6 @@ public class Board extends JPanel implements MouseListener {
 			Enemy enemy = new Enemy(0, 0, "");
 			enemy.setInvalid(true);
 			int i = 0;
-			int numberOfSuperpowers = 0;
 			while (i == 0) {
 				int randomRow = (int) (enemyRow * Math.random());
 				int randomCol = (int) (enemyCol * Math.random());
@@ -486,7 +485,6 @@ public class Board extends JPanel implements MouseListener {
 //					System.out.println("New superpower: " + superpowerCurrentRow);
 					hasSuperpower = true;
 					enemies.get(randomRow).set(randomCol, superpower);
-					numberOfSuperpowers++;
 //					System.out.println("Valid");
 					break;
 				}
