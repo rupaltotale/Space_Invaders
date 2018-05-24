@@ -367,7 +367,7 @@ public class Board extends JPanel implements MouseListener {
 			for (int c = 0; c < enemyCol; c++) {
 				int random = (int) (Math.random() * enemyRow * enemyCol) + 1;
 				if (random + 10 >= enemyRow * enemyCol && !hasSuperpower) {
-					String superpowerString = superpowers.get((int) (Math.random() * superpowers.size()));
+					String superpowerString = "freezeEnemies";//superpowers.get((int) (Math.random() * superpowers.size()));
 					Enemy superpower = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, superpowerString);
 					setSuperpowerImage(superpower);
 					eRow.add(superpower);
@@ -721,12 +721,12 @@ public class Board extends JPanel implements MouseListener {
 			spaceshipSizeRatio = 9;
 		}
 		timePaused++;
-		if (timePaused == 5 * 1000 / 20) {
+		if (timePaused == 7 * 1000 / 20) {
 			pauseEnemies = false;
 			timePaused = 0;
 		}
 		invisibleBarrierTime++;
-		if (invisibleBarrierTime == 5 * 1000 / 20) {
+		if (invisibleBarrierTime == 7 * 1000 / 20) {
 			invisibleBarrier = false;
 			invisibleBarrierTime = 0;
 		}
