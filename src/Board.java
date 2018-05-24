@@ -51,7 +51,6 @@ public class Board extends JPanel implements MouseListener {
 	private static boolean showHomePage = true;
 	private static ArrayList<Integer> playGameRect = new ArrayList<>();
 
-
 	/* Barriers */
 	static ArrayList<Barrier> barriers = new ArrayList<Barrier>();
 	private static int numberOfBarriers = 4;
@@ -70,26 +69,28 @@ public class Board extends JPanel implements MouseListener {
 	private static double angleIncrement = 0.03;
 
 	/*
-	 * Superpowers
+	 * Super powers
 	 */
 	static ArrayList<String> superpowers = new ArrayList<String>();
 	static boolean hasSuperpower = false;
+
+	private static int pauseEnemiesTime = 0;
+	private static int numRocketPro = 0;
+	static int spaceshipSizeRatio = 9;
+	private static int smallerSpaceshipTime = 1000;
+	private static int invisibleBarrierTime = 0;
+
 	private static boolean pauseEnemies = false;
 	private static boolean invisibleBarrier = false;
-	private static int timePaused = 0;
+	private static boolean rocketProjectile = false;
+	private static boolean smallerSpaceship = false;
 
 	private static int superpowerCurrentRow;
 	private boolean superpowerMovingUp = true;
-	private static int numRocketPro = 0;
-
-	// static int sizeReductor =1;
-
-	private static boolean rocketProjectile = false;
-//	static int sizeReductor =1;
-
+	private static String superpowerDashboardText = "";
 
 	/* Flying enemies */
-	static int fRow = margin / 3;
+	static int fRow = (int) (margin / 2);
 	static int fCol = margin;
 	static Enemy flyingEnemy;
 	static int fTime = 30 * 1000 / time / constant; // every 10 seconds
@@ -107,12 +108,6 @@ public class Board extends JPanel implements MouseListener {
 	static int sSpeed = 5 * constant;
 	static int spSpeed = -20 * constant;
 	static ArrayList<Projectile> sProjectiles = new ArrayList(); // list of projectiles thrown by the spaceship
-	static int spaceshipSizeRatio = 9;
-	private static int smallerSpaceshipTime = 1000;
-	private static int invisibleBarrierTime = 0;
-
-	
-
 
 	public static void main(String[] args) throws IOException {
 
@@ -144,15 +139,20 @@ public class Board extends JPanel implements MouseListener {
 	public static void startNewGame() {
 		// Reset all variables to initial game settings
 		hasSuperpower = false;
-		hasSuperpower = false;
 		pauseEnemies = false;
 		invisibleBarrier = false;
-		timePaused = 0;
+		rocketProjectile = false;
+		smallerSpaceship = false;
+		spaceshipSizeRatio = 9;
+
+		superpowerDashboardText = "";
+		pauseEnemiesTime = 0;
 		gameOver = false;
 		score = 0;
 		livesLeft = lives - 1;
 		timeElapsed = 0;
 		angle = 0;
+		probabilityOfNotShooting = 0.98;
 		angleIncrement = 0.03;
 		eSpeed = 1;
 
@@ -178,7 +178,6 @@ public class Board extends JPanel implements MouseListener {
 		board.removeAll();
 
 	}
-
 
 	/*
 	 * Defines functionalities of different keys: Right, Left, Space
@@ -222,16 +221,18 @@ public class Board extends JPanel implements MouseListener {
 						int row = spaceship.getRow() - projectile.getHeight();
 						int col = spaceship.getCol() + spaceship.getWidth() / 2 - projectile.getWidth() / 2;
 						projectile.setLocation(row, col);
-						if (rocketProjectile && numRocketPro <3) {
-							if (numRocketPro ==3) {
-								rocketProjectile = false;
-								numRocketPro = 0;
-							}
-							projectile.passThrough();
-							numRocketPro ++;
+						if (rocketProjectile && numRocketPro <= 3) {
+							numRocketPro++;
+
 						}
+						if (rocketProjectile && numRocketPro == 4) {
+							hasSuperpower = false;
+							rocketProjectile = false;
+							numRocketPro = 0;
+						}
+
 						sProjectiles.add(projectile);
-						
+
 					}
 				}
 			}
@@ -358,6 +359,7 @@ public class Board extends JPanel implements MouseListener {
 	 * Creates the enemies visually and adds rows of them to the enemies list.
 	 */
 	public static void createEnemies() {
+		hasSuperpower = false;
 		rowsInvalidated = 0;
 		enemies = new ArrayList();
 		int colSpacing = (width - margin * 2) / (enemyCol + 1);
@@ -365,15 +367,19 @@ public class Board extends JPanel implements MouseListener {
 		for (int r = 0; r < enemyRow; r++) {
 			ArrayList<Enemy> eRow = new ArrayList<Enemy>();
 			for (int c = 0; c < enemyCol; c++) {
-				int random = (int) (Math.random() * enemyRow * enemyCol) + 1;
-				if (random + 10 >= enemyRow * enemyCol && !hasSuperpower) {
-					String superpowerString = "freezeEnemies";//superpowers.get((int) (Math.random() * superpowers.size()));
-					Enemy superpower = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, superpowerString);
-					setSuperpowerImage(superpower);
-					eRow.add(superpower);
-					superpowerCurrentRow = superpower.getRow();
-					hasSuperpower = true;
-				} else if (r < 1) {
+//<<<<<<< HEAD
+//				int random = (int) (Math.random() * enemyRow * enemyCol) + 1;
+//				if (random + 10 >= enemyRow * enemyCol && !hasSuperpower) {
+//					String superpowerString = "freezeEnemies";//superpowers.get((int) (Math.random() * superpowers.size()));
+//					Enemy superpower = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, superpowerString);
+//					setSuperpowerImage(superpower);
+//					eRow.add(superpower);
+//					superpowerCurrentRow = superpower.getRow();
+//					hasSuperpower = true;
+//				} else if (r < 1) {
+//=======
+				if (r < 1) {
+//>>>>>>> 59303c9898a991a6834183c48424dcc96ccacd0f
 					Enemy enemy = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, Enemy.getPurpleEnemy());
 					moveDownBy = enemy.getHeight() / 4;
 					eRow.add(enemy);
@@ -388,6 +394,7 @@ public class Board extends JPanel implements MouseListener {
 			}
 			enemies.add(eRow);
 		}
+		addNewSuperpower();
 		flyingEnemy = new Enemy(fRow, fCol, Enemy.getFlyingEnemy());
 
 	}
@@ -434,31 +441,69 @@ public class Board extends JPanel implements MouseListener {
 	 * This function is executed every <time> millisecond.
 	 */
 	protected static void tick() {
-		if (!pauseEnemies
-		// && timeElapsed%2 ==0
-		) {
+		if (!pauseEnemies) {
 			moveEnemies();
+		}
+		if (!hasSuperpower) {
+//			System.out.println("No Superpower");
+			superpowerDashboardText = "";
+		}
+			
+		
+		if (numberOfValidEnemies() > 5) {
+			addNewSuperpower();
 		}
 
 		moveSpaceship();
 		shootSpaceshipProjectile();
 		moveFlyingEnemy();
-		// addEnemiesProjectiles();
 		chooseRandomEnemyForProjectile();
 		moveEnemiesProjectiles();
 		checkTimeDependentSuperpowers();
 		advanceToNextLevel();
-
-		// isNewRowInvalidated();
-		// if (smaller) {
-		// superpowers("smaller");
-		// }
-		// if (!smaller && pauseEnemies) {
-		// superpowers("pauseEnemies");
-		// }
-		// isNewRowInvalidated(false);
 		gameOver();
-		// isAlive = spaceship.alive();
+
+	}
+
+	private static int numberOfValidEnemies() {
+		int numberOfValidEnemies = 0;
+		for (int r = 0; r < enemyRow; r++) {
+			for (int c = 0; c < enemyCol; c++) {
+				if (!enemies.get(r).get(c).isInvalid()) {
+					numberOfValidEnemies++;
+				}
+			}
+		}
+		return numberOfValidEnemies;
+	}
+
+	private static void addNewSuperpower() {
+		if (!hasSuperpower) {
+			Enemy enemy = new Enemy(0, 0, "");
+			enemy.setInvalid(true);
+			int i = 0;
+			while (i == 0) {
+				int randomRow = (int) (enemyRow * Math.random());
+				int randomCol = (int) (enemyCol * Math.random());
+				String superpowerString = superpowers.get((int) (Math.random() * superpowers.size()));
+				enemy = enemies.get(randomRow).get(randomCol);
+				int r = enemy.getRow();
+				int c = enemy.getCol();
+//				i++;
+				if(!enemy.isInvalid()) {
+					Enemy superpower = new Enemy(r, c, superpowerString);
+					setSuperpowerImage(superpower);
+					superpowerCurrentRow = r;
+//					System.out.println("New superpower: " + superpowerCurrentRow);
+					hasSuperpower = true;
+					enemies.get(randomRow).set(randomCol, superpower);
+//					System.out.println("Valid");
+					break;
+				}
+
+			}
+
+		}
 
 	}
 
@@ -566,14 +611,12 @@ public class Board extends JPanel implements MouseListener {
 				Enemy enemy = enemies.get(r).get(c);
 				int initialY = enemy.getRow();
 				int newY = initialY + moveDownBy;
-				if(enemy.getSuperPower() != null) {
-				}
 				enemy.setRow(newY);
-				if(enemy.getSuperPower() != null) {
+				if (enemy.getSuperPower() != null && !enemy.isInvalid()) {
 					superpowerCurrentRow = superpowerCurrentRow + moveDownBy;
+//					System.out.println(superpowerCurrentRow);
 				}
-				
-				
+
 			}
 		}
 	}
@@ -613,12 +656,12 @@ public class Board extends JPanel implements MouseListener {
 						for (int c = 0; c < enemies.get(r).size(); c++) {
 							Enemy enemy = enemies.get(r).get(c);
 							if (isColliding(enemy, projectile)) {
-								checkForSuperpower(enemy);
+								activateSuperpower(enemy);
 								enemy.setInvalid(true);
 								Audio.makeSoftKillingSoundForEnemy();
 								score += enemy.getScore();
-								if(!projectile.canPassThrough()){
-								sProjectiles.remove(projectile);
+								if (!rocketProjectile) {
+									sProjectiles.remove(projectile);
 								}
 								break;
 
@@ -627,14 +670,14 @@ public class Board extends JPanel implements MouseListener {
 					}
 
 					// checks if projectile is colliding with a flying enemy
-					if (isColliding(flyingEnemy, projectile) ) {
+					if (isColliding(flyingEnemy, projectile)) {
 						flyingEnemy.setInvalid(true);
 						sProjectiles.remove(projectile);
 						score += flyingEnemy.getScore();
 						Audio.makeHardKillingSoundForEnemy();
 					}
 					for (int b = 0; b < barriers.size(); b++) {
-						if (isColliding(barriers.get(b), projectile) && !invisibleBarrier) {
+						if (isColliding(barriers.get(b), projectile)) {
 							sProjectiles.remove(projectile);
 						}
 					}
@@ -644,19 +687,18 @@ public class Board extends JPanel implements MouseListener {
 	}
 
 	/*
-	 * Superpower methods
+	 * Super powers: restore barriers, another life, smaller spaceship, rocket
+	 * projectile, freeze Enemies, invisible barrier
 	 */
 	private static void setupSuperpowers() {
 		superpowers.add("restoreBarriers");
 		superpowers.add("anotherLife");
 		superpowers.add("smallerSpaceship");// 10 seconds
-		// superpowers.add("invisibleProjectile"); // 10 seconds
-		// superpowers.add("impenetrableBarrier"); // impenetrable by enemies
 		// superpowers.add("noShootingProjectiles");
 		superpowers.add("rocketProjectile");
 		superpowers.add("freezeEnemies");
-		superpowers.add("invisibleBarrier");}
-
+		superpowers.add("invisibleBarrier");
+	}
 
 	private static void setSuperpowerImage(Enemy superpower) {
 		if (superpower.getSuperPower().equals("restoreBarriers")) {
@@ -675,20 +717,22 @@ public class Board extends JPanel implements MouseListener {
 
 	}
 
-	private static void checkForSuperpower(Enemy superpower) {
+	private static void activateSuperpower(Enemy superpower) {
 		if (superpower.getSuperPower() != null) {
 			if (superpower.getSuperPower().equals("restoreBarriers")) {
-
-				System.out.println("Restoring barriers!");
+//				System.out.println("Restoring barriers!");
 				setTheme(currentTheme, false);
+				hasSuperpower = false;
 
 			}
 			if (superpower.getSuperPower().equals("anotherLife")) {
 				int lives = spaceship.getLives() + 1;
 				spaceship.setLives(lives);
 				livesLeft = spaceship.getLives() - 1;
+				hasSuperpower = false;
 			}
 			if (superpower.getSuperPower().equals("smallerSpaceship")) {
+				smallerSpaceship = true;
 				smallerSpaceshipTime = 0;
 				spaceshipSizeRatio = 15;
 			}
@@ -703,32 +747,75 @@ public class Board extends JPanel implements MouseListener {
 			if (superpower.getSuperPower().equals("rocketProjectile")) {
 				rocketProjectile = true;
 			}
-			
 
 		}
 
-	}
-	
-	public static void checkTimeIndependentSuperpowers() {
-		
 	}
 
 	public static void checkTimeDependentSuperpowers() {
 		// smaller spaceship
 
-		smallerSpaceshipTime++;
-		if (smallerSpaceshipTime >= 10 * 1000 / 20) {
-			spaceshipSizeRatio = 9;
+		if (smallerSpaceship) {
+			smallerSpaceshipTime++;
+			if (smallerSpaceshipTime >= 10 * 1000 / 20) {
+				spaceshipSizeRatio = 9;
+				smallerSpaceshipTime = 0;
+				hasSuperpower = false;
+				smallerSpaceship = false;
+				// superpowerDashboardText = "";
+			} else {
+				int time = (int) (10 - smallerSpaceshipTime * 0.02);
+				superpowerDashboardText = "Spaceship will be smaller for " + time + " seconds";
+			}
 		}
-		timePaused++;
-		if (timePaused == 7 * 1000 / 20) {
-			pauseEnemies = false;
-			timePaused = 0;
+//<<<<<<< HEAD
+//		timePaused++;
+//		if (timePaused == 7 * 1000 / 20) {
+//			pauseEnemies = false;
+//			timePaused = 0;
+//		}
+//		invisibleBarrierTime++;
+//		if (invisibleBarrierTime == 7 * 1000 / 20) {
+//			invisibleBarrier = false;
+//			invisibleBarrierTime = 0;
+//=======
+		if (pauseEnemies) {
+			pauseEnemiesTime++;
+			if (pauseEnemiesTime >= 10 * 1000 / 20) {
+				pauseEnemies = false;
+				pauseEnemiesTime = 0;
+				hasSuperpower = false;
+				// superpowerDashboardText = "";
+			} else {
+				int time = (int) (10 - pauseEnemiesTime * 0.02);
+				superpowerDashboardText = "Enemies will be frozen for " + time + " seconds";
+			}
 		}
-		invisibleBarrierTime++;
-		if (invisibleBarrierTime == 7 * 1000 / 20) {
-			invisibleBarrier = false;
-			invisibleBarrierTime = 0;
+
+		if (invisibleBarrier) {
+			invisibleBarrierTime++;
+			if (invisibleBarrierTime >= 10 * 1000 / 20) {
+				invisibleBarrier = false;
+				invisibleBarrierTime = 0;
+				hasSuperpower = false;
+				// superpowerDashboardText = "";
+			} else {
+				int time = (int) (10 - invisibleBarrierTime * 0.02);
+				superpowerDashboardText = "Barriers will be impenetrable for " + time + " seconds";
+			}
+
+		}
+		if (rocketProjectile) {
+			int shoots = 4 - numRocketPro;
+			superpowerDashboardText = shoots + " rocket projectiles left";
+			if (shoots == 0) {
+				superpowerDashboardText = "";
+				rocketProjectile = false;
+			}
+		}
+		if (!hasSuperpower) {
+			superpowerDashboardText = "";
+//>>>>>>> 59303c9898a991a6834183c48424dcc96ccacd0f
 		}
 
 	}
@@ -767,7 +854,7 @@ public class Board extends JPanel implements MouseListener {
 							int c = (col - barrier.getCol());
 							int rgba = (0 << 24) | (0 << 16) | (0 << 8) | 0;
 							boolean transparent = barrier.getImage().getRGB(c, r) == rgba;
-							if (!transparent) {
+							if (!transparent && !invisibleBarrier) {
 								barrier.setAttacked(true);
 								barrier.setAttackedX(c);
 								barrier.setAttackedY(r);
@@ -799,7 +886,7 @@ public class Board extends JPanel implements MouseListener {
 							int c = (col - barrier.getCol());
 							int rgba = (0 << 24) | (0 << 16) | (0 << 8) | 0;
 							boolean transparent = barrier.getImage().getRGB(c, r) == rgba;
-							if (!transparent && !invisibleBarrier) {
+							if (!transparent) {
 								barrier.setAttacked(true);
 								barrier.setAttackedX(c);
 								barrier.setAttackedY(r);
@@ -898,18 +985,27 @@ public class Board extends JPanel implements MouseListener {
 		}
 		if (allKilled) {
 			// things to do when advancing to new level
+//			System.out.println("New Level");
 			enemies = new ArrayList<ArrayList<Enemy>>();
 			hasSuperpower = false;
+			pauseEnemies = false;
+			invisibleBarrier = false;
+			rocketProjectile = false;
+			smallerSpaceship = false;
+			spaceshipSizeRatio = 9;
+			superpowerDashboardText = "";
 			createEnemies();
 			nextTheme();
-			angleIncrement = 0.03;
+			// angleIncrement = 0.03;
 			if (eSpeed < 0) {
 				eSpeed--;
 			} else {
 				eSpeed++;
 			}
 			moveDownBy /= 1.3;
-			System.out.println(eSpeed);
+			sSpeed += 3;
+			moveLimit += 12;
+//			System.out.println(eSpeed);
 
 		}
 	}
@@ -928,7 +1024,7 @@ public class Board extends JPanel implements MouseListener {
 
 	}
 
-	private static int isNewRowInvalidated() {
+	private static int numberOfRowsInvalidated() {
 		int invalidRows = 0;
 		for (int c = 0; c < enemies.get(0).size(); c++) {
 			boolean newInvalidRow = true;
@@ -954,10 +1050,10 @@ public class Board extends JPanel implements MouseListener {
 		// checks if bottom most row of enemies is below spaceship
 		for (int r = 0; r < enemies.size(); r++) {
 			for (int c = 0; c < enemies.get(r).size(); c++) {
-				if (!enemies.get(r).get(c).isInvalid() 
-						&& enemies.get(r).get(c).getRow() + enemies.get(r).get(c).getHeight() > spaceship.getRow()) {
+				if (!enemies.get(r).get(c).isInvalid()
+						&& enemies.get(r).get(c).getRow() > spaceship.getRow()) {
 					belowSpaceship = true;
-					System.out.println("Below Spaceship");
+//					System.out.println("Below Spaceship");
 				}
 			}
 		}
@@ -1035,6 +1131,9 @@ public class Board extends JPanel implements MouseListener {
 		String t = "Time Elapsed: " + (timeElapsed) / time / 2;
 		g.drawString(t, width / 2 - t.length() * 15 / 2, margin / 3);
 
+		g.drawString(superpowerDashboardText, width / 2 - superpowerDashboardText.length() * 15 / 2,
+				(int) (margin / 1.5));
+
 	}
 
 	private void paintFlyingEnemy(Graphics g) {
@@ -1080,13 +1179,12 @@ public class Board extends JPanel implements MouseListener {
 				Enemy enemy = enemies.get(r).get(c);
 				if (!enemy.isInvalid()) {
 					if (enemy.getSuperPower() != null) {
-						if(enemy.getRow() > superpowerCurrentRow +12) {
+						if (enemy.getRow() > superpowerCurrentRow + 12) {
 							superpowerMovingUp = true;
 						}
-						if(enemy.getRow() > superpowerCurrentRow -12 && superpowerMovingUp) {
+						if (enemy.getRow() > superpowerCurrentRow - 12 && superpowerMovingUp) {
 							enemy.setRow(enemy.getRow() - 3);
-						}
-						else {
+						} else {
 							superpowerMovingUp = false;
 							enemy.setRow(enemy.getRow() + 3);
 						}
@@ -1102,12 +1200,9 @@ public class Board extends JPanel implements MouseListener {
 						at.scale(.12, 0.12);
 						at.rotate(Math.toRadians(angle), enemy.getImage().getWidth() / 2,
 								enemy.getImage().getHeight() / 2);
-						int rowsInvalidatedTEMP = rowsInvalidated;
-						// System.out.println(rowsInvalidatedTEMP);
-						double increment = (isNewRowInvalidated() - rowsInvalidatedTEMP) * 0.02;
-						// System.out.println(rowsInvalidatedTEMP);
-						angleIncrement = angleIncrement + increment;
-						// System.out.println(angleIncrement +" incremented by " + increment);
+						//
+						angleIncrement = (numberOfRowsInvalidated() + 1) * 0.02;
+
 						angle += angleIncrement;
 						Graphics2D g2d = (Graphics2D) g;
 
