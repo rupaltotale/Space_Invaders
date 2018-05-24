@@ -745,7 +745,7 @@ public class Board extends JPanel implements MouseListener {
 			if (superpower.getSuperPower().equals("anotherLife")) {
 				int lives = spaceship.getLives() + 1;
 				spaceship.setLives(lives);
-				livesLeft = spaceship.getLives() - 1;
+				livesLeft = spaceship.getLives();
 				hasSuperpower = false;
 			}
 			if (superpower.getSuperPower().equals("smallerSpaceship")) {
@@ -824,9 +824,11 @@ public class Board extends JPanel implements MouseListener {
 		}
 		if (rocketProjectile) {
 			int shoots = 4 - numRocketPro;
-			superpowerDashboardText = shoots + " rocket projectiles left";
-			if (shoots == 0) {
+			superpowerDashboardText = (shoots-1) + " rocket projectiles left";
+			if (shoots == 1) {
 				superpowerDashboardText = "";
+			}
+			if (shoots == 0) {
 				rocketProjectile = false;
 			}
 		}
