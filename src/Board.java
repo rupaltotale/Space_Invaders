@@ -367,7 +367,7 @@ public class Board extends JPanel implements MouseListener {
 			for (int c = 0; c < enemyCol; c++) {
 				int random = (int) (Math.random() * enemyRow * enemyCol) + 1;
 				if (random + 10 >= enemyRow * enemyCol && !hasSuperpower) {
-					String superpowerString = "invisibleBarrier";//superpowers.get((int) (Math.random() * superpowers.size()));
+					String superpowerString = superpowers.get((int) (Math.random() * superpowers.size()));
 					Enemy superpower = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, superpowerString);
 					setSuperpowerImage(superpower);
 					eRow.add(superpower);
