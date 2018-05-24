@@ -49,9 +49,9 @@ public class Board extends JPanel implements MouseListener {
 	static Timer timer = new Timer(time, null);
 	private static boolean pause = false;
 	private static boolean showHomePage = true;
-	private static ArrayList<Integer> playGameRect = new ArrayList<>();
-	private static ArrayList<Integer> infoRect = new ArrayList<>();
-	private static ArrayList<Integer> playOrPauseRect = new ArrayList<>();
+	private static ArrayList<Integer> playGameRect = new ArrayList<Integer>();
+	private static ArrayList<Integer> infoRect = new ArrayList<Integer>();
+	private static ArrayList<Integer> playOrPauseRect = new ArrayList<Integer>();
 	private static boolean showInfo;
 
 	/* Barriers */
@@ -208,7 +208,7 @@ public class Board extends JPanel implements MouseListener {
 
 		this.getActionMap().put("right", new AbstractAction() {
 
-			@Override
+			
 			public void actionPerformed(ActionEvent e) {
 				direction = 1;
 				movedBy = 0;
@@ -217,7 +217,7 @@ public class Board extends JPanel implements MouseListener {
 
 		this.getActionMap().put("left", new AbstractAction() {
 
-			@Override
+			
 			public void actionPerformed(ActionEvent e) {
 				direction = -1;
 				movedBy = 0;
@@ -227,7 +227,7 @@ public class Board extends JPanel implements MouseListener {
 
 		this.getActionMap().put("shoot", new AbstractAction() {
 
-			@Override
+			
 			public void actionPerformed(ActionEvent e) {
 
 				if (!gameOver) {
@@ -256,7 +256,7 @@ public class Board extends JPanel implements MouseListener {
 		});
 		this.getActionMap().put("pause", new AbstractAction() {
 
-			@Override
+			
 			public void actionPerformed(ActionEvent e) {
 				// ADD implementation of space key here
 
@@ -267,7 +267,7 @@ public class Board extends JPanel implements MouseListener {
 		});
 		this.getActionMap().put("newGame", new AbstractAction() {
 
-			@Override
+			
 			public void actionPerformed(ActionEvent e) {
 				if (gameOver) {
 					startNewGame();
@@ -428,7 +428,7 @@ public class Board extends JPanel implements MouseListener {
 	 */
 	private static void setupTimer() {
 		timer.addActionListener(new ActionListener() {
-			@Override
+			
 			public void actionPerformed(ActionEvent arg0) {
 				if (!pause) {
 					tick();
@@ -496,7 +496,7 @@ public class Board extends JPanel implements MouseListener {
 				int c = enemy.getCol();
 				// i++;
 				if (!enemy.isInvalid()) {
-					Enemy superpower = new Enemy(r, c, "rocketProjectile");
+					Enemy superpower = new Enemy(r, c, superpowerString);
 					setSuperpowerImage(superpower);
 					superpowerCurrentRow = r;
 					// System.out.println("New superpower: " + superpowerCurrentRow);
@@ -1056,7 +1056,7 @@ public class Board extends JPanel implements MouseListener {
 
 	}
 
-	@Override
+	
 	public void paintComponent(Graphics g) {
 
 		g.drawImage(background, 0, 0, width, height, null);
@@ -1125,7 +1125,7 @@ public class Board extends JPanel implements MouseListener {
 		// gameOverButton.setBounds(width / 4, height / 4, width / 2, height / 2);
 		// gameOverButton.addActionListener(new ActionListener() {
 		//
-		// @Override
+		// 
 		// public void actionPerformed(ActionEvent e) {
 		// startNewGame();
 		//
@@ -1209,10 +1209,10 @@ public class Board extends JPanel implements MouseListener {
 							superpowerMovingUp = true;
 						}
 						if (enemy.getRow() > superpowerCurrentRow - 12 && superpowerMovingUp) {
-							enemy.setRow(enemy.getRow() - 3);
+							enemy.setRow(enemy.getRow() - 1);
 						} else {
 							superpowerMovingUp = false;
-							enemy.setRow(enemy.getRow() + 3);
+							enemy.setRow(enemy.getRow() + 1);
 						}
 						enemy.setWidth(enemy.getImage().getWidth() / 8);
 						enemy.setHeight(enemy.getImage().getHeight() / 8);
@@ -1305,7 +1305,7 @@ public class Board extends JPanel implements MouseListener {
 
 	}
 
-	@Override
+	
 	public void mouseClicked(MouseEvent e) {
 		int mX = e.getX();
 		int mY = e.getY();
@@ -1344,22 +1344,22 @@ public class Board extends JPanel implements MouseListener {
 	}
 
 	// Ignore this!
-	@Override
+	
 	public void mousePressed(MouseEvent e) {
 
 	}
 
-	@Override
+	
 	public void mouseReleased(MouseEvent e) {
 
 	}
 
-	@Override
+	
 	public void mouseEntered(MouseEvent e) {
 
 	}
 
-	@Override
+	
 	public void mouseExited(MouseEvent e) {
 
 	}
