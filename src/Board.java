@@ -222,8 +222,8 @@ public class Board extends JPanel implements MouseListener {
 						int row = spaceship.getRow() - projectile.getHeight();
 						int col = spaceship.getCol() + spaceship.getWidth() / 2 - projectile.getWidth() / 2;
 						projectile.setLocation(row, col);
-						if (rocketProjectile && numRocketPro <=3) {
-							if (numRocketPro ==4) {
+						if (rocketProjectile && numRocketPro <3) {
+							if (numRocketPro ==3) {
 								rocketProjectile = false;
 								numRocketPro = 0;
 							}
@@ -367,7 +367,7 @@ public class Board extends JPanel implements MouseListener {
 			for (int c = 0; c < enemyCol; c++) {
 				int random = (int) (Math.random() * enemyRow * enemyCol) + 1;
 				if (random + 10 >= enemyRow * enemyCol && !hasSuperpower) {
-					String superpowerString = superpowers.get((int) (Math.random() * superpowers.size()));
+					String superpowerString = "invisibleBarrier";//superpowers.get((int) (Math.random() * superpowers.size()));
 					Enemy superpower = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, superpowerString);
 					setSuperpowerImage(superpower);
 					eRow.add(superpower);
@@ -627,14 +627,14 @@ public class Board extends JPanel implements MouseListener {
 					}
 
 					// checks if projectile is colliding with a flying enemy
-					if (isColliding(flyingEnemy, projectile)) {
+					if (isColliding(flyingEnemy, projectile) ) {
 						flyingEnemy.setInvalid(true);
 						sProjectiles.remove(projectile);
 						score += flyingEnemy.getScore();
 						Audio.makeHardKillingSoundForEnemy();
 					}
 					for (int b = 0; b < barriers.size(); b++) {
-						if (isColliding(barriers.get(b), projectile)) {
+						if (isColliding(barriers.get(b), projectile) && !invisibleBarrier) {
 							sProjectiles.remove(projectile);
 						}
 					}
@@ -767,7 +767,7 @@ public class Board extends JPanel implements MouseListener {
 							int c = (col - barrier.getCol());
 							int rgba = (0 << 24) | (0 << 16) | (0 << 8) | 0;
 							boolean transparent = barrier.getImage().getRGB(c, r) == rgba;
-							if (!transparent && !invisibleBarrier) {
+							if (!transparent) {
 								barrier.setAttacked(true);
 								barrier.setAttackedX(c);
 								barrier.setAttackedY(r);
@@ -799,7 +799,7 @@ public class Board extends JPanel implements MouseListener {
 							int c = (col - barrier.getCol());
 							int rgba = (0 << 24) | (0 << 16) | (0 << 8) | 0;
 							boolean transparent = barrier.getImage().getRGB(c, r) == rgba;
-							if (!transparent) {
+							if (!transparent && !invisibleBarrier) {
 								barrier.setAttacked(true);
 								barrier.setAttackedX(c);
 								barrier.setAttackedY(r);
