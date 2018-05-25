@@ -384,7 +384,19 @@ public class Board extends JPanel implements MouseListener {
 		for (int r = 0; r < enemyRow; r++) {
 			ArrayList<Enemy> eRow = new ArrayList<Enemy>();
 			for (int c = 0; c < enemyCol; c++) {
+//<<<<<<< HEAD
+//				int random = (int) (Math.random() * enemyRow * enemyCol) + 1;
+//				if (random + 10 >= enemyRow * enemyCol && !hasSuperpower) {
+//					String superpowerString = "freezeEnemies";//superpowers.get((int) (Math.random() * superpowers.size()));
+//					Enemy superpower = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, superpowerString);
+//					setSuperpowerImage(superpower);
+//					eRow.add(superpower);
+//					superpowerCurrentRow = superpower.getRow();
+//					hasSuperpower = true;
+//				} else if (r < 1) {
+//=======
 				if (r < 1) {
+//>>>>>>> 59303c9898a991a6834183c48424dcc96ccacd0f
 					Enemy enemy = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, Enemy.getPurpleEnemy());
 					if (moveDownBy == 0)
 						moveDownBy = enemy.getHeight() / 4;
@@ -734,7 +746,7 @@ public class Board extends JPanel implements MouseListener {
 			if (superpower.getSuperPower().equals("anotherLife")) {
 				int lives = spaceship.getLives() + 1;
 				spaceship.setLives(lives);
-				livesLeft = spaceship.getLives() - 1;
+				livesLeft = spaceship.getLives();
 				hasSuperpower = false;
 			}
 			if (superpower.getSuperPower().equals("smallerSpaceship")) {
@@ -774,6 +786,17 @@ public class Board extends JPanel implements MouseListener {
 				superpowerDashboardText = "Spaceship will be smaller for " + time + " seconds";
 			}
 		}
+//<<<<<<< HEAD
+//		timePaused++;
+//		if (timePaused == 7 * 1000 / 20) {
+//			pauseEnemies = false;
+//			timePaused = 0;
+//		}
+//		invisibleBarrierTime++;
+//		if (invisibleBarrierTime == 7 * 1000 / 20) {
+//			invisibleBarrier = false;
+//			invisibleBarrierTime = 0;
+//=======
 		if (pauseEnemies) {
 			pauseEnemiesTime++;
 			if (pauseEnemiesTime >= 10 * 1000 / 20) {
@@ -802,14 +825,17 @@ public class Board extends JPanel implements MouseListener {
 		}
 		if (rocketProjectile) {
 			int shoots = 4 - numRocketPro;
-			superpowerDashboardText = shoots + " rocket projectiles left";
-			if (shoots == 0) {
+			superpowerDashboardText = (shoots-1) + " rocket projectiles left";
+			if (shoots == 1) {
 				superpowerDashboardText = "";
+			}
+			if (shoots == 0) {
 				rocketProjectile = false;
 			}
 		}
 		if (!hasSuperpower) {
 			superpowerDashboardText = "";
+//>>>>>>> 59303c9898a991a6834183c48424dcc96ccacd0f
 		}
 
 	}
