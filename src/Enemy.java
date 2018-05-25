@@ -13,6 +13,8 @@ public class Enemy extends JPanel {
 	private int height = 100;
 	private boolean invalid = false;
 	private int score;
+	private int numBlasts = 0;
+	private boolean dead = false;
 	// private String projectileName;
 	private BufferedImage projectile;
 
@@ -20,15 +22,15 @@ public class Enemy extends JPanel {
 	private BufferedImage superPowerImage;
 
 	// Spaceship Theme: Score, imageName, projectileName
-	private static ArrayList<Object> redEnemy = new ArrayList<>();
-	private static ArrayList<Object> blueEnemy = new ArrayList<>();
-	private static ArrayList<Object> purpleEnemy = new ArrayList<>();
-	private static ArrayList<Object> flyingEnemy = new ArrayList<>();
+	private static ArrayList<Object> redEnemy = new ArrayList<Object>();
+	private static ArrayList<Object> blueEnemy = new ArrayList<Object>();
+	private static ArrayList<Object> purpleEnemy = new ArrayList<Object>();
+	private static ArrayList<Object> flyingEnemy = new ArrayList<Object>();
 
 	public Enemy(int row, int col, ArrayList<Object> enemyList) {
 		this.row = row;
 		this.col = col;
-		this.score = (int) enemyList.get(0);
+		this.score = (Integer) enemyList.get(0);
 		this.image = (BufferedImage) enemyList.get(1);
 
 		if (enemyList.get(2) != null)
@@ -61,14 +63,20 @@ public class Enemy extends JPanel {
 		flyingEnemy.add(300);
 		flyingEnemy.add(Images.getFlyingEnemy());
 		flyingEnemy.add(null);
+		
+
 
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
-
+		if (dead)
+		numBlasts++;
+		if(numBlasts<10)
 		g.drawImage(image, col, row, width, height, this);
-
+		else 
+			setInvalid(true);
+		System.out.println(numBlasts);
 	}
 
 	// getters and setters
@@ -117,6 +125,7 @@ public class Enemy extends JPanel {
 
 	public void setInvalid(boolean invalid) {
 		this.invalid = invalid;
+		dead = false;
 	}
 
 	public static ArrayList<Object> getRedEnemy() {
@@ -187,4 +196,16 @@ public class Enemy extends JPanel {
 		this.superPowerImage = superPowerImage;
 	}
 
+	public int getNumBlasts() {
+	
+		return numBlasts;
+	}
+
+	public void setNumBlasts(int numBlasts) {
+		this.numBlasts = numBlasts;
+	}
+
+	public void dead() {
+		dead =true;
+	}
 }
