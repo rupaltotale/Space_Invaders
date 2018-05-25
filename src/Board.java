@@ -508,7 +508,7 @@ public class Board extends JPanel implements MouseListener {
 				int c = enemy.getCol();
 				// i++;
 				if (!enemy.isInvalid()) {
-					Enemy superpower = new Enemy(r, c, "rocketProjectile");
+					Enemy superpower = new Enemy(r, c, superpowerString);
 					setSuperpowerImage(superpower);
 					superpowerCurrentRow = r;
 					// System.out.println("New superpower: " + superpowerCurrentRow);
