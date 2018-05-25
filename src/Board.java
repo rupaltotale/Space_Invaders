@@ -50,7 +50,10 @@ public class Board extends JPanel implements MouseListener {
 	private static boolean pause = false;
 	private static boolean showHomePage = true;
 	private static ArrayList<Integer> playGameRect = new ArrayList<>();
-
+	private static ArrayList<Integer> infoRect = new ArrayList<>();
+	private static ArrayList<Integer> playOrPauseRect = new ArrayList<>();
+	private static boolean showInfo;
+	private static int numBlasts;
 	/* Barriers */
 	static ArrayList<Barrier> barriers = new ArrayList<Barrier>();
 	private static int numberOfBarriers = 4;
@@ -59,7 +62,7 @@ public class Board extends JPanel implements MouseListener {
 	static ArrayList<ArrayList<Enemy>> enemies = new ArrayList<ArrayList<Enemy>>();
 	static int enemyRow = 5;
 	static int enemyCol = 12;
-	private static int moveDownBy;
+	private static int moveDownBy = 0;
 	static ArrayList<Projectile> eProjectiles = new ArrayList();
 	static double eSpeed = 1 * constant;
 	static int epSpeed = 8 * constant;
@@ -87,6 +90,7 @@ public class Board extends JPanel implements MouseListener {
 
 	private static int superpowerCurrentRow;
 	private boolean superpowerMovingUp = true;
+
 	private static String superpowerDashboardText = "";
 
 	/* Flying enemies */
@@ -97,7 +101,7 @@ public class Board extends JPanel implements MouseListener {
 	static int fSpeed = 3 * constant;
 
 	/* Spaceship */
-	static int sRow = height - 100;
+	static int sRow = height - 120;
 	static int sCol = margin;
 	static int lives = 4;
 	static Spaceship spaceship = new Spaceship(sRow, sCol, lives);// for the spaceship characteristics
@@ -155,6 +159,18 @@ public class Board extends JPanel implements MouseListener {
 		probabilityOfNotShooting = 0.98;
 		angleIncrement = 0.03;
 		eSpeed = 1;
+
+		sRow = height - 120;
+		sCol = margin;
+		lives = 4;
+		spaceship = new Spaceship(sRow, sCol, lives);// for the spaceship characteristics
+		moveLimit = 40;
+		movedBy = moveLimit;
+		direction = 0; // -1 is left, 1 is right
+		isAlive = true;
+		sSpeed = 5 * constant;
+		spSpeed = -20 * constant;
+		sProjectiles = new ArrayList();
 
 		createEnemies();
 		createBarriers();
@@ -216,7 +232,7 @@ public class Board extends JPanel implements MouseListener {
 
 				if (!gameOver) {
 
-					if (sProjectiles.size() == 0) {
+					if (sProjectiles.size() == 0 || rocketProjectile) {
 						Projectile projectile = new Projectile(Images.getSpaceshipProjectile(), spSpeed, true);
 						int row = spaceship.getRow() - projectile.getHeight();
 						int col = spaceship.getCol() + spaceship.getWidth() / 2 - projectile.getWidth() / 2;
@@ -245,6 +261,7 @@ public class Board extends JPanel implements MouseListener {
 				// ADD implementation of space key here
 
 				pause = !pause;
+				board.repaint();
 			}
 
 		});
@@ -335,7 +352,7 @@ public class Board extends JPanel implements MouseListener {
 		if (currentTheme.equals("desert")) {
 			background = Images.getDessertBackground();
 			for (int i = 0; i < barriers.size(); i++) {
-				barriers.get(i).setImage(Images.getSeaBarrier(), modifyBarrier);
+				barriers.get(i).setImage(Images.getDessertBarrier(), modifyBarrier);
 			}
 			for (int r = 0; r < enemies.size(); r++) {
 				for (int c = 0; c < enemies.get(r).size(); c++) {
@@ -369,7 +386,8 @@ public class Board extends JPanel implements MouseListener {
 			for (int c = 0; c < enemyCol; c++) {
 				if (r < 1) {
 					Enemy enemy = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, Enemy.getPurpleEnemy());
-					moveDownBy = enemy.getHeight() / 4;
+					if (moveDownBy == 0)
+						moveDownBy = enemy.getHeight() / 4;
 					eRow.add(enemy);
 				} else if (r < 3) {
 					Enemy enemy = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, Enemy.getBlueEnemy());
@@ -433,11 +451,10 @@ public class Board extends JPanel implements MouseListener {
 			moveEnemies();
 		}
 		if (!hasSuperpower) {
-//			System.out.println("No Superpower");
+			// System.out.println("No Superpower");
 			superpowerDashboardText = "";
 		}
-			
-		
+
 		if (numberOfValidEnemies() > 5) {
 			addNewSuperpower();
 		}
@@ -477,15 +494,15 @@ public class Board extends JPanel implements MouseListener {
 				enemy = enemies.get(randomRow).get(randomCol);
 				int r = enemy.getRow();
 				int c = enemy.getCol();
-//				i++;
-				if(!enemy.isInvalid()) {
-					Enemy superpower = new Enemy(r, c, superpowerString);
+				// i++;
+				if (!enemy.isInvalid()) {
+					Enemy superpower = new Enemy(r, c, "rocketProjectile");
 					setSuperpowerImage(superpower);
 					superpowerCurrentRow = r;
-//					System.out.println("New superpower: " + superpowerCurrentRow);
+					// System.out.println("New superpower: " + superpowerCurrentRow);
 					hasSuperpower = true;
 					enemies.get(randomRow).set(randomCol, superpower);
-//					System.out.println("Valid");
+					// System.out.println("Valid");
 					break;
 				}
 
@@ -602,7 +619,7 @@ public class Board extends JPanel implements MouseListener {
 				enemy.setRow(newY);
 				if (enemy.getSuperPower() != null && !enemy.isInvalid()) {
 					superpowerCurrentRow = superpowerCurrentRow + moveDownBy;
-//					System.out.println(superpowerCurrentRow);
+					// System.out.println(superpowerCurrentRow);
 				}
 
 			}
@@ -645,11 +662,12 @@ public class Board extends JPanel implements MouseListener {
 							Enemy enemy = enemies.get(r).get(c);
 							if (isColliding(enemy, projectile)) {
 								activateSuperpower(enemy);
+								if (enemy.getNumBlasts() <= 0)
 								enemy.setInvalid(true);
 								Audio.makeSoftKillingSoundForEnemy();
 								score += enemy.getScore();
 								if (!rocketProjectile) {
-									sProjectiles.remove(projectile);
+								sProjectiles.remove(projectile);
 								}
 								break;
 
@@ -708,7 +726,7 @@ public class Board extends JPanel implements MouseListener {
 	private static void activateSuperpower(Enemy superpower) {
 		if (superpower.getSuperPower() != null) {
 			if (superpower.getSuperPower().equals("restoreBarriers")) {
-//				System.out.println("Restoring barriers!");
+				// System.out.println("Restoring barriers!");
 				setTheme(currentTheme, false);
 				hasSuperpower = false;
 
@@ -797,12 +815,19 @@ public class Board extends JPanel implements MouseListener {
 	}
 
 	private static boolean isColliding(Object obj, Projectile projectile) {
+		
+		
 		if (obj instanceof Enemy) {
 			Enemy enemy = (Enemy) obj;
 			if (projectile.getRow() >= enemy.getRow() && projectile.getRow() <= enemy.getRow() + enemy.getHeight()
 					&& projectile.getCol() >= enemy.getCol() && projectile.getCol() <= enemy.getCol() + enemy.getWidth()
 					// && nextEnemy.isInvalid()
 					&& !enemy.isInvalid()) {
+				if(enemy.getSuperPower() == null) {
+					enemy.setImage(Images.getBlast());
+					enemy.dead();
+				}
+					//numBlasts = 500;
 				return true;
 			}
 
@@ -961,7 +986,7 @@ public class Board extends JPanel implements MouseListener {
 		}
 		if (allKilled) {
 			// things to do when advancing to new level
-//			System.out.println("New Level");
+			// System.out.println("New Level");
 			enemies = new ArrayList<ArrayList<Enemy>>();
 			hasSuperpower = false;
 			pauseEnemies = false;
@@ -978,10 +1003,10 @@ public class Board extends JPanel implements MouseListener {
 			} else {
 				eSpeed++;
 			}
-			moveDownBy /= 1.3;
+			moveDownBy /= 1.1;
 			sSpeed += 3;
 			moveLimit += 12;
-//			System.out.println(eSpeed);
+			// System.out.println(eSpeed);
 
 		}
 	}
@@ -1026,10 +1051,9 @@ public class Board extends JPanel implements MouseListener {
 		// checks if bottom most row of enemies is below spaceship
 		for (int r = 0; r < enemies.size(); r++) {
 			for (int c = 0; c < enemies.get(r).size(); c++) {
-				if (!enemies.get(r).get(c).isInvalid()
-						&& enemies.get(r).get(c).getRow() > spaceship.getRow()) {
+				if (!enemies.get(r).get(c).isInvalid() && enemies.get(r).get(c).getRow() > spaceship.getRow()) {
 					belowSpaceship = true;
-//					System.out.println("Below Spaceship");
+					// System.out.println("Below Spaceship");
 				}
 			}
 		}
@@ -1054,6 +1078,11 @@ public class Board extends JPanel implements MouseListener {
 			paintProjectiles(g);
 			paintFlyingEnemy(g);
 			paintDashBoard(g);
+			paintFooter(g);
+			//
+			if (showInfo)
+				// pause = true;
+				paintInfo(g);
 
 		}
 
@@ -1062,6 +1091,35 @@ public class Board extends JPanel implements MouseListener {
 
 		}
 
+	}
+
+	private void paintFooter(Graphics g) {
+		int infoW = Images.getInfo().getWidth() / 25;
+		int infoH = Images.getInfo().getHeight() / 25;
+		int infoX1 = width - margin / 2 - infoW;
+		int infoY1 = height - margin / 2;
+		g.drawImage(Images.getInfo(), infoX1, infoY1, infoW, infoH, null);
+		infoRect.removeAll(infoRect);
+		infoRect.add(infoX1);
+		infoRect.add(infoX1 + infoW);
+		infoRect.add(infoY1);
+		infoRect.add(infoX1 + infoH);
+
+		// int ppW = Images.getInfo().getWidth() / 25;
+		// int ppH = Images.getInfo().getHeight() / 25;
+		int ppX1 = (int) (width - margin / 1.25) - infoW;
+		int ppY1 = height - margin / 2;
+		BufferedImage pauseOrPlay;
+		if (!pause) {
+			pauseOrPlay = Images.getPause();
+		} else {
+			pauseOrPlay = Images.getPlay();
+		}
+		g.drawImage(pauseOrPlay, (int) ppX1, ppY1, infoW, infoH, null);
+		playOrPauseRect.add(ppX1);
+		playOrPauseRect.add(ppX1 + infoW);
+		playOrPauseRect.add(ppY1);
+		playOrPauseRect.add(ppX1 + infoH);
 	}
 
 	private void paintGameOverPanel(Graphics g) {
@@ -1154,7 +1212,7 @@ public class Board extends JPanel implements MouseListener {
 			for (int c = 0; c < enemies.get(r).size(); c++) {
 				Enemy enemy = enemies.get(r).get(c);
 				if (!enemy.isInvalid()) {
-					if (enemy.getSuperPower() != null) {
+					if (enemy.getSuperPower() != null && !pause) {
 						if (enemy.getRow() > superpowerCurrentRow + 12) {
 							superpowerMovingUp = true;
 						}
@@ -1179,17 +1237,20 @@ public class Board extends JPanel implements MouseListener {
 						//
 						angleIncrement = (numberOfRowsInvalidated() + 1) * 0.02;
 
-						angle += angleIncrement;
+						if (!pause)
+							angle += angleIncrement;
 						Graphics2D g2d = (Graphics2D) g;
 
 						g2d.drawImage(enemy.getImage(), at, null);
-					} else {
-						enemy.setWidth(enemy.getImage().getWidth() / 8);
-						enemy.setHeight(enemy.getImage().getHeight() / 8);
-						enemy.paintComponent(g);
-					}
+					} 
 
 					//
+				}
+				else if(enemy.getNumBlasts() < 20){
+					enemy.setWidth(enemy.getImage().getWidth() / 8);
+					enemy.setHeight(enemy.getImage().getHeight() / 8);
+					enemy.paintComponent(g);
+					enemy.setNumBlasts(enemy.getNumBlasts() + 1);
 				}
 
 			}
@@ -1224,28 +1285,72 @@ public class Board extends JPanel implements MouseListener {
 			playGameRect.add((int) (height - 2.25 * margin)); // minY
 			playGameRect.add(playGameRect.get(2) + playGameImage.getHeight()); // maxY
 
+			// INFO ICON
+			int infoX1 = width / 2 + playGameImage.getWidth() / 2 + 10;
+			int infoY1 = (int) (height - 2.2 * margin);
+			int infoW = Images.getInfo().getWidth() / 20;
+			int infoH = Images.getInfo().getHeight() / 20;
+			g.drawImage(Images.getInfo(), infoX1, infoY1, infoW, infoH, null);
+			infoRect.add(infoX1);
+			infoRect.add(infoX1 + infoW);
+			infoRect.add(infoY1);
+			infoRect.add(infoX1 + infoH);
+
+			// System.out.println(infoRect);
+
+			if (showInfo) {
+				paintInfo(g);
+			}
+
+		}
+
+	}
+
+	private void paintInfo(Graphics g) {
+		// TODO Paint info panel
+		if (showInfo) {
+
+			System.out.println("Painting Info Panel");
 		}
 
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		int mX = e.getX();
+		int mY = e.getY();
 		if (showHomePage) {
-			int mX = e.getX();
-			int mY = e.getY();
-			checkIfPlayGame(mX, mY);
+			if (checkInRect(mX, mY, playGameRect)) {
+				showHomePage = false;
+				timer.start();
+			} else if (checkInRect(mX, mY, infoRect)) {
+				System.out.println("Info icon clicked");
+				showInfo = true;
+				board.repaint();
+			}
 		} else if (gameOver) {
 			startNewGame();
 		}
 
+		else {
+			if (checkInRect(mX, mY, infoRect)) {
+				System.out.println("Info icon clicked");
+				showInfo = true;
+				board.repaint();
+			} else if (checkInRect(mX, mY, playOrPauseRect)) {
+				System.out.println("Pause or play icon clicked");
+				pause = !pause;
+				board.repaint();
+			}
+		}
+
 	}
 
-	private void checkIfPlayGame(int x, int y) {
-		if (x >= playGameRect.get(0) && x <= playGameRect.get(1) && y >= playGameRect.get(2)
-				&& y <= playGameRect.get(3)) {
-			showHomePage = false;
-			timer.start();
+	private boolean checkInRect(int x, int y, ArrayList<Integer> rect) {
+		if (x >= rect.get(0) && x <= rect.get(1) && y >= rect.get(2) && y <= rect.get(3)) {
+			return true;
 		}
+		return false;
 	}
 
 	// Ignore this!
@@ -1261,7 +1366,7 @@ public class Board extends JPanel implements MouseListener {
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-
+			
 	}
 
 	@Override
