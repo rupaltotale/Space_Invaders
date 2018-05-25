@@ -63,7 +63,11 @@ public class Images {
 	private static BufferedImage play;
 	private static BufferedImage pause;
 	private static BufferedImage dessertBarrier;
+
 	private static BufferedImage blast;
+
+	private static BufferedImage infoPanel;
+
 
 	// static ArrayList<BufferedImage> images = new ArrayList<>();
 	// static ArrayList<BufferedImage> images2 = new ArrayList<>();
@@ -192,8 +196,13 @@ public class Images {
 		inputStream = new FileInputStream("src/Images/Pause.png");
 		pause = ImageIO.read(inputStream);
 		
+
 		inputStream = new FileInputStream("src/Images/blast.png");
 		blast = ImageIO.read(inputStream);
+
+		inputStream = new FileInputStream("src/Images/InfoPanel.png");
+		infoPanel = ImageIO.read(inputStream);
+
 	}
 
 	public static boolean inBounds(BufferedImage image, int r, int c) {
@@ -586,6 +595,14 @@ public class Images {
 
 	public static void setDessertBarrier(BufferedImage dessertBarrier) {
 		Images.dessertBarrier = dessertBarrier;
+	}
+
+	public static BufferedImage getInfoPanel() {
+		return infoPanel;
+	}
+
+	public static void setInfoPanel(BufferedImage infoPanel) {
+		Images.infoPanel = infoPanel;
 	}
 
 }

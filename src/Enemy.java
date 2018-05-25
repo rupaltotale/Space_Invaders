@@ -22,15 +22,15 @@ public class Enemy extends JPanel {
 	private BufferedImage superPowerImage;
 
 	// Spaceship Theme: Score, imageName, projectileName
-	private static ArrayList<Object> redEnemy = new ArrayList<>();
-	private static ArrayList<Object> blueEnemy = new ArrayList<>();
-	private static ArrayList<Object> purpleEnemy = new ArrayList<>();
-	private static ArrayList<Object> flyingEnemy = new ArrayList<>();
+	private static ArrayList<Object> redEnemy = new ArrayList<Object>();
+	private static ArrayList<Object> blueEnemy = new ArrayList<Object>();
+	private static ArrayList<Object> purpleEnemy = new ArrayList<Object>();
+	private static ArrayList<Object> flyingEnemy = new ArrayList<Object>();
 
 	public Enemy(int row, int col, ArrayList<Object> enemyList) {
 		this.row = row;
 		this.col = col;
-		this.score = (int) enemyList.get(0);
+		this.score = (Integer) enemyList.get(0);
 		this.image = (BufferedImage) enemyList.get(1);
 
 		if (enemyList.get(2) != null)
