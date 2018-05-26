@@ -1,8 +1,6 @@
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import javax.imageio.ImageIO;
+
 import javax.swing.JPanel;
 
 public class Projectile extends JPanel {
@@ -24,7 +22,6 @@ public class Projectile extends JPanel {
 //	private boolean spaceship;
 	private String imageName;
 	private boolean spaceshipP;
-	private boolean passThrough = false;
 
 	public Projectile(BufferedImage projectile, int speed, boolean spaceshipP) {
 
@@ -113,21 +110,6 @@ public class Projectile extends JPanel {
 		this.row = row;
 	}
 
-//	public int getDamage() {
-//		return damage;
-//	}
-//
-//	public void setDamage(int damage) {
-//		this.damage = damage;
-//	}
-//
-//	public int getPointValue() {
-//		return pointValue;
-//	}
-//
-//	public void setPointValue(int pointValue) {
-//		this.pointValue = pointValue;
-//	}
 
 	public void setImage(BufferedImage image) {
 		this.image = image;
@@ -173,14 +155,5 @@ public class Projectile extends JPanel {
 		this.spaceshipP = spaceshipP;
 	}
 
-	public void passThrough() {
-		passThrough = true;
-		
-	}
-
-	public boolean canPassThrough() {
-		
-		return passThrough;
-	}
-
+	//
 }
