@@ -110,7 +110,8 @@ public class Board extends JPanel implements MouseListener {
 	static boolean isAlive = true;
 	static int sSpeed = 5 * constant;
 	static int spSpeed = -20 * constant;
-	static ArrayList<Projectile> sProjectiles = new ArrayList<Projectile>(); // list of projectiles thrown by the spaceship
+	static ArrayList<Projectile> sProjectiles = new ArrayList<Projectile>(); // list of projectiles thrown by the
+																				// spaceship
 
 	public static void main(String[] args) throws IOException {
 
@@ -230,7 +231,7 @@ public class Board extends JPanel implements MouseListener {
 
 				if (!gameOver) {
 
-					if (sProjectiles.size() == 0 ) {
+					if (sProjectiles.size() == 0) {
 						Projectile projectile = new Projectile(Images.getSpaceshipProjectile(), spSpeed, true);
 						int row = spaceship.getRow() - projectile.getHeight();
 						int col = spaceship.getCol() + spaceship.getWidth() / 2 - projectile.getWidth() / 2;
@@ -324,9 +325,9 @@ public class Board extends JPanel implements MouseListener {
 			dashboardTextColor = "#F8F1D7";
 
 		}
-//		GreenBirdEnemy -- ProjectilePurple
-//		OrangeBirdEnemy -- ProjectileBlue
-//		PurpleBirdEnemy -- ProjectileRed
+		// GreenBirdEnemy -- ProjectilePurple
+		// OrangeBirdEnemy -- ProjectileBlue
+		// PurpleBirdEnemy -- ProjectileRed
 
 		if (currentTheme.equals("sky")) {
 			background = Images.getSkyBackground();
@@ -349,9 +350,9 @@ public class Board extends JPanel implements MouseListener {
 			}
 			dashboardTextColor = "#232323";
 		}
-//		YellowFishEnemy -- ProjectileBlue
-//		PinkFishEnemy -- ProjectileRed
-//		GreenFishEnemy -- ProjectilePurple
+		// YellowFishEnemy -- ProjectileBlue
+		// PinkFishEnemy -- ProjectileRed
+		// GreenFishEnemy -- ProjectilePurple
 
 		if (currentTheme.equals("sea")) {
 			background = Images.getSeaBackground();
@@ -374,9 +375,9 @@ public class Board extends JPanel implements MouseListener {
 			}
 			dashboardTextColor = "#232323";
 		}
-//		EnemyBunny -- ProjectilePurple
-//		EnemyFox -- ProjectileRed
-//		EnemyLizard -- ProjectileBlue
+		// EnemyBunny -- ProjectilePurple
+		// EnemyFox -- ProjectileRed
+		// EnemyLizard -- ProjectileBlue
 
 		if (currentTheme.equals("desert")) {
 			background = Images.getDessertBackground();
@@ -1262,15 +1263,18 @@ public class Board extends JPanel implements MouseListener {
 			for (int c = 0; c < enemies.get(r).size(); c++) {
 				Enemy enemy = enemies.get(r).get(c);
 				if (!enemy.isInvalid()) {
-					if (enemy.getSuperPower() != null && !pause) {
-						if (enemy.getRow() > superpowerCurrentRow + 12) {
-							superpowerMovingUp = true;
-						}
-						if (enemy.getRow() > superpowerCurrentRow - 12 && superpowerMovingUp) {
-							enemy.setRow(enemy.getRow() - 1);
-						} else {
-							superpowerMovingUp = false;
-							enemy.setRow(enemy.getRow() + 1);
+					if (enemy.getSuperPower() != null) {
+						if (!pause) {
+
+							if (enemy.getRow() > superpowerCurrentRow + 12) {
+								superpowerMovingUp = true;
+							}
+							if (enemy.getRow() > superpowerCurrentRow - 12 && superpowerMovingUp) {
+								enemy.setRow(enemy.getRow() - 1);
+							} else {
+								superpowerMovingUp = false;
+								enemy.setRow(enemy.getRow() + 1);
+							}
 						}
 						enemy.setWidth(enemy.getImage().getWidth() / 8);
 						enemy.setHeight(enemy.getImage().getHeight() / 8);
