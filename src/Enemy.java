@@ -69,9 +69,11 @@ public class Enemy extends JPanel {
 
 	@Override
 	public void paintComponent(Graphics g) {
+
 		
 		g.drawImage(image, col, row, width, height, this);
 		
+
 	}
 
 	// getters and setters
