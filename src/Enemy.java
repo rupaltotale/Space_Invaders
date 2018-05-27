@@ -13,8 +13,8 @@ public class Enemy extends JPanel {
 	private int height = 100;
 	private boolean invalid = false;
 	private int score;
-	private int numBlasts = 0;
-	private boolean dead = false;
+	private int numBlasts;
+//	private boolean dead = false;
 	// private String projectileName;
 	private BufferedImage projectile;
 
@@ -32,6 +32,7 @@ public class Enemy extends JPanel {
 		this.col = col;
 		this.score = (Integer) enemyList.get(0);
 		this.image = (BufferedImage) enemyList.get(1);
+		numBlasts = 0;
 
 		if (enemyList.get(2) != null)
 			this.projectile = (BufferedImage) enemyList.get(2);
@@ -70,14 +71,11 @@ public class Enemy extends JPanel {
 
 	@Override
 	public void paintComponent(Graphics g) {
-//		if (dead)
-//		numBlasts++;
-//		if(numBlasts<10)
+
+		
 		g.drawImage(image, col, row, width, height, this);
-		//else 
-			//setInvalid(true);
-			//numBlasts = 0;
-		//System.out.println(numBlasts);
+		
+
 	}
 
 	// getters and setters
@@ -126,7 +124,7 @@ public class Enemy extends JPanel {
 
 	public void setInvalid(boolean invalid) {
 		this.invalid = invalid;
-		dead = false;
+		
 	}
 
 	public static ArrayList<Object> getRedEnemy() {
@@ -202,11 +200,11 @@ public class Enemy extends JPanel {
 		return numBlasts;
 	}
 
-	public void setNumBlasts(int numBlasts) {
-		this.numBlasts = numBlasts;
+	public void incrementNumBlasts() {
+		this.numBlasts++;
 	}
 
-	public void dead() {
-		dead =true;
-	}
+//	public void dead() {
+//		dead =true;
+//	}
 }
