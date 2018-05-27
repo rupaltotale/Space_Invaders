@@ -14,8 +14,6 @@ public class Enemy extends JPanel {
 	private boolean invalid = false;
 	private int score;
 	private int numBlasts;
-//	private boolean dead = false;
-	// private String projectileName;
 	private BufferedImage projectile;
 
 	private String superPower;
