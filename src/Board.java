@@ -103,7 +103,8 @@ public class Board extends JPanel implements MouseListener {
 	/* Spaceship */
 	static int sRow = height - 120;
 	static int sCol = margin;
-	static int lives = 3;
+	static int lives = 30; ////////CHANGE THIS
+	
 	static Spaceship spaceship = new Spaceship(sRow, sCol, lives);// for the spaceship characteristics
 	static int moveLimit = 40;
 	static int movedBy = moveLimit;
@@ -694,7 +695,7 @@ public class Board extends JPanel implements MouseListener {
 							Enemy enemy = enemies.get(r).get(c);
 							if (isColliding(enemy, projectile)) {
 								activateSuperpower(enemy);
-								if (enemy.getNumBlasts() <= 0)
+								//if (enemy.getNumBlasts() <= 0)
 								enemy.setInvalid(true);
 								Audio.makeSoftKillingSoundForEnemy();
 								score += enemy.getScore();
@@ -1291,7 +1292,7 @@ public class Board extends JPanel implements MouseListener {
 
 					//
 				}
-				else if(enemy.getNumBlasts() < 20){
+				else if(enemy.getNumBlasts() < 10){
 					enemy.setWidth(enemy.getImage().getWidth() / 8);
 					enemy.setHeight(enemy.getImage().getHeight() / 8);
 					enemy.paintComponent(g);

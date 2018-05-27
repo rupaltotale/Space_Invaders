@@ -70,13 +70,14 @@ public class Enemy extends JPanel {
 
 	@Override
 	public void paintComponent(Graphics g) {
-		if (dead)
-		numBlasts++;
-		if(numBlasts<10)
+//		if (dead)
+//		numBlasts++;
+//		if(numBlasts<10)
 		g.drawImage(image, col, row, width, height, this);
-		else 
-			setInvalid(true);
-		System.out.println(numBlasts);
+		//else 
+			//setInvalid(true);
+			//numBlasts = 0;
+		//System.out.println(numBlasts);
 	}
 
 	// getters and setters
