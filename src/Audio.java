@@ -8,38 +8,35 @@ import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 
 public class Audio {
-	static File hardKillSound = new File("src/Audio/HardKillSound.wav");
-	static File whooshFile = new File("src/Audio/Whoosh.wav");
-	static File softKillSound = new File("src/Audio/SoftKillSound.wav");
+	static String hardKillSound = "Audio/HardKillSound.wav";
+	static String whooshFile = "Audio/Whoosh.wav";
+	static String softKillSound = "Audio/SoftKillSound.wav";
 	static InputStream inputStream;
 
-	public static void makeSound(File file) {
+	public void makeSound(String file) {
 		AudioStream sound = null;
+
+		inputStream = this.getClass().getResourceAsStream(file);
 		try {
-			inputStream = new FileInputStream(file);
-			try {
-				sound = new AudioStream(inputStream);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} catch (FileNotFoundException e) {
+			sound = new AudioStream(inputStream);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 		AudioPlayer.player.start(sound);
 	}
-	
-	public static void makeHardKillingSoundForEnemy() {
+
+	public void makeHardKillingSoundForEnemy() {
 		makeSound(hardKillSound);
 	}
-	
-	public static void makeKillingSoundForSpaceship() {
+
+	public void makeKillingSoundForSpaceship() {
 		makeSound(whooshFile);
 	}
 
-	public static void makeSoftKillingSoundForEnemy() {
-		makeSound(softKillSound);		
+	public void makeSoftKillingSoundForEnemy() {
+		makeSound(softKillSound);
 	}
-	
 
 }
