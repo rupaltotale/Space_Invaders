@@ -8,11 +8,12 @@ import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 
 public class Audio {
-	static String hardKillSound = "Audio/HardKillSound.wav";
-	static String whooshFile = "Audio/Whoosh.wav";
-	static String softKillSound = "Audio/CollisionWithEnemies.wav";
-	static String launchProjectile = "Audio/LaunchProjectile.wav";
-	static InputStream inputStream;
+	private static String hardKillSound = "Audio/HardKillSound.wav";
+	private static String whooshFile = "Audio/Whoosh.wav";
+	private static String softKillSound = "Audio/CollisionWithEnemies.wav";
+	private static String launchProjectile = "Audio/LaunchProjectile.wav";
+	private static String bubblePop = "Audio/BubblePop.wav";
+	private static InputStream inputStream;
 
 	public void makeSound(String file) {
 		AudioStream sound = null;
@@ -44,5 +45,8 @@ public class Audio {
 //		System.out.println("makingsound");
 		makeSound(launchProjectile);
 	}
-
+	public void makeBubblePopSound() {
+//		System.out.println("makingsound");
+		makeSound(bubblePop);
+	}
 }

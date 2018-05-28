@@ -5,21 +5,14 @@ import javax.swing.JPanel;
 
 public class Projectile extends JPanel {
 
-//	public enum ProjectileTypes {
-//		Boomerang, LaserGun, Rocket, Cannon
-//	};
+
 
 	private int speed;
 	private int height;
 	private int width;
-//	private ProjectileTypes projectile;
-//	private Color color = Color.BLACK;
 	private int col;
 	private int row;
-//	private int damage;
-//	private int pointValue;
 	private BufferedImage image;
-//	private boolean spaceship;
 	private String imageName;
 	private boolean spaceshipP;
 
@@ -29,8 +22,6 @@ public class Projectile extends JPanel {
 		this.spaceshipP = spaceshipP;
 		setSpeed(speed);
 		setSize();
-//		setDamage();
-
 	}
 
 	public void setSpeed(int speed) {
@@ -38,7 +29,6 @@ public class Projectile extends JPanel {
 
 	}
 
-	// should we make them all the same size?
 	public void setSize() {
 
 		height = image.getHeight() / 15;
@@ -46,11 +36,7 @@ public class Projectile extends JPanel {
 
 	}
 
-//	public void setDamage() {
-//		if (projectile == ProjectileTypes.Rocket) {
-//			damage = 20;
-//		}
-//	}
+
 
 	public BufferedImage getImage() {
 
@@ -115,29 +101,6 @@ public class Projectile extends JPanel {
 		this.image = image;
 	}
 
-//	public Color getColor() {
-//		return color;
-//	}
-//
-//	public void setColor(Color color) {
-//		this.color = color;
-//	}
-//
-//	public ProjectileTypes getProjectile() {
-//		return projectile;
-//	}
-//
-//	public void setProjectile(ProjectileTypes projectile) {
-//		this.projectile = projectile;
-//	}
-//
-//	public boolean isSpaceship() {
-//		return spaceship;
-//	}
-//
-//	public void setSpaceship(boolean spaceship) {
-//		this.spaceship = spaceship;
-//	}
 
 	public String getImageName() {
 		return imageName;
