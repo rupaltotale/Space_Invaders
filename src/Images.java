@@ -12,6 +12,8 @@ import javax.imageio.ImageIO;
 public class Images {
 	private InputStream inputStream;
 
+	
+
 	// Space Theme
 	private static BufferedImage spaceBackground;
 	private static BufferedImage skyBackground; /* ADD */
@@ -71,6 +73,7 @@ public class Images {
 	private static BufferedImage makeSound;
 
 	private static BufferedImage enemyBlast;
+	private static BufferedImage spaceshipBlast;
 
 	public void loadImages() throws IOException {
 		inputStream = this.getClass().getResourceAsStream("Images/SpaceBackground.png");
@@ -226,6 +229,9 @@ public class Images {
 
 		inputStream = this.getClass().getResourceAsStream("Images/EnemyBlast.png");
 		enemyBlast = ImageIO.read(inputStream);
+		
+		inputStream = this.getClass().getResourceAsStream("Images/SpaceshipBlast.png");
+		spaceshipBlast = ImageIO.read(inputStream);
 	}
 
 	public static BufferedImage flipHorizontally(BufferedImage image) {
@@ -454,6 +460,14 @@ public class Images {
 		g.drawRenderedImage(image, null);
 		g.dispose();
 		return result;
+	}
+
+	public InputStream getInputStream() {
+		return inputStream;
+	}
+
+	public static BufferedImage getSpaceshipBlast() {
+		return spaceshipBlast;
 	}
 
 	

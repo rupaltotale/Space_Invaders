@@ -10,7 +10,8 @@ import sun.audio.AudioStream;
 public class Audio {
 	static String hardKillSound = "Audio/HardKillSound.wav";
 	static String whooshFile = "Audio/Whoosh.wav";
-	static String softKillSound = "Audio/SoftKillSound.wav";
+	static String softKillSound = "Audio/CollisionWithEnemies.wav";
+	static String launchProjectile = "Audio/LaunchProjectile.wav";
 	static InputStream inputStream;
 
 	public void makeSound(String file) {
@@ -37,6 +38,11 @@ public class Audio {
 
 	public void makeSoftKillingSoundForEnemy() {
 		makeSound(softKillSound);
+	}
+
+	public void makeLaunchProjectileSound() {
+//		System.out.println("makingsound");
+		makeSound(launchProjectile);
 	}
 
 }

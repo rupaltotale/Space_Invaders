@@ -28,24 +28,24 @@ import javax.swing.UIManager;
 public class Board extends JPanel implements MouseListener {
 
 	/* Frame and board */
-	static JFrame frame = new JFrame("Space Invaders");
-	static Board board = new Board(); // JPanel
+	private static JFrame frame = new JFrame("Space Invaders");
+	private static Board board = new Board(); // JPanel
 
 	/* Game settings */
 	private static String dashboardTextColor = "#232323";// "#F8F1D7";
-	static int width = 1125; // panel width
-	static int height = 750; // panel height
-	static int margin = 150;
-	static BufferedImage background;
-	static boolean gameOver = false;
-	static String initialTheme = "space";
-	static String currentTheme = initialTheme;
-	static int score = 0;
-	static int livesLeft;
-	static int timeElapsed = 0;
-	static int constant = 1;
-	static int time = 20 * constant; // in milliseconds
-	static Timer timer = new Timer(time, null);
+	private static int width = 1125; // panel width
+	private static int height = 750; // panel height
+	private static int margin = 150;
+	private static BufferedImage background;
+	private static boolean gameOver = false;
+	private static String initialTheme = "space";
+	private static String currentTheme = initialTheme;
+	private static int score = 0;
+	private static int livesLeft;
+	private static int timeElapsed = 0;
+	private static int constant = 1;
+	private static int time = 20 * constant; // in milliseconds
+	private static Timer timer = new Timer(time, null);
 	private static boolean pause = false;
 	private static boolean showHomePage = true;
 	private static ArrayList<Integer> playGameRect = new ArrayList<Integer>();
@@ -57,31 +57,31 @@ public class Board extends JPanel implements MouseListener {
 	private static Audio audio = new Audio();
 
 	/* Barriers */
-	static ArrayList<Barrier> barriers = new ArrayList<Barrier>();
+	private static ArrayList<Barrier> barriers = new ArrayList<Barrier>();
 	private static int numberOfBarriers = 4;
 
 	/* Regular enemies */
-	static ArrayList<ArrayList<Enemy>> enemies = new ArrayList<ArrayList<Enemy>>();
-	static int enemyRow = 5;
-	static int enemyCol = 12;
+	private static ArrayList<ArrayList<Enemy>> enemies = new ArrayList<ArrayList<Enemy>>();
+	private static int enemyRow = 5;
+	private static int enemyCol = 12;
 	private static int moveDownBy = 0;
-	static ArrayList<Projectile> eProjectiles = new ArrayList<Projectile>();
-	static double eSpeed = 1 * constant;
-	static int epSpeed = 8 * constant;
+	private static ArrayList<Projectile> eProjectiles = new ArrayList<Projectile>();
+	private static double eSpeed = 1 * constant;
+	private static int epSpeed = 8 * constant;
 	private static double probabilityOfNotShooting = 0.98;
-	static int rowsInvalidated;
+	private static int rowsInvalidated;
 	private static double angle = 0;
 	private static double angleIncrement = 0.03;
 
 	/*
 	 * Super powers
 	 */
-	static ArrayList<String> superpowers = new ArrayList<String>();
-	static boolean hasSuperpower = false;
+	private static ArrayList<String> superpowers = new ArrayList<String>();
+	private static boolean hasSuperpower = false;
 
 	private static int pauseEnemiesTime = 0;
 	private static int numRocketPro = 0;
-	static int spaceshipSizeRatio = 9;
+	private static int spaceshipSizeRatio = 9;
 	private static int smallerSpaceshipTime = 1000;
 	private static int invisibleBarrierTime = 0;
 
@@ -96,25 +96,26 @@ public class Board extends JPanel implements MouseListener {
 	private static String superpowerDashboardText = "";
 
 	/* Flying enemies */
-	static int fRow = (int) (margin / 2);
-	static int fCol = margin;
-	static Enemy flyingEnemy;
-	static int fTime = 30 * 1000 / time / constant; // every 10 seconds
-	static int fSpeed = 3 * constant;
+	private static int fRow = (int) (margin / 2);
+	private static int fCol = margin;
+	private static Enemy flyingEnemy;
+	private static int fTime = 30 * 1000 / time / constant; // every 10 seconds
+	private static int fSpeed = 3 * constant;
 
 	/* Spaceship */
-	static int sRow = height - 120;
-	static int sCol = margin;
-	static int lives = 3;
-	static Spaceship spaceship = new Spaceship(sRow, sCol, lives);// for the spaceship characteristics
-	static int moveLimit = 40;
-	static int movedBy = moveLimit;
-	static int direction = 0; // -1 is left, 1 is right
-	static boolean isAlive = true;
-	static int sSpeed = 5 * constant;
-	static int spSpeed = -20 * constant;
-	static ArrayList<Projectile> sProjectiles = new ArrayList<Projectile>(); // list of projectiles thrown by the
-																				// spaceship
+	private static int sRow = height - 120;
+	private static int sCol = margin;
+	private static int lives = 3;
+	private static Spaceship spaceship = new Spaceship(sRow, sCol, lives);// for the spaceship characteristics
+	private static int moveLimit = 40;
+	private static int movedBy = moveLimit;
+	private static int direction = 0; // -1 is left, 1 is right
+	private static boolean isAlive = true;
+	private static int sSpeed = 5 * constant;
+	private static int spSpeed = -20 * constant;
+	private static int spaceshipBlastTimes = 0;
+	private static ArrayList<Projectile> sProjectiles = new ArrayList<Projectile>();// list of projectiles thrown by the
+	// spaceship
 
 	public static void main(String[] args) throws IOException {
 
@@ -175,6 +176,7 @@ public class Board extends JPanel implements MouseListener {
 		sSpeed = 5 * constant;
 		spSpeed = -20 * constant;
 		sProjectiles = new ArrayList<Projectile>();
+		spaceshipBlastTimes = 0;
 
 		createEnemies();
 		createBarriers();
@@ -237,13 +239,13 @@ public class Board extends JPanel implements MouseListener {
 				if (!gameOver) {
 
 					if (sProjectiles.size() == 0) {
+//						audio.makeLaunchProjectileSound();
 						Projectile projectile = new Projectile(Images.getSpaceshipProjectile(), spSpeed, true);
 						int row = spaceship.getRow() - projectile.getHeight();
 						int col = spaceship.getCol() + spaceship.getWidth() / 2 - projectile.getWidth() / 2;
 						projectile.setLocation(row, col);
 						if (rocketProjectile && numRocketPro <= 3) {
 							numRocketPro++;
-
 						}
 						if (rocketProjectile && numRocketPro == 4) {
 							hasSuperpower = false;
@@ -273,12 +275,14 @@ public class Board extends JPanel implements MouseListener {
 		this.getActionMap().put("newGame", new AbstractAction() {
 
 			public void actionPerformed(ActionEvent e) {
-				if (gameOver) {
-					startNewGame();
-				} else if (showHomePage) {
+//				if (gameOver) {
+//					startNewGame();
+//				} else 
+					if (showHomePage) {
 					showHomePage = false;
 					timer.start();
 				}
+					startNewGame();
 			}
 
 		});
@@ -524,7 +528,8 @@ public class Board extends JPanel implements MouseListener {
 		moveEnemiesProjectiles();
 		checkTimeDependentSuperpowers();
 		advanceToNextLevel();
-		gameOver();
+		if (spaceshipBlastTimes == 0)
+			gameOver();
 
 	}
 
@@ -712,6 +717,12 @@ public class Board extends JPanel implements MouseListener {
 					sProjectiles.remove(projectile);
 				} else {
 					projectile.move();
+					// Checks for collision between projectile and barrier
+					for (int b = 0; b < barriers.size(); b++) {
+						if (isColliding(barriers.get(b), projectile)) {
+							sProjectiles.remove(projectile);
+						}
+					}
 
 					// checks if the projectile is colliding with any regular enemy
 
@@ -719,6 +730,9 @@ public class Board extends JPanel implements MouseListener {
 						for (int c = 0; c < enemies.get(r).size(); c++) {
 							Enemy enemy = enemies.get(r).get(c);
 							if (isColliding(enemy, projectile)) {
+								if (!rocketProjectile) {
+									sProjectiles.remove(projectile);
+								}
 								if (enemy.getSuperPower() == null)
 									enemy.incrementNumBlasts();
 								activateSuperpower(enemy);
@@ -726,10 +740,7 @@ public class Board extends JPanel implements MouseListener {
 								if (!mute) {
 									audio.makeSoftKillingSoundForEnemy();
 								}
-								score += enemy.getScore();
-								if (!rocketProjectile) {
-									sProjectiles.remove(projectile);
-								}
+								score += (enemy.getScore()* 1000) /timeElapsed;
 								break;
 
 							}
@@ -744,11 +755,7 @@ public class Board extends JPanel implements MouseListener {
 						if (!mute)
 							audio.makeHardKillingSoundForEnemy();
 					}
-					for (int b = 0; b < barriers.size(); b++) {
-						if (isColliding(barriers.get(b), projectile)) {
-							sProjectiles.remove(projectile);
-						}
-					}
+
 				}
 			}
 		}
@@ -891,28 +898,9 @@ public class Board extends JPanel implements MouseListener {
 	}
 
 	private static boolean isColliding(Object obj, Projectile projectile) {
-		if (obj instanceof Enemy) {
-			Enemy enemy = (Enemy) obj;
-			if (projectile.getRow() >= enemy.getRow() && projectile.getRow() <= enemy.getRow() + enemy.getHeight()
-					&& projectile.getCol() >= enemy.getCol() && projectile.getCol() <= enemy.getCol() + enemy.getWidth()
-					// && nextEnemy.isInvalid()
-					&& !enemy.isInvalid()) {
-				return true;
-			}
-
-		}
-
-		if (obj instanceof Spaceship) {
-			if (projectile.getRow() >= spaceship.getRow()
-					&& projectile.getRow() <= spaceship.getRow() + spaceship.getHeight()
-					&& projectile.getCol() + projectile.getWidth() >= spaceship.getCol()
-					&& projectile.getCol() <= spaceship.getCol() + spaceship.getWidth()) {
-				return true;
-			}
-		}
 		if (obj instanceof Barrier) {
 			Barrier barrier = (Barrier) obj;
-			if (!projectile.isSpaceshipP()) { // add it!
+			if (!projectile.isSpaceshipP()) { // projectile is shot by enemy
 				for (int row = projectile.getRow(); row < projectile.getRow() + projectile.getHeight() + eSpeed
 						+ 1; row++) {
 					for (int col = projectile.getCol(); col < projectile.getCol() + projectile.getWidth(); col++) {
@@ -972,7 +960,26 @@ public class Board extends JPanel implements MouseListener {
 
 				}
 			}
+		} else if (obj instanceof Enemy) {
+			Enemy enemy = (Enemy) obj;
+			if (projectile.getRow() > enemy.getRow() && projectile.getRow() < enemy.getRow() + enemy.getHeight() / 2
+					&& projectile.getCol() > enemy.getCol() && projectile.getCol() < enemy.getCol() + enemy.getWidth()
+					// && nextEnemy.isInvalid()
+					&& !enemy.isInvalid()) {
+				return true;
+			}
+
 		}
+
+		else if (obj instanceof Spaceship) {
+			if (projectile.getRow() >= spaceship.getRow()
+					&& projectile.getRow() <= spaceship.getRow() + spaceship.getHeight()
+					&& projectile.getCol() + projectile.getWidth() >= spaceship.getCol()
+					&& projectile.getCol() <= spaceship.getCol() + spaceship.getWidth()) {
+				return true;
+			}
+		}
+
 		return false;
 	}
 
@@ -1034,6 +1041,8 @@ public class Board extends JPanel implements MouseListener {
 			if (isColliding(spaceship, projectile)) {
 				// spaceship.hit(projectile.getDamage());
 				spaceship.removeLife();
+				spaceshipBlastTimes++;
+				// spaceship.setCol(margin);
 				if (!mute)
 					audio.makeKillingSoundForSpaceship();
 				livesLeft = spaceship.getLives();
@@ -1068,10 +1077,10 @@ public class Board extends JPanel implements MouseListener {
 			createEnemies();
 			nextTheme();
 			// angleIncrement = 0.03;
-			if (eSpeed < 0 && eSpeed> -4) {
+			if (eSpeed < 0 && eSpeed > -4) {
 				eSpeed--;
 				moveDownBy /= 1.1;
-			} else if (eSpeed < 4){
+			} else if (eSpeed < 4) {
 				eSpeed++;
 				moveDownBy /= 1.1;
 			}
@@ -1190,7 +1199,7 @@ public class Board extends JPanel implements MouseListener {
 		playOrPauseRect.add(infoY1);
 		playOrPauseRect.add(ppX + infoH);
 
-		int muteX = (int) (width - margin/2) - infoW * 3 - 15 * 2;
+		int muteX = (int) (width - margin / 2) - infoW * 3 - 15 * 2;
 		BufferedImage muteOrUnmute;
 		if (!mute) {
 			muteOrUnmute = Images.getMakeSound();
@@ -1283,10 +1292,23 @@ public class Board extends JPanel implements MouseListener {
 	}
 
 	private void paintSpaceship(Graphics g) {
-		spaceship.setWidth(spaceship.getImage().getWidth() / spaceshipSizeRatio);
-		spaceship.setHeight(spaceship.getImage().getHeight() / spaceshipSizeRatio);
 
-		spaceship.paintComponent(g);
+		if (spaceshipBlastTimes > 0 && spaceshipBlastTimes < 15) {
+			spaceship.setImage(Images.getSpaceshipBlast());
+			BufferedImage image = Images.getSpaceshipBlast();
+			int width = spaceship.getImage().getWidth() / spaceshipSizeRatio * (spaceshipBlastTimes / 3 + 1);
+			int height = spaceship.getImage().getHeight() / spaceshipSizeRatio * (spaceshipBlastTimes / 3 + 1);
+			g.drawImage(image, spaceship.getCol() - (width - spaceship.getWidth()) / 2,
+					spaceship.getRow() - (height - spaceship.getHeight()) / 2, width, height, null);
+			spaceshipBlastTimes++;
+		} else {
+			spaceship.setImage(Images.getSpaceship());
+			spaceshipBlastTimes = 0;
+			spaceship.setWidth(spaceship.getImage().getWidth() / spaceshipSizeRatio);
+			spaceship.setHeight(spaceship.getImage().getHeight() / spaceshipSizeRatio);
+			spaceship.paintComponent(g);
+		}
+
 	}
 
 	private void paintEnemies(Graphics g) {
@@ -1388,7 +1410,6 @@ public class Board extends JPanel implements MouseListener {
 			infoRect.add(infoY1);
 			infoRect.add(infoX1 + infoH);
 
-
 			if (showInfo) {
 				paintInfo(g);
 			}
@@ -1435,8 +1456,7 @@ public class Board extends JPanel implements MouseListener {
 				pause = !pause;
 				showInfo = false;
 				board.repaint();
-			}
-			else if (checkInRect(mX, mY, muteOrUnmuteRect)) {
+			} else if (checkInRect(mX, mY, muteOrUnmuteRect)) {
 				mute = !mute;
 				board.repaint();
 			}
@@ -1470,5 +1490,3 @@ public class Board extends JPanel implements MouseListener {
 	}
 
 }
-
-
