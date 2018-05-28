@@ -290,7 +290,7 @@ public class Board extends JPanel implements MouseListener {
 
 			public void actionPerformed(ActionEvent e) {
 				showInfo = !showInfo;
-				pause = !pause;
+				pause = showInfo;
 				board.repaint();
 			}
 
@@ -1422,6 +1422,7 @@ public class Board extends JPanel implements MouseListener {
 		if (showInfo) {
 
 			pause = true;
+			board.repaint();
 			int w = (int) (Images.getInfoPanel().getWidth() / 3.5);
 			int h = (int) (Images.getInfoPanel().getHeight() / 3.5);
 			g.drawImage(Images.getInfoPanel(), width / 2 - w / 2, height / 2 - h / 2, w, h, null);
