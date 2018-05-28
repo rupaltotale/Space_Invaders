@@ -1451,7 +1451,7 @@ public class Board extends JPanel implements MouseListener {
 		else if (!gameOver && !showHomePage) {
 			if (checkInRect(mX, mY, infoRect)) {
 				showInfo = !showInfo;
-				pause = !pause;
+				pause = showInfo;
 				board.repaint();
 			} else if (checkInRect(mX, mY, playOrPauseRect)) {
 				pause = !pause;
