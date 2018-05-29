@@ -13,6 +13,7 @@ public class Audio {
 	private static String softKillSound = "Audio/CollisionWithEnemies.wav";
 	private static String launchProjectile = "Audio/LaunchProjectile.wav";
 	private static String bubblePop = "Audio/BubblePop.wav";
+	private static String backgroundMusic = "Audio/BackgroundMusic70s.wav";
 	private static InputStream inputStream;
 
 	public void makeSound(String file) {
@@ -48,5 +49,9 @@ public class Audio {
 	public void makeBubblePopSound() {
 //		System.out.println("makingsound");
 		makeSound(bubblePop);
+	}
+	public void make70sBackgroundMusic() {
+//		System.out.println("makingsound");
+		makeSound(backgroundMusic);
 	}
 }

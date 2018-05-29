@@ -216,7 +216,7 @@ public class Board extends JPanel implements MouseListener {
 
 			public void actionPerformed(ActionEvent e) {
 				direction = 1;
-				movedBy = 0;
+				movedBy = 0;  
 			}
 		});
 
@@ -935,7 +935,7 @@ public class Board extends JPanel implements MouseListener {
 		} else if (obj instanceof Enemy) {
 			Enemy enemy = (Enemy) obj;
 			if (projectile.getRow() > enemy.getRow() && projectile.getRow() < enemy.getRow() + enemy.getHeight() / 2
-					&& projectile.getCol() > enemy.getCol() && projectile.getCol() < enemy.getCol() + enemy.getWidth()
+					&& projectile.getCol() > enemy.getCol() +10 && projectile.getCol() < enemy.getCol() + enemy.getWidth() - 10
 					&& !enemy.isInvalid()) {
 				return true;
 			}
