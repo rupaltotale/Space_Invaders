@@ -1,3 +1,4 @@
+/.DS_Store
 /Audio.class
 /Audio/
 /Barrier.class
@@ -9,12 +10,10 @@
 /Board$6.class
 /Board$7.class
 /Board$8.class
+/Board$9.class
 /Board.class
 /Enemy.class
 /Images.class
 /Images/
 /Projectile.class
 /Spaceship.class
-/Board$9.class
-/Spaceship2.class
-/Audio2/
