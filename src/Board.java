@@ -55,6 +55,11 @@ public class Board extends JPanel implements MouseListener {
 	private static boolean showInfo;
 	private static boolean mute = false;
 	private static Audio audio = new Audio();
+	
+	//////////trying to move and shoot at the same time
+	private static boolean movingRight = false;
+	private static boolean movingLeft = false;
+	private static boolean shooting = false;
 
 	/* Barriers */
 	private static ArrayList<Barrier> barriers = new ArrayList<Barrier>();
@@ -205,26 +210,50 @@ public class Board extends JPanel implements MouseListener {
 
 		this.getInputMap().put(KeyStroke.getKeyStroke("LEFT"), "left");
 		this.getInputMap().put(KeyStroke.getKeyStroke("RIGHT"), "right");
+		this.getInputMap().put(KeyStroke.getKeyStroke("released LEFT"), "stop");
+		this.getInputMap().put(KeyStroke.getKeyStroke("released RIGHT"), "stop");
 		this.getInputMap().put(KeyStroke.getKeyStroke("SPACE"), "shoot");
+		this.getInputMap().put(KeyStroke.getKeyStroke("released SPACE"), "stop shoot");
 		this.getInputMap().put(KeyStroke.getKeyStroke("P"), "pause");
 		this.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "newGame");
 		this.getInputMap().put(KeyStroke.getKeyStroke("I"), "info");
 		this.getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "escape");
 		this.getInputMap().put(KeyStroke.getKeyStroke("M"), "mute");
+		
+		this.getActionMap().put("stop", new AbstractAction() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				movingLeft = false;
+				movingRight = false;
+			}
+			
+		});
+		
+		this.getActionMap().put("stop shoot", new AbstractAction() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				shooting = false;
+			}
+			
+		});
 
 		this.getActionMap().put("right", new AbstractAction() {
 
 			public void actionPerformed(ActionEvent e) {
-				direction = 1;
-				movedBy = 0;
+//				direction = 1;
+//				movedBy = 0;
+				movingRight = true;
 			}
 		});
 
 		this.getActionMap().put("left", new AbstractAction() {
 
 			public void actionPerformed(ActionEvent e) {
-				direction = -1;
-				movedBy = 0;
+//				direction = -1;
+//				movedBy = 0;
+				movingLeft = true;
 
 			}
 		});
@@ -233,27 +262,28 @@ public class Board extends JPanel implements MouseListener {
 
 			public void actionPerformed(ActionEvent e) {
 
-				if (!gameOver) {
-
-					if (sProjectiles.size() == 0) {
-						// audio.makeLaunchProjectileSound();
-						Projectile projectile = new Projectile(Images.getSpaceshipProjectile(), spSpeed, true);
-						int row = spaceship.getRow() - projectile.getHeight();
-						int col = spaceship.getCol() + spaceship.getWidth() / 2 - projectile.getWidth() / 2;
-						projectile.setLocation(row, col);
-						if (rocketProjectile && numRocketPro <= 3) {
-							numRocketPro++;
-						}
-						if (rocketProjectile && numRocketPro == 4) {
-							hasSuperpower = false;
-							rocketProjectile = false;
-							numRocketPro = 0;
-						}
-
-						sProjectiles.add(projectile);
-
-					}
-				}
+//				if (!gameOver) {
+//
+//					if (sProjectiles.size() == 0) {
+//						// audio.makeLaunchProjectileSound();
+//						Projectile projectile = new Projectile(Images.getSpaceshipProjectile(), spSpeed, true);
+//						int row = spaceship.getRow() - projectile.getHeight();
+//						int col = spaceship.getCol() + spaceship.getWidth() / 2 - projectile.getWidth() / 2;
+//						projectile.setLocation(row, col);
+//						if (rocketProjectile && numRocketPro <= 3) {
+//							numRocketPro++;
+//						}
+//						if (rocketProjectile && numRocketPro == 4) {
+//							hasSuperpower = false;
+//							rocketProjectile = false;
+//							numRocketPro = 0;
+//						}
+//
+//						sProjectiles.add(projectile);
+//
+//					}
+//				}
+				shooting = true;
 			}
 
 		});
@@ -493,6 +523,10 @@ public class Board extends JPanel implements MouseListener {
 	 * This function is executed every <time> millisecond.
 	 */
 	protected static void tick() {
+		moveRight(movingRight);
+		moveLeft(movingLeft);
+		shoot(shooting);
+		
 		if (!pauseEnemies) {
 			moveEnemies();
 		}
@@ -1420,6 +1454,51 @@ public class Board extends JPanel implements MouseListener {
 			return true;
 		}
 		return false;
+	}
+	
+	private static void moveRight(boolean right) {
+		if (right) {
+			direction = 1;
+			movedBy = 0;
+			//right = false;
+		}
+		
+	}
+	
+	private static void moveLeft(boolean left) {
+		if (left) {
+			direction = -1;
+			movedBy = 0;
+			//left = false;
+		}
+		
+	}
+	
+	private static void shoot(boolean shoot) {
+		if(shoot) {
+			if (!gameOver) {
+				
+									if (sProjectiles.size() == 0) {
+										// audio.makeLaunchProjectileSound();
+										Projectile projectile = new Projectile(Images.getSpaceshipProjectile(), spSpeed, true);
+										int row = spaceship.getRow() - projectile.getHeight();
+										int col = spaceship.getCol() + spaceship.getWidth() / 2 - projectile.getWidth() / 2;
+										projectile.setLocation(row, col);
+										if (rocketProjectile && numRocketPro <= 3) {
+											numRocketPro++;
+										}
+										if (rocketProjectile && numRocketPro == 4) {
+											hasSuperpower = false;
+											rocketProjectile = false;
+											numRocketPro = 0;
+										}
+				
+										sProjectiles.add(projectile);
+				
+									}
+								}
+			//shoot = false;
+		}
 	}
 
 	// Ignore this!
