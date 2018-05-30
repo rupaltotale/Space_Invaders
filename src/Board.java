@@ -39,7 +39,7 @@ public class Board extends JPanel implements MouseListener {
 	private static BufferedImage background;
 	private static boolean gameOver = false;
 	private static String initialTheme = "space";
-	private static String currentTheme = initialTheme;
+	private static String currentTheme = initialTheme;//adding the themes to different set ups
 	private static int score = 0;
 	private static int livesLeft;
 	private static int timeElapsed = 0;
