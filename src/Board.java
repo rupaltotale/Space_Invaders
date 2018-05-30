@@ -73,7 +73,7 @@ public class Board extends JPanel implements MouseListener {
 	private static double angle = 0;
 	private static double angleIncrement = 0.03;
 
-	/*Super powers*/
+	/* Super powers */
 	private static ArrayList<String> superpowers = new ArrayList<String>();
 	private static boolean hasSuperpower = false;
 
@@ -139,6 +139,8 @@ public class Board extends JPanel implements MouseListener {
 		board.setUpKeyMappings();
 		Board mml = new Board();
 		board.addMouseListener(mml);
+		audio.setPlayBackgroundMusic(true);
+		
 
 	}
 
@@ -183,6 +185,8 @@ public class Board extends JPanel implements MouseListener {
 		spaceship.setLives(lives);
 
 		timer.start();
+		if (!showHomePage && !gameOver)
+			audio.setPlayBackgroundMusic(false);
 		if (sProjectiles.size() > 0) {
 			for (int i = 0; i < sProjectiles.size(); i++) {
 				sProjectiles.remove(i);
@@ -216,7 +220,7 @@ public class Board extends JPanel implements MouseListener {
 
 			public void actionPerformed(ActionEvent e) {
 				direction = 1;
-				movedBy = 0;  
+				movedBy = 0;
 			}
 		});
 
@@ -430,7 +434,7 @@ public class Board extends JPanel implements MouseListener {
 			ArrayList<Enemy> eRow = new ArrayList<Enemy>();
 			for (int c = 0; c < enemyCol; c++) {
 				if (r < 1) {
-					
+
 					Enemy enemy = new Enemy(r * rowSpacing + margin, c * colSpacing + margin, Enemy.getPurpleEnemy());
 					if (moveDownBy == 0)
 						moveDownBy = enemy.getHeight() / 4;
@@ -724,8 +728,7 @@ public class Board extends JPanel implements MouseListener {
 								if (!mute) {
 									if (enemy.getSuperPower() == null) {
 										audio.makeSoftKillingSoundForEnemy();
-									}
-									else {
+									} else {
 										audio.makeBubblePopSound();
 									}
 								}
@@ -935,8 +938,8 @@ public class Board extends JPanel implements MouseListener {
 		} else if (obj instanceof Enemy) {
 			Enemy enemy = (Enemy) obj;
 			if (projectile.getRow() > enemy.getRow() && projectile.getRow() < enemy.getRow() + enemy.getHeight() / 2
-					&& projectile.getCol() > enemy.getCol() +10 && projectile.getCol() < enemy.getCol() + enemy.getWidth() - 10
-					&& !enemy.isInvalid()) {
+					&& projectile.getCol() > enemy.getCol() + 10
+					&& projectile.getCol() < enemy.getCol() + enemy.getWidth() - 10 && !enemy.isInvalid()) {
 				return true;
 			}
 
@@ -1047,7 +1050,7 @@ public class Board extends JPanel implements MouseListener {
 			superpowerDashboardText = "";
 			createEnemies();
 			nextTheme();
-		
+
 			if (eSpeed < 0 && eSpeed > -4) {
 				eSpeed--;
 				moveDownBy /= 1.1;
@@ -1057,7 +1060,6 @@ public class Board extends JPanel implements MouseListener {
 			}
 			sSpeed += 3;
 			moveLimit += 12;
-		
 
 		}
 	}
@@ -1110,6 +1112,7 @@ public class Board extends JPanel implements MouseListener {
 		}
 		if (spaceship.isDead() || belowSpaceship) {
 			gameOver = true;
+			audio.setPlayBackgroundMusic(true);
 			timer.stop();
 		}
 
@@ -1183,7 +1186,6 @@ public class Board extends JPanel implements MouseListener {
 	}
 
 	private void paintGameOverPanel(Graphics g) {
-		
 
 		g.drawImage(Images.getGameOverWindow(), 0, 0, width, height, null);
 		Font font = new Font("Courier", Font.PLAIN, 50);
