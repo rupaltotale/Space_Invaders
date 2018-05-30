@@ -35,6 +35,7 @@ public class Audio {
 		AudioPlayer.player.start(sound);
 	}
 	public void makeBackgroundMusic70s() {
+		clip = null;
 		AudioInputStream audioStream = null;
 		try {
 			audioStream = AudioSystem.getAudioInputStream(this.getClass().getResource(backgroundMusic));
@@ -60,12 +61,13 @@ public class Audio {
         
         
         clip.loop(Clip.LOOP_CONTINUOUSLY);
-        try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        
+//        try {
+//			Thread.sleep(10000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	public void makeHardKillingSoundForEnemy() {
 		makeSound(hardKillSound);
@@ -96,6 +98,7 @@ public class Audio {
 			makeBackgroundMusic70s();
 		}
 		else {
+			System.out.println("closing");
 			clip.close();
 		}
 	}
